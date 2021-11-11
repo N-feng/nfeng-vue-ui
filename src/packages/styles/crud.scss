@@ -1,0 +1,170 @@
+.crud-component {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  // 搜索表单
+  .search-form {
+    background-color: white;
+
+    .rule-form {
+      padding: 16px 24px 0;
+    }
+  }
+
+  // 表格头部
+  .crud-header {
+    padding-bottom: 12px;
+    position: relative;
+    .red-star {
+      color: red;
+      position: absolute;
+      top: 10px;
+      left: -10px;
+    }
+    .crud-title {
+      margin: 0;
+    }
+    .crud-title-large {
+      font-size: 20px;
+    }
+  }
+
+  // 表格
+  .table-component {
+    background-color: white;
+    flex: 1;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 12px 20px;
+
+    .cell-form {
+      flex: 1;
+      overflow: auto;
+      // border: 1px solid #EBEEF5;
+      .el-table th {
+        background-color: rgba(250, 250, 250, 1);
+        color: rgba(0, 0, 0, 0.847058823529412);
+        // z-index: 999;
+      }
+      // .el-table__fixed-right {
+      //   z-index: 1000;
+      // }
+      .el-form-item {
+        margin-bottom: 10px;
+        &.is-error{
+          margin-bottom: 22px;
+          margin-top: 10px;
+        }
+      }
+      .el-form-item__error {
+        width: 100%;
+        text-align: left;
+        // position: relative;
+      }
+      .cell {
+        overflow: visible;
+      }
+    }
+    
+    .pagination {
+      padding-top: 12px;
+      text-align: right;
+    }
+  }
+
+  // 搜索表单 + 表格
+  .search-form + .table-component {
+    margin-top: 15px;
+  }
+
+  // 警告框
+  .el-alert {
+    margin-bottom: 20px;
+  }
+
+  .crud-component {
+    .table-component {
+      padding: 0;
+    }
+  }
+
+}
+
+// form组件 + crud组件
+.form-component + .crud-component {
+  margin-top: 20px;
+}
+
+// crud组件 + crud组件
+.crud-component + .crud-component {
+  margin-top: 20px;
+}
+
+.dialog-search-btns {
+  .el-form-item__content{
+    margin-left: 20px!important;
+  }
+}
+
+.el-table .row-expand-hide .cell .el-table__expand-icon {
+  display: none;
+}
+
+// 行选中
+.el-table tr.selected {
+  background-color: #ffefe9;
+}
+
+// 文字省略
+.text-overflow {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/*滚动条整体样式*/
+.el-table__header-wrapper {
+  width: calc(100% - 10px)!important;
+}
+.el-table__body-wrapper,
+.el-table__fixed-body-wrapper {
+  &::-webkit-scrollbar {
+    width: 10px; /*高宽分别对应横竖滚动条的尺寸*/
+    height: 10px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+  }
+}
+.el-table__fixed,
+.el-table__fixed-right {
+  height: calc(100% - 10px) !important;
+  &::before {
+    height: 0px !important;
+  }
+} 
+.el-table__fixed-body-wrapper {
+  padding-bottom: 10px;
+  background: white;
+}
+.el-table__footer-wrapper {
+  position: relative;
+  z-index: 3;
+}
+// 列表页面样式
+.list-component {
+  .el-table--scrollable-y .el-table__fixed-right{
+    right: 10px !important;
+    background-color: #fff;
+  }
+}
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

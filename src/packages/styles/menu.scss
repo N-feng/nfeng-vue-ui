@@ -1,0 +1,28 @@
+.collapse {
+  &.el-menu--collapse {
+    width: 200px;
+    height: 100vh
+  }
+
+  &.el-menu--collapse > .el-menu-item span,
+  &.el-menu--collapse > .el-submenu > .el-submenu__title span {
+    width: auto!important;
+    height: auto!important;
+    visibility: visible!important;
+  }
+
+  &.el-menu--collapse > .el-menu-item [class^="el-icon-"],
+  &.el-menu--collapse > .el-submenu > .el-submenu__title [class^="el-icon-"] {
+    margin-right: 5px!important;
+  }
+
+  &.el-menu--collapse > .el-menu-item .el-submenu__icon-arrow,
+  &.el-menu--collapse > .el-submenu > .el-submenu__title .el-submenu__icon-arrow {
+    display: block!important;
+  }
+}
+
+.el-menu-item-group__title {
+  padding: 0!important;
+}
+

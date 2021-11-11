@@ -1,0 +1,51 @@
+// 表单头部
+.form-header {
+  padding: 12px 24px;
+  border-bottom: 1px solid rgba(0,0,0,.06);
+
+  .form-title {
+    margin: 0;
+    .form-subtitle{
+      margin-left: 15px;
+      font-size: 14px;
+      font-weight: normal;
+      color:#797979
+    }
+  }
+  .form-title-large {
+    font-size: 20px;
+  }
+}
+
+// 表单组件
+.form-component {
+  background-color: white;
+  
+  // 表单
+  .rule-form {
+    padding: 16px 24px 0;
+  }
+
+  // 分组头部
+  .group-header {
+    padding-bottom: 24px;
+    padding-left: 30px;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 36px;
+  }
+
+  .el-form-item--small .el-form-item__content {
+    line-height: 33px;
+  }
+
+}
+
+// 文本显示
+.form-item-text {
+  line-height: 33.34px;
+  min-height: 33.34px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

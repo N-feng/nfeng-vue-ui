@@ -1,0 +1,28 @@
+.dialog-table {
+  .el-dialog__body {
+    padding: 0;
+  }
+  .crud-component {
+    // max-height: 400px;
+
+    .table-component {
+      padding-top: 0;
+      .el-form-item{
+        margin-bottom: 22px;
+      }
+      .el-form-item.is-error{
+        margin-bottom: 22px;
+        margin-top: 0 !important;
+      }
+    }
+  }
+  .search-form + .table-component {
+    margin-top: 0;
+  }
+  .el-table__expanded-cell[class*=cell] {
+    padding: 15px 10px;
+  }
+  .table-component .table-component {
+    padding-bottom: 0;
+  }
+}

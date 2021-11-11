@@ -1,0 +1,11 @@
+.el-button + .btn-del {
+  margin-left: 10px;
+}
+
+.btn-del + .el-button {
+  margin-left: 10px;
+}
+
+.btn-del + .btn-del {
+  margin-left: 10px;
+}

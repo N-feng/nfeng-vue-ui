@@ -1,0 +1,33 @@
+.upload--disabled {
+  .el-upload--picture-card {
+    display: none;
+  }
+  .el-upload,
+  .el-upload__tip {
+    display: none;
+  }
+  .el-upload-list__item:first-child {
+    margin-top: 4px;
+  }
+}
+
+.upload--hide {
+  .el-upload,
+  .el-upload__tip {
+    display: none;
+  }
+  .el-upload-list__item:first-child {
+    margin-top: 4px;
+  }
+}
+
+.upload--close {
+  .el-upload-list__item-status-label,
+  .el-icon-close {
+    display: none !important;
+  }
+}
+
+.el-icon-close-tip {
+  display: none !important;
+}

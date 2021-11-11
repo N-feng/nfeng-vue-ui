@@ -1,0 +1,61 @@
+/* 定位 */
+.relative {
+  position: relative;
+}
+/* 布局 */
+.flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.flex-center{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.space-around{
+  justify-content: space-around;
+}
+.space-between{
+  justify-content: space-between;
+}
+
+.flex_row {
+  display: flex;
+}
+
+.flex_shrink {
+  flex-shrink: 0;
+}
+
+.flex_wrap {
+  flex-wrap: wrap;
+}
+
+.justify-end{
+  justify-content: flex-end;
+}
+.space-center {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.align-start{
+  align-items: flex-start;
+}
+/* 透明度 */
+.opacity85 {
+  opacity: .85;
+}
+
+.opacity65 {
+  opacity: .65;
+}
+
+
+//对齐方式
+.tar{
+  text-align: right;
+}
