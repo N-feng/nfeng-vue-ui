@@ -1,93 +1,50 @@
 <template>
   <div class="crud-component">
     <!-- 搜索表单 -->
-    <div v-if="items.length" class="search-form">
-      <!-- 搜索表单 -->
-      <ygp-form
-        ref="searchForm"
-        v-model="searchForm"
-        :option="{ items }"
-        :enable-enter-search="tableOption.enableEnterSearch"
-        :label-width="tableOption.labelWidth"
-        :dic="dic"
-        :size="size"
-        :count="count"
-        @submit="searchSubmit"
-        @reset="searchReset"
-        @change="crudFormChange"
-        @remote="(callback, query, prop) => $emit('remote', callback, query, prop)"
-      >
-        <!-- 搜索按钮 -->
-        <el-col
-          slot="menu"
-          :span="tableOption.searchSpan || 8"
-          :offset="type === 'dialog' ? 0 : offset"
-          style="text-align: right;"
-        >
-          <el-form-item class="dialog-search-btns">
-            <slot name="preSearchMenu" :searchForm="searchForm" :size="size"></slot>
-            <el-button
-              type="primary"
-              :size="size"
-              @click="$refs.searchForm.submitForm();$emit('submitBtn')"
-            >查询</el-button>
-            <el-button :size="size" :plain="true" @click="$refs.searchForm.resetForm()">重置</el-button>
-            <el-button
-              v-if="getItemShow(option.exportBtn !== undefined ? option.exportBtn : false)"
-              :size="size"
-              :plain="true"
-              @click="exportForm"
-            >导出</el-button>
-            <slot name="searchMenu" :searchForm="searchForm" :size="size"></slot>
-            <el-button
-              v-if="showSearchFormColumnLength > 5"
-              :size="size"
-              type="text"
-              @click="expand = !expand"
-            >
-              {{ expand ? "收起" : "展开" }}
-              <i
-                :class="expand ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
-              ></i>
-            </el-button>
-          </el-form-item>
-        </el-col>
-      </ygp-form>
-    </div>
+    <header-search
+      ref="headerSearch"
+      :search="searchForm"
+      @submit="searchSubmit"
+      @reset="searchReset"
+    >
+      <template slot="searchMenu" slot-scope="scope">
+        <slot name="searchMenu" v-bind="scope"></slot>
+      </template>
+    </header-search>
     <!--  表单表格之间插槽  -->
     <slot name="middleDiv" />
     <!-- 表格 -->
-    <div class="table-component">
-      <!-- 表格操作/标题 -->
-      <div v-if="tableOption.operate || tableOption.tableTitle" class="space-center crud-header">
-        <div v-if="tableOption.tableTitleRequire" class="red-star">*</div>
-        <h3
-          class="crud-title"
-          :class="{ 'crud-title-large': tableOption.titleSize === 'large' }"
-        >{{ tableOption.tableTitle }}</h3>
-        <div>
-          <template v-for="(item, index) in tableOption.operate">
-            <el-button
-              v-if="getItemShow(item.show ? item.show : true)"
-              :key="index"
-              :size="item.size ? item.size : size"
-              :type="item.type"
-              @click="$emit(item.operate, searchForm)"
-            >{{ item.title }}</el-button>
-          </template>
-        </div>
-      </div>
+    <div class="table-component" :class="[{'table--fullscreen':fullscreen}]">
+      <!-- 表格功能列 -->
+      <header-menu v-if="vaildData(tableOption.header,true)" ref="headerMenu">
+        <template slot="menuLeft" slot-scope="scope">
+          <slot name="menuLeft" v-bind="scope"></slot>
+        </template>
+        <template slot="menuRight" slot-scope="scope">
+          <slot name="menuRight" v-bind="scope"></slot>
+        </template>
+      </header-menu>
       <!-- 表格提示标语 -->
       <slot name="tip" />
       <!-- 表格主体 -->
-      <el-form v-if="tableOption" ref="cellForm" :model="cellForm" class="cell-form">
+      <el-form
+        v-if="tableOption"
+        ref="cellForm"
+        :model="cellForm"
+        class="cell-form"
+        :show-message="false"
+        @validate="handleValidate"
+      >
         <el-table
+          v-if="reload"
           ref="table"
           :data="cellForm.list"
-          v-bind="tableOption"
           :row-key="tableOption.rowKey"
-          :default-expand-all="tableOption.defaultExpandAll"
+          :size="controlSize"
           :expand-row-keys="tableOption.expandRowKeys"
+          :default-expand-all="tableOption.defaultExpandAll"
+          :show-summary="tableOption.showSummary"
+          :summary-method="tableOption.summaryMethod"
           :row-class-name="tableRowClassName"
           :height="tableOption.height"
           @current-change="(currentRow, oldCurrentRow) => emitEventHandler('current-change', currentRow, oldCurrentRow)"
@@ -95,178 +52,35 @@
           @row-click="rowClick"
           @sort-change="({ column, prop, order }) => emitEventHandler('sort-change', { column, prop, order })"
         >
-          <!-- 折叠面板  -->
-          <el-table-column v-if="tableOption.expand" type="expand">
-            <template slot-scope="{ row, $index }">
-              <slot :row="row" :index="$index" name="expand"></slot>
-            </template>
-          </el-table-column>
-          <!-- 选择框 -->
-          <el-table-column
-            v-if="tableOption.selection"
-            :reserve-selection="tableOption.reserveSelection"
-            type="selection"
-            width="50"
-            align="center"
-            fixed="left"
-            :selectable="tableOption.checkSelectable"
-          ></el-table-column>
-          <el-table-column
-            v-if="tableOption.rowSelection"
-            type="check"
-            width="50"
-            align="center"
-            fixed="left"
-          >
-            <template slot="header" slot-scope="scope">
-              <el-checkbox
-                v-if="tableOption.checkAll !== false"
-                v-model="checkAll"
-                :indeterminate="isIndeterminate"
-                @change="(val) => allCheck(val, scope)"
-              ></el-checkbox>
-            </template>
-            <template slot-scope="{ row }">
-              <el-checkbox :value="getCheck(row)" @change="(val) => rowCheck(val, row)"></el-checkbox>
-            </template>
-          </el-table-column>
-          <!-- 序号 -->
-          <el-table-column
-            v-if="tableOption.index"
-            type="index"
-            width="50"
-            align="center"
-            label="序号"
-          ></el-table-column>
-          <!-- 动态列 -->
-          <template v-for="(column, index) in showColumn">
-            <el-table-column
-              :key="index"
-              v-bind="{...column, align: tableOption.align || column.align || 'center', headerAlign: column.headerAlign || column.align}"
-            >
-              <!-- 自定义表头 -->
-              <template slot="header" slot-scope="scope">
-                <slot
-                  v-if="column.headerSlot"
-                  :name="column.prop + 'Header'"
-                  v-bind="Object.assign(scope, { column })"
-                ></slot>
-                <span
-                  v-else
-                  :class="{ required: column.rules && column.rules.length }"
-                >{{ column.label }}</span>
-              </template>
-              <!-- 自定义列模板 -->
-              <template slot-scope="scope" :scope="newSlotScope ? 'scope' : false">
-                <span
-                  v-if="column.filter"
-                >{{ Vue.filter(column["filter"])(scope.row[column.prop]) }}</span>
-                <span v-else-if="column.slotName">
-                  <slot
-                    :name="column.slotName"
-                    :row="scope.row"
-                    :$index="scope.$index"
-                    :prop="`list.${scope.$index}.${column.prop}`"
-                    :rules="column.rules"
-                    :placeholder="getPlaceholder(column)"
-                  />
-                </span>
-                <span
-                  v-else-if="column.formatter"
-                >{{ column.formatter( scope.row, scope.column, scope.row[column.prop], scope.$index ) }}</span>
-                <div
-                  v-else-if="column.isEllipsis"
-                  :title="scope.row[column.prop]"
-                  :style="{ width: scope.column.width ? scope.column.width : '150px' }"
-                  class="text-overflow"
-                >{{scope.row[column.prop]}}</div>
-                <!-- 表单控件 -->
-                <el-form-item
-                  v-else-if="getItemShow(column.edit, scope.row)"
-                  :prop="`list.${scope.$index}.${column.prop}`"
-                  :rules="getRules(column.rules, scope.row, cellForm.list)"
-                >
-                  <!-- 动态组件 -->
-                  <component
-                    :is="getComponent(column.type)"
-                    v-model="scope.row[column.prop]"
-                    v-bind="column"
-                    :width="undefined"
-                    :size="column.size ? column.size : size"
-                    :placeholder="getPlaceholder(column)"
-                    :class="getClassName(column.class, scope.row)"
-                    :disabled="getItemShow(column.disabled, scope.row)"
-                    :options="getOptions(column,scope.row)"
-                    @focus="(value, option) => $emit('focus', scope.row, scope.$index, column.prop, value, option)"
-                    @change="(value, option) => $emit('change', scope.row, scope.$index, column.prop, value, option)"
-                  ></component>
-                </el-form-item>
-                <span
-                  v-else-if="column.render"
-                  :class="getClassName(column.class, scope.row)"
-                >{{ column.render(scope.row) }}</span>
-                <span 
-                  v-else-if="column.emptyLine"
-                  :class="getClassName(column.class, scope.row)"
-                >
-                  {{ scope.row[column.propName || column.prop] || '-' }}
-                </span>
-                <span
-                  v-else
-                  :class="getClassName(column.class, scope.row)"
-                >{{ scope.row[column.propName || column.prop] }}</span>
-              </template>
-            </el-table-column>
+          <!-- 暂无数据提醒 -->
+          <template slot="empty">
+            <div class="ygp-crud__empty">
+              <ygp-empty
+                image="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNDEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAxKSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj4KICAgIDxlbGxpcHNlIGZpbGw9IiNGNUY1RjUiIGN4PSIzMiIgY3k9IjMzIiByeD0iMzIiIHJ5PSI3Ii8+CiAgICA8ZyBmaWxsLXJ1bGU9Im5vbnplcm8iIHN0cm9rZT0iI0Q5RDlEOSI+CiAgICAgIDxwYXRoIGQ9Ik01NSAxMi43Nkw0NC44NTQgMS4yNThDNDQuMzY3LjQ3NCA0My42NTYgMCA0Mi45MDcgMEgyMS4wOTNjLS43NDkgMC0xLjQ2LjQ3NC0xLjk0NyAxLjI1N0w5IDEyLjc2MVYyMmg0NnYtOS4yNHoiLz4KICAgICAgPHBhdGggZD0iTTQxLjYxMyAxNS45MzFjMC0xLjYwNS45OTQtMi45MyAyLjIyNy0yLjkzMUg1NXYxOC4xMzdDNTUgMzMuMjYgNTMuNjggMzUgNTIuMDUgMzVoLTQwLjFDMTAuMzIgMzUgOSAzMy4yNTkgOSAzMS4xMzdWMTNoMTEuMTZjMS4yMzMgMCAyLjIyNyAxLjMyMyAyLjIyNyAyLjkyOHYuMDIyYzAgMS42MDUgMS4wMDUgMi45MDEgMi4yMzcgMi45MDFoMTQuNzUyYzEuMjMyIDAgMi4yMzctMS4zMDggMi4yMzctMi45MTN2LS4wMDd6IiBmaWxsPSIjRkFGQUZBIi8+CiAgICA8L2c+CiAgPC9nPgo8L3N2Zz4K"
+                :desc="tableOption.emptyText"
+              ></ygp-empty>
+            </div>
           </template>
-          <!-- 操作栏 -->
-          <el-table-column
-            v-if="tableOption.menu"
-            :width="tableOption.menuWidth || 200"
-            fixed="right"
-            label="操作"
-            align="center"
-          >
-            <template slot-scope="{ row, $index }">
-              <el-button
-                v-if="getMenuShow(tableOption.viewBtn, row, $index)"
-                type="text"
-                :size="size"
-                icon="el-icon-view"
-                @click="$emit('row-view', row, $index)"
-              >查看</el-button>
-              <el-button
-                v-if="getMenuShow(tableOption.editBtn, row, $index)"
-                type="text"
-                :size="size"
-                icon="el-icon-edit"
-                @click="$emit('row-edit', row, $index)"
-              >编辑</el-button>
-              <el-popconfirm
-                v-if="getMenuShow(tableOption.delBtn, row, $index)"
-                class="btn-del"
-                confirm-button-text="好的"
-                cancel-button-text="不用了"
-                icon="el-icon-info"
-                icon-color="red"
-                :title="tableOption.delTitle || '确定删除吗？'"
-                @confirm="$emit('row-del', row, $index)"
-              >
-                <el-button slot="reference" type="text" :size="size" icon="el-icon-delete">删除</el-button>
-              </el-popconfirm>
-              <template v-if="tableOption.customMenu">
-                <template v-for="(menu, i) in tableOption.customMenu">
-                  <el-button
-                    v-if="getMenuShow(menu.show ? menu.show : true, row, $index)"
-                    :key="i"
-                    type="text"
-                    :size="size"
-                    @click="handleCustomMenu(row, $index, menu)"
-                  >{{ menu.text }}</el-button>
-                </template>
+          <div>
+            <column-default ref="columnDefault">
+              <template slot="expand" slot-scope="{row,index}">
+                <slot :row="row" :index="index" name="expand"></slot>
               </template>
-              <slot name="menu" :row="row" :index="$index" :size="size"></slot>
+            </column-default>
+            <!-- 动态列 -->
+            <template v-for="column in list">
+              <column-slot :key="column.label" :column="column">
+                <template v-for="item in mainSlot" :slot="item" slot-scope="scope">
+                  <slot v-bind="scope" :name="item"></slot>
+                </template>
+              </column-slot>
             </template>
-          </el-table-column>
+            <column-menu>
+              <template slot="menu" slot-scope="scope">
+                <slot name="menu" v-bind="scope"></slot>
+              </template>
+            </column-menu>
+          </div>
         </el-table>
       </el-form>
       <div class="footer">
@@ -288,38 +102,77 @@
         ></el-pagination>
       </div>
     </div>
+    <!-- 动态列 -->
+    <dialog-column ref="dialogColumn"></dialog-column>
+    <!-- 表单 -->
+    <dialog-form ref="dialogForm"></dialog-form>
   </div>
 </template>
 
 <script>
-// import { getObjType } from "@/utils/util.js";
+import headerSearch from "./header-search.vue";
+import headerMenu from "./header-menu.vue";
+import columnDefault from "./column-default.vue";
+import columnSlot from "./column-slot.vue";
+import columnMenu from "./column-menu.vue";
+import dialogColumn from "./dialog-column.vue";
+import dialogForm from "./dialog-form.vue";
+import { validatenull } from "@/utils/validate";
+import { defaultColumn } from "./config.js";
+import { arraySort } from "@/utils/util";
+import permission from '@/utils/permission';
 
 export default {
   name: "YgpCrud",
-  // provide() {
-  //   return {
-  //     crud: this
-  //   };
-  // },
+  directives: {
+    permission
+  },
+  provide() {
+    return {
+      crud: this,
+    };
+  },
+  components: {
+    headerSearch, // 搜索
+    headerMenu, // 菜单头部
+    columnDefault, // 默认列
+    columnSlot, // 动态列
+    columnMenu, // 操作栏
+    dialogColumn, // 显隐列
+    dialogForm, // 表单
+  },
   props: {
-    size: {
-      type: String,
-      default: "small",
-      validator: (value) => {
-        const types = ["large", "medium", "small", "mini"];
-        const valid = types.indexOf(value.toLowerCase()) !== -1 || value === "";
-        if (!valid) {
-          throw new Error(
-            `Size must be one of ['large', 'medium', 'small', 'mini']`
-          );
-        }
-        return valid;
-      },
-    },
     // 表格配置
     option: {
       type: Object,
       required: true,
+      default: () => {
+        return {};
+      },
+    },
+    // 枚举库
+    dic: {
+      type: Object,
+      default: () => {
+        return {};
+      },
+    },
+    // 分页数据
+    page: {
+      type: Object,
+      default: () => {
+        return {};
+      },
+    },
+    // 权限控制
+    permission: {
+      type: [Function, Object],
+      default: () => {
+        return {};
+      }
+    },
+    value: {
+      type: Object,
       default: () => {
         return {};
       },
@@ -332,26 +185,6 @@ export default {
         return [];
       },
     },
-    // 分页数据
-    page: {
-      type: Object,
-      default: () => {
-        return {};
-      },
-    },
-    // 枚举库
-    dic: {
-      type: Object,
-      default: () => {
-        return {};
-      },
-    },
-    type: {
-      type: String,
-    },
-    value: {
-      type: Object,
-    },
     rowSelection: {
       type: Object,
     },
@@ -359,16 +192,16 @@ export default {
       type: Array,
       default: () => [],
     },
-    defaultShowColumns: {
-      type: Number,
-      default: 5,
-    },
   },
   data() {
     return {
+      reload: true,
+      listError: {},
       tableData: [],
       tableOption: {},
       tableSelect: [],
+      tableForm: {},
+      tableIndex: -1,
       pageData: {
         total: 0, // 总页数
         pagerCount: 7, //超过多少条隐藏
@@ -382,72 +215,95 @@ export default {
       expand: false,
       checkAll: false,
       isIndeterminate: false,
+      objectOption: {},
+      defaultColumn,
+      defaultBind: {},
+      fullscreen: false,
+      editableKeys: [],
     };
   },
   computed: {
-    // 搜索表单配置
-    items() {
-      let items = [];
-      if (this.tableOption.columns) {
-        items = this.tableOption.columns
-          .filter((item) => item.search)
-          .map((item) => {
-            return {
-              ...item,
-              width: undefined,
-            };
-          });
-      }
-      return items;
-    },
-    // 表格数据
     cellForm() {
+      let list = this.tableData;
+      list = list.filter((ele) => {
+        let result = [];
+        for (var o in this.objectOption) {
+          if (!validatenull(this.objectOption[o].screenValue)) {
+            let column = this.objectOption[o];
+            let prop = column.propName || column.prop;
+            let value = ele[prop] + "";
+            // let value = (ele['$' + o] ? ele['$' + o] : ele[o]) + ''
+            result.push(value.indexOf(this.objectOption[o].screenValue) !== -1);
+          }
+        }
+        if (validatenull(result)) {
+          return true;
+        }
+        return eval(result.join("&&"));
+      });
       return {
-        list: this.tableData,
+        list,
       };
     },
-    count() {
-      if (
-        (!this.expand &&
-          this.showSearchFormColumnLength < this.defaultShowColumns) ||
-        this.expand
-      ) {
-        return this.showSearchFormColumnLength;
-      }
-      return this.defaultShowColumns;
+    list() {
+      let result = [...this.columnOption];
+      result = arraySort(
+        result,
+        "index",
+        (a, b) =>
+          this.objectOption[a.prop]?.index - this.objectOption[b.prop]?.index
+      );
+      return result;
     },
-    showSearchFormColumnLength() {
-      if (this.tableOption.columns) {
-        return (
-          this.tableOption.columns
-            // .filter((column) =>
-            //   this.getItemShow(column.show !== undefined ? column.show : true)
-            // )
-            .filter((column) => column.search).length
-        );
-      }
-      return 0;
+    mainSlot() {
+      let result = [];
+      this.propOption.forEach((item) => {
+        if (this.$scopedSlots[item.prop]) result.push(item.prop);
+      });
+      return this.getSlotList(
+        ["Header", "Form"],
+        this.$scopedSlots,
+        this.propOption
+      ).concat(result);
     },
-    showColumn() {
-      // tableOption.columns
-      // getItemShow(column.show !== undefined ? column.show : true)
-      if (this.tableOption.columns) {
-        return this.tableOption.columns.filter((column) =>
-          this.getItemShow(column.show !== undefined ? column.show : true)
-        );
+    propOption() {
+      let result = [];
+      function findProp(list = []) {
+        if (!Array.isArray(list)) return;
+        list.forEach((ele) => {
+          result.push(ele);
+          if (ele.children) findProp(ele.children);
+        });
       }
-      return [];
+      findProp(this.columnOption);
+      return result;
     },
-    offset() {
-      return 24 - ((this.count * 8) % 24) - 8;
+    columnOption() {
+      return this.tableOption.columns || [];
+    },
+    isMediumSize() {
+      return this.controlSize;
+    },
+    controlSize() {
+      return this.tableOption.size;
     },
   },
   watch: {
+    propOption: {
+      handler(val) {
+        this.objectOption = {};
+        val.forEach((ele) => (this.objectOption[ele.prop] = ele));
+        this.columnInit && this.columnInit();
+      },
+      deep: true,
+    },
     option: {
       handler(val) {
         this.tableOption = val;
+        this.expand = val.expandDefault; // 查询条件默认展开
       },
       deep: true,
+      immediate: true,
     },
     data: {
       handler(val) {
@@ -476,8 +332,6 @@ export default {
     },
   },
   created() {
-    this.tableOption = this.option;
-    this.expand = this.tableOption.expandDefault; //查询条件默认展开
     this.tableDataInit(this.data);
     this.formDataInit();
     this.pageDataInit();
@@ -487,6 +341,22 @@ export default {
     this.onLoad();
   },
   methods: {
+    handleValidate(prop, valid, msg) {
+      if (!this.listError[prop]) {
+        this.$set(this.listError, prop, { valid: false, msg: "" });
+      }
+      this.listError[prop].valid = !valid;
+      this.listError[prop].msg = msg;
+    },
+    getPermission(key, row, index) {
+      if (typeof this.permission === "function") {
+        return this.permission(key, row, index)
+      } else if (!this.validatenull(this.permission[key])) {
+        return this.permission[key]
+      } else {
+        return true;
+      }
+    },
     // 表格行样式
     tableRowClassName({ row }) {
       let key = this.tableOption.rowKey;
@@ -555,6 +425,7 @@ export default {
     // 搜索表单数据初始化
     formDataInit() {
       let searchForm = {};
+      if (!this.tableOption.columns) return;
       this.tableOption.columns.forEach((column) => {
         if (column.value !== undefined && column.value !== "") {
           searchForm[column.prop] = column.value;
@@ -588,8 +459,8 @@ export default {
       this.$emit("selection-change", []);
     },
     // 重置按钮回调
-    searchReset() {
-      // this.searchForm = {};
+    searchReset(formData) {
+      this.searchForm = formData;
       // this.formDataInit(); // vue2 缺陷 日期数组不通知值改变
       this.pageData.currentPage = 1;
       this.$emit("reset");
@@ -601,7 +472,7 @@ export default {
     // 表格提交回调
     submitForm() {
       return new Promise((resolve) => {
-        this.$refs["cellForm"].validate((valid, msg) => {
+        this.$refs.cellForm.validate((valid, msg) => {
           resolve({ formData: this.cellForm, errorData: msg, valid });
           if (valid) {
             this.$emit("submit", this.cellForm);
@@ -609,9 +480,21 @@ export default {
         });
       });
     },
+    // 对部分表单字段进行校验
+    validateCellForm() {
+      return new Promise((resolve) => {
+        this.$refs.cellForm.validate((valid, msg) => {
+          resolve(msg);
+        });
+      });
+    },
     // 表格操作回调
     emitEventHandler(event) {
       this.$emit(event, ...Array.from(arguments).slice(1));
+    },
+    //刷新事件
+    refreshChange() {
+      this.$emit("refresh-change");
     },
     // 选中实例
     toggleSelection(rows) {
@@ -678,14 +561,66 @@ export default {
         this.$emit("row-check", val, JSON.parse(JSON.stringify(row)));
       });
     },
+    //行编辑点击
+    rowCell(val, row) {
+      const rowKey = this.getRowKey(row);
+      if (val) {
+        this.editableKeys.push(rowKey);
+      } else {
+        const index = this.editableKeys.findIndex((item) => item === rowKey);
+        if (index !== -1) {
+          this.editableKeys.splice(index, 1);
+        }
+      }
+      this.$emit("row-edit", val, JSON.parse(JSON.stringify(row)));
+    },
+    //对象克隆
+    rowClone(row) {
+      let rowData = {};
+      Object.keys(row).forEach((ele) => {
+        if (!["_parent", "children"].includes(ele)) {
+          rowData[ele] = row[ele];
+        }
+      });
+      return rowData;
+    },
+    // 编辑
+    rowEdit(row, index) {
+      this.tableForm = this.rowClone(row);
+      this.tableIndex = index;
+      this.$emit("input", this.tableForm);
+      this.$refs.dialogForm.show("edit");
+    },
+    //查看
+    rowView(row, index) {
+      this.tableForm = this.rowClone(row);
+      this.tableIndex = index;
+      this.$emit("input", this.tableForm);
+      this.$refs.dialogForm.show("view");
+    },
     getRowKey(row) {
       if (typeof this.tableOption.rowKey === "function") {
         return this.tableOption.rowKey(row);
+      }
+      if (typeof this.tableOption.rowKey === "string") {
+        return row[this.tableOption.rowKey];
       }
       return row.key;
     },
     getCheck(row) {
       return this.selectedRowKeys.includes(this.getRowKey(row));
+    },
+    getSlotList(list = [], slot, propList) {
+      propList = propList.map((ele) => ele.prop);
+      return Object.keys(slot).filter((ele) => {
+        let result = false;
+        if (!propList.includes(ele)) {
+          list.forEach((name) => {
+            if (ele.includes(name)) result = true;
+          });
+        }
+        return result;
+      });
     },
     /**
      * 动态获取组件
@@ -764,34 +699,6 @@ export default {
         return show;
       }
     },
-    // 操作按钮的权限控制
-    getMenuShow(option, row, $index) {
-      if (typeof option === "function") {
-        return option({
-          rowData: { row, $index },
-          formData: this.searchForm,
-          queryData: this.$route.query,
-        });
-      } else if (Array.isArray(option)) {
-        return option.includes(this.$route.query.type);
-      } else {
-        return option;
-      }
-    },
-    // 自定义操作的显示
-    getCustomMenuShow(show, row) {
-      if (typeof show === "function") {
-        return show({
-          row,
-        });
-      } else {
-        return true;
-      }
-    },
-    // 自定义操作
-    handleCustomMenu(row, index, menu) {
-      this.$emit(menu.function, row, index);
-    },
     // 更新分页数据
     updateValue() {
       this.$emit("update:page", this.pageData);
@@ -816,6 +723,34 @@ export default {
         formData: this.searchForm,
       });
     },
+    columnInit() {
+      this.propOption.forEach((column) => {
+        if (this.defaultBind[column.prop] === true) return;
+        this.defaultColumn.forEach((ele) => {
+          if (!this.objectOption[column.prop][ele.prop] && ele.prop == "index")
+            this.$set(this.objectOption[column.prop], ele.prop, "");
+          if (["hide", "filters", "index", "sortable"].includes(ele.prop)) {
+            this.$watch(`objectOption.${column.prop}.${ele.prop}`, () =>
+              this.refreshTable()
+            );
+          }
+        });
+        this.defaultBind[column.prop] = true;
+      });
+    },
+    refreshTable(callback) {
+      this.reload = false;
+      this.$nextTick(() => {
+        this.reload = true;
+        //是否开启表格排序
+        // setTimeout(() => this.$refs.columnDefault.setSort());
+        callback && callback();
+      });
+    },
   },
 };
 </script>
+
+<style lang="scss">
+@import "./_index.scss";
+</style>

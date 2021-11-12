@@ -1,17 +1,11 @@
-<!--
- * @Date: 2021-02-23 10:06:59
- * @LastEditors: zangbianxuegu
- * @LastEditTime: 2021-03-26 13:08:53
- * @FilePath: /ygp-bciscm-static/src/packages/Select/index.vue
--->
 <template>
   <div>
     <!-- 下拉选框 -->
     <el-select
       v-model="text"
-      :style="`width:${width || '100%'}`"
       :size="size"
       :loading="loading"
+      :readonly="readonly"
       :disabled="disabled"
       :placeholder="placeholder || `请选择${label || ''}`"
       :filterable="filterable"
@@ -39,9 +33,11 @@ export default {
   name: "YgpSelect",
   props: {
     value: {},
-    width: {},
     size: {
       type: String
+    },
+    readonly: {
+      type: Boolean
     },
     disabled: {
       type: Boolean
@@ -100,7 +96,7 @@ export default {
   },
   created() {
     this.text = this.value;
-    this.netDic = this.options;
+    this.netDic = this.options || [];
   },
   methods: {
     getLabel(option, labelKey) {

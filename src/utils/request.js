@@ -1,43 +1,44 @@
-import axios from 'axios'
-import store from '../store'
-import { router } from '@/router'
-import { getLocalToken } from '@/utils/auth.js'
-import { Message } from 'element-ui'
+import axios from "axios";
+import store from "../store";
+import { router } from "@/router";
+import { getLocalToken } from "@/utils/auth.js";
+import { Message } from "element-ui";
 
 const service = axios.create({
   timeout: 10000,
   baseURL: process.env.VUE_APP_BASE_API
 });
+
 service.interceptors.request.use(
-  config => {
-    store.state.loading = true
-    let token = getLocalToken() || ''
+  (config) => {
+    store.state.loading = true;
+    let token = getLocalToken() || "";
 
     if (token) {
-      config.headers.common['token'] = token
+      config.headers.common["token"] = token;
     }
-    return config
+    return config;
   },
-  error => {
+  (error) => {
     // do something with request error
-    store.state.loading = false //loading加载动画关闭
+    store.state.loading = false; //loading加载动画关闭
     // for debug
-    return Promise.reject(error)
+    return Promise.reject(error);
   }
-)
+);
 
-const showTip = tip => {
+const showTip = (tip) => {
   Message({
     type: 'error',
-    message: tip || '请求出错啦'
+    message: tip || '请求出错啦',
     // duration: 1500
   })
 }
 
-const handleResponse = response => {
+const handleResponse = (response) => {
   const code = parseInt(response.data && response.data.code)
   // 没有对请求文件流做错误处理
-  if (code !== 0 && response.config.responseType !== 'blob') {
+  if (code !== 0 && response.config.responseType !== "blob") {
     // msg为服务端返回的错误信息，字段名自定义，此处以msg为例
     let message = (response.data || {}).data || (response.data || {}).msg
 
@@ -45,13 +46,13 @@ const handleResponse = response => {
       case 400:
         break
       case 401:
-        showTip(message)
-        store.commit('clear_token') //清token
+        showTip(message);
+        store.commit("clear_token"); //清token
         // 为了重新实例化vue-router对象 避免bug
-        if (location.pathname.indexOf('/login') === -1) {
+        if (location.pathname.indexOf("/login") === -1) {
           router.push({
-            path: '/login'
-          })
+            path: "/login",
+          });
         }
         break
       case 4001:
@@ -72,8 +73,7 @@ const handleResponse = response => {
         // message = message || err.response.data.msg
         break
     }
-    console.log(response.config)
-    if (!response.config.noTip) showTip(message)
+    showTip(message)
     // return {
     //   code,
     //   message
@@ -83,15 +83,15 @@ const handleResponse = response => {
   // 如果http响应状态码response.status正常，则直接返回数据
   if ((status >= 200 && status <= 300) || status === 304) {
     // 保证文件流输出完全
-    if (response.config.responseType === 'blob') {
-      return response
+    if (response.config.responseType === "blob") {
+      return response;
     } else {
-      return response.data
+      return response.data;
     }
   }
 }
 
-const handleError = err => {
+const handleError = (err) => {
   const { response } = err
 
   if (!response.status) {
@@ -109,9 +109,8 @@ const handleError = err => {
       break
     case 403:
       err.message = '登陆过期，请重新登录(403)';
-      var fullPath = location.pathname + location.search
       router.push({
-        path: `/login?redirect=${window.__POWERED_BY_QIANKUN__ ? fullPath : fullPath.replace('/bciscmAssets', '')}`,
+        path: "/login",
       });
       break
     case 404:
@@ -145,12 +144,12 @@ const handleError = err => {
 }
 
 service.interceptors.response.use(
-  response => {
-    store.state.loading = false
-    return Promise.resolve(handleResponse(response))
+  (response) => {
+    store.state.loading = false;
+    return Promise.resolve(handleResponse(response));
   },
-  err => {
-    store.state.loading = false
+  (err) => {
+    store.state.loading = false;
 
     if (!err) return Promise.reject(err)
 
@@ -169,9 +168,9 @@ service.interceptors.response.use(
         err.message = '连接服务器失败!'
       }
     }
-    showTip(err.message)
-    return Promise.reject(err)
+    showTip(err.message);
+    return Promise.reject(err);
   }
-)
+);
 
-export default service
+export default service;

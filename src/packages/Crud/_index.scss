@@ -1,8 +1,39 @@
+.table--fullscreen {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  // overflow: auto;
+  margin: 0;
+  z-index: 5;
+}
+
+.crud__menu {
+  padding: 0 20px 12px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.crud-title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.query-filter {
+  .el-form-item--small.el-form-item {
+    margin: 0;
+    margin-bottom: 12px;
+    margin-right: 12px;
+  }
+}
+
 .crud-component {
   background: #FFFFFF;
   display: flex;
   flex-direction: column;
   height: 100%;
+  overflow: auto;
 
   // 搜索表单
   .search-form {
@@ -38,12 +69,21 @@
     overflow: auto;
     display: flex;
     flex-direction: column;
-    padding: 12px 18px;
+    margin: 16px;
+    line-height: 20px;
+
+    // 滚动条样式
+    &::-webkit-scrollbar {
+      width: 9px;
+      height: 9px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #d8d6d6;
+    }
 
     .cell-form {
       flex: 1;
       overflow: auto;
-      // border: 1px solid #EBEEF5;
       .el-table th {
         background-color: rgba(250, 250, 250, 1);
         color: rgba(0, 0, 0, 0.847058823529412);
@@ -130,45 +170,104 @@
 }
 
 /*滚动条整体样式*/
-.el-table__header-wrapper {
-  width: calc(100% - 10px)!important;
-}
 .el-table__body-wrapper,
 .el-table__fixed-body-wrapper {
   &::-webkit-scrollbar {
-    width: 10px; /*高宽分别对应横竖滚动条的尺寸*/
-    height: 10px;
+    width: 9px; /*高宽分别对应横竖滚动条的尺寸*/
+    height: 9px;
   }
   &::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.2);
+    background: #d8d6d6;
   }
   &::-webkit-scrollbar-track {
     background: rgba(0, 0, 0, 0.05);
   }
 }
-.el-table__fixed,
-.el-table__fixed-right {
-  height: calc(100% - 10px) !important;
-  &::before {
-    height: 0px !important;
-  }
-} 
-.el-table__fixed-body-wrapper {
-  padding-bottom: 10px;
-  background: white;
-}
-.el-table__footer-wrapper {
-  position: relative;
-  z-index: 3;
-}
-// 列表页面样式
+
+// 修复列表页样式
 .list-component {
-  .el-table--scrollable-y .el-table__fixed-right{
-    right: 10px !important;
+  .el-table__header-wrapper {
+    width: calc(100% - 9px)!important;
+  }
+  // .el-table__fixed-right {
+  //   height: calc(100% - 8px)!important;
+  // }
+  .el-table--scrollable-y .el-table__fixed-right {
+    right: 9px!important;
   }
 }
+
+// 列表页面样式
 .footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: sticky;
+  bottom: 0;
+  background: white;
+  z-index: 3;
 }
+
+// 吸附样式
+.table_sticky {
+  .el-table {
+    overflow: visible;
+  }
+
+  .el-table__header-wrapper {
+    overflow: hidden;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+  }
+
+  .el-table__fixed {
+    overflow: visible;
+
+    .el-table__fixed-header-wrapper {
+      position: sticky;
+      left: 0;
+      top: 0;
+      z-index: 5;
+      width: inherit;
+      overflow: hidden;
+    }
+
+    .el-table__fixed-body-wrapper {
+      width: inherit;
+      overflow: hidden;
+    }
+  }
+
+  .el-table__fixed-right {
+    overflow: visible;
+    .el-table__fixed-header-wrapper {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      width: inherit;
+      height: 48px;
+      overflow: hidden;
+
+      .el-table__header {
+        position: absolute;
+        right: 0;
+        left: auto;
+      }
+    }
+
+    .el-table__fixed-body-wrapper {
+      width: inherit;
+      overflow: hidden;
+      height: calc(100% - 57px);
+
+      .el-table__body {
+        position: absolute;
+        right: 0;
+        left: auto;
+      }
+    }
+  }
+
+}
+

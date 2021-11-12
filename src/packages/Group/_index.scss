@@ -1,0 +1,19 @@
+.form-group:not(:first-child) {
+  margin-top: 34px;
+  &:last-child {
+    margin-bottom: 0;
+  }
+  .el-collapse {
+    border: none;
+  }
+  .el-collapse-item__header {
+    margin-bottom: 16px;
+  }
+  .el-collapse-item__header {
+    border-bottom: 1px solid #EBEEF5;
+    font-size: 16px;
+  }
+  .el-collapse-item__header.is-active {
+    border-bottom: 1px solid #EBEEF5;
+  }
+}

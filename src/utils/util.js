@@ -1,3 +1,10 @@
+import { validatenull } from './validate';
+
+export function setAsVal(obj, bind = '', value = '') {
+  eval('obj.' + bind + '=`' + value + '`');
+  return obj;
+}
+
 /**
  * 根据值查找对应的序号
  */
@@ -169,3 +176,17 @@ export function keepTwoDecimal(num) {
   result = Math.round(num * 100) / 100
   return result
 }
+
+export const arraySort = (list = [], prop, callback) => {
+  return list.filter(ele => !validatenull(ele[prop])).sort((a, b) => callback(a, b)).concat(list.filter(ele => validatenull(ele[prop])));
+}
+
+/**
+ * 验证是否存在true/false
+ */
+ export const vaildData = (val, dafult) => {
+  if (typeof val === 'boolean') {
+    return val;
+  }
+  return !validatenull(val) ? val : dafult;
+};

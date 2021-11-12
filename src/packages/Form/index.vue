@@ -1,214 +1,155 @@
 <template>
-  <div class="form-component">
-    <!-- 表单操作/标题 -->
-    <div v-if="formOption.operate || formOption.title" class="space-center form-header">
-      <h3 class="form-title form-title-large">
-        <!-- <i class="el-icon-back" style="cursor: pointer;" @click="formOption.backFun?formOption.backFun():$router.go(-1)"></i> -->
-        {{ formOption.title }}
-        <span
-          v-if="formOption.subtitle"
-          class="form-subtitle"
-        >{{formOption.subtitle}}</span>
-      </h3>
-      <div>
-        <el-button
-          v-if="getItemStatus(formOption.cancel)"
-          :size="size"
-          @click="$emit('handleCancel')"
-        >返回</el-button>
-        <el-button
-          v-if="getItemStatus(formOption.submit)"
-          :size="size"
-          type="primary"
-          :loading="submitLoading"
-          @click="handleSubmit"
-        >提交</el-button>
-        <template v-for="(item, index) in formOption.operate">
-          <el-popconfirm
-            v-if="item.btnType === 'confirm' && getItemStatus(item.show ? item.show : true)"
-            :key="index"
-            class="btn-del"
-            confirm-button-text="好的"
-            cancel-button-text="不用了"
-            icon="el-icon-info"
-            icon-color="red"
-            :title="getItemBtnTitle(item.btnTitle)"
-            @confirm="$emit(item.operate)"
-          >
-            <el-button
-              slot="reference"
-              :size="item.size ? item.size : size"
-              :type="item.type"
-              :icon="item.icon"
-            >{{item.btnText}}</el-button>
-          </el-popconfirm>
-          <el-button
-            v-else-if="getItemStatus(item.show ? item.show : true)"
-            :key="index"
-            :size="item.size ? item.size : size"
-            :type="item.type"
-            @click="$emit(item.operate)"
-          >{{ item.title }}</el-button>
-        </template>
-        <el-popconfirm
-          v-if="getItemStatus(formOption.withdrawBtn)"
-          class="btn-del"
-          confirm-button-text="好的"
-          cancel-button-text="不用了"
-          icon="el-icon-info"
-          icon-color="red"
-          title="确定撤回吗？"
-          @confirm="$emit('withdraw')"
-        >
-          <el-button slot="reference" type="primary" :size="size">撤回</el-button>
-        </el-popconfirm>
-        <el-popconfirm
-          v-if="getItemStatus(formOption.delBtn)"
-          class="btn-del"
-          confirm-button-text="好的"
-          cancel-button-text="不用了"
-          icon="el-icon-info"
-          icon-color="red"
-          title="确定删除吗？"
-          @confirm="$emit('handleDel')"
-        >
-          <el-button slot="reference" :size="size" icon="el-icon-delete">删除</el-button>
-        </el-popconfirm>
-      </div>
-    </div>
-    <!-- 表单主体 -->
-    <!-- @submit.native.prevent: 当Form组件中只有一个Input组件时，鼠标聚焦输入框后，点击回车键，页面就会刷新 -->
+  <div :class="{'query-filter': isSearch, 'pro-form': !isSearch, 'form-detail': isDetail}">
     <el-form
       ref="ruleForm"
-      class="rule-form"
+      :inline="true"
       :model="formData"
-      :size="size"
-      :disabled="disabled"
-      :label-width="labelWidth"
-      :rules="formOption.rules"
-      @submit.native.prevent
+      :size="controlSize"
+      :label-width="parentOption.labelWidth || '140px'"
     >
-      <template v-for="(item, index) in columnOption">
-        <div v-if="getItemStatus(item.show ? item.show : true)" :key="index" class="group">
-          <div
-            v-if="item.label"
-            class="group-header"
-            :class="{ required: item.required }"
-          >{{ item.label }}</div>
-          <el-row :gutter="10">
-            <template v-for="(column, cindex) in item.items">
-              <el-col
-                v-if="getItemStatus(column.show ? column.show : true)"
-                :key="cindex"
-                :style="{ display: cindex < count ? 'block' : 'none' }"
-                :span="column.span || 8"
+      <component
+        :is="groupName"
+        v-for="(item, index) in columnOption"
+        :key="item.label"
+        :is-tabs="isTabs"
+        :display="vaildDisplay(item)"
+        :index="index"
+        :active.sync="activeName"
+        :label="item.label"
+        :column-option="columnOption"
+      >
+        <div v-show="isGroupShow(item, index+'')" :class="['group-content', item.class]">
+          <template v-for="(column, cindex) in item.items">
+            <el-form-item
+              v-if="vaildDisplay(column) && cindex < count"
+              :key="column.prop"
+              :class="['ygp-form__item', {'full-width': ['radio', 'textarea', 'upload'].includes(column.type)}]"
+              :prop="column.prop"
+              :label="getLabel(column)"
+              :label-width="column.labelWidth || item.labelWidth || parentOption.labelWidth"
+              :rules="getItemProp(column, 'rules')"
+            >
+              <slot
+                v-if="column.formSlot"
+                :value="formData[column.prop]"
+                :name="column.prop"
+                :column="column"
+                :size="column.size || controlSize"
+                :placeholder="getPlaceholder(column)"
+                :disabled="getItemProp(column, 'disabled')"
+              />
+              <!-- html -->
+              <!-- <template
+                v-else-if="(column.type === 'html' || column.detail || formOption.detail) && column.type !== 'upload'"
               >
-                <el-form-item
-                  v-if="!getHide(column)"
-                  class="form-item"
-                  :prop="column.prop"
-                  :label="getLabel(column.label)"
-                  :label-width="formOption.labelWidth || column.labelWidth || labelWidth"
-                  :rules="getRules(column.rules)"
-                >
-                  <slot
-                    v-if="column.formSlot"
-                    :value="formData[column.prop]"
-                    :name="column.prop"
-                    :column="column"
-                    :size="size"
-                    :placeholder="getPlaceholder(column)"
-                    :disabled="getItemStatus(column.disabled)"
-                  />
-                  <!-- html -->
-                  <template
-                    v-else-if="
-                      (column.type === 'html' ||
-                        column.detail ||
-                        formOption.detail) &&
-                        column.type !== 'upload'
-                    "
-                  >
-                    <div
-                      v-if="column.render"
-                      :class="!column.notEllipsis?'form-item-text':''"
-                      :title="column.render(formData)"
-                      v-html="column.render(formData)"
-                    ></div>
-                    <div
-                     v-else-if="column.emptyLine"
-                      :class="!column.notEllipsis?'form-item-text':''"
-                      :title="formData[column.propName || column.prop] || '-'"
-                      v-html="formData[column.propName || column.prop] || '-'"
-                    ></div>
-                    <div
-                      v-else
-                      :class="!column.notEllipsis?'form-item-text':''"
-                      :title="formData[column.propName || column.prop]"
-                      v-html="formData[column.propName || column.prop]"
-                    ></div>
-                  </template>
+                <div
+                  v-if="column.render"
+                  :class="!column.notEllipsis?'form-item-text':''"
+                  :title="column.render(formData)"
+                  v-html="column.render(formData)"
+                ></div>
+                <div
+                  v-else
+                  :class="!column.notEllipsis?'form-item-text':''"
+                  :title="formData[column.propName || column.prop]"
+                  v-html="formData[column.propName || column.prop]"
+                ></div>
+              </template>-->
 
-                  <!-- 级联选择器 -->
-                  <!-- TypeError: Cannot read property 'level' of null加了key重新渲染 -->
-                  <el-cascader
-                    v-else-if="column.type === 'cascader'"
-                    ref="cascader"
-                    :key="column.key"
-                    v-model="formData[column.prop]"
-                    :filterable="column.filterable"
-                    :options="column.options"
-                    :props="column.props"
-                    :clearable="column.clearable"
-                    :placeholder="getPlaceholder(column)"
-                    :disabled="getItemStatus(column.disabled)"
-                    @change="handleCascaderChange(value,column.prop)"
-                    @focus="$emit('focus', column.prop)"
-                  ></el-cascader>
-                  <el-switch
-                    v-else-if="column.type === 'switch'"
-                    v-model="formData[column.prop]"
-                    active-color="#13ce66"
-                    @change="handleChange"
-                  ></el-switch>
-                  <!-- 动态组件 -->
-                  <component
-                    :is="getComponent(column.type)"
-                    v-else
-                    v-model="formData[column.prop]"
-                    v-bind="column"
-                    :size="column.size ? column.size : size"
-                    :maxlength="column.maxlength"
-                    :placeholder="getPlaceholder(column)"
-                    :disabled="getItemStatus(column.disabled)"
-                    :close="getItemStatus(column.close)"
-                    :options="getOptions(column)"
-                    :detail="column.detail || formOption.detail"
-                    :default-time="column.defaultTime"
-                    @keyup.enter.native="handleEnter"
-                    @change="(value, option) => $emit('change', value, column.prop, option)"
-                    @focus="$emit('focus', column.prop)"
-                    @remote="(callback, query) => $emit('remote', callback, query, column.prop)"
-                    @validateField="$refs.ruleForm.validateField(column.prop)"
-                  ></component>
-                </el-form-item>
-              </el-col>
-            </template>
-            <slot name="menu"></slot>
-          </el-row>
+              <!-- 级联选择器 -->
+              <el-cascader
+                v-else-if="column.type === 'cascader'"
+                v-model="formData[column.prop]"
+                :filterable="column.filterable"
+                :options="column.options"
+                :props="column.props"
+                :clearable="column.clearable"
+                :placeholder="getPlaceholder(column)"
+                :disabled="getItemProp(column, 'disabled')"
+                @change="handleCascaderChange(value,column.prop)"
+              ></el-cascader>
+              <el-switch
+                v-else-if="column.type === 'switch'"
+                v-model="formData[column.prop]"
+                active-color="#13ce66"
+                @change="handleChange"
+              ></el-switch>
+              <!-- 动态组件 -->
+              <component
+                :is="getComponent(column.type)"
+                v-else
+                :ref="column.prop"
+                v-model="formData[column.prop]"
+                v-bind="column"
+                :dic="dic"
+                :size="parentOption.size"
+                :maxlength="column.maxlength"
+                :placeholder="getPlaceholder(column)"
+                :disabled="getItemProp(column, 'disabled') || formOption.detail"
+                :close="getItemProp(column, 'close')"
+                :options="getOptions(column)"
+                :detail="column.detail || formOption.detail"
+                :default-time="column.defaultTime"
+                :range="column.range"
+                :column-slot="columnSlot"
+                @keyup.enter.native="handleEnter"
+                @change="(value, option, crudColumn, crudScope) => $emit('change', value, option, crudColumn ? crudColumn : column, crudScope)"
+                @focus="$emit('focus', column.prop)"
+                @remote="(callback, query) => $emit('remote', callback, query, column.prop)"
+                @validateField="$refs.ruleForm.validateField(column.prop)"
+              >
+                <template slot="menuDynamic" slot-scope="scope">
+                  <slot name="menuDynamic" v-bind="scope"></slot>
+                </template>
+                <template v-for="el in columnSlot" :slot="el" slot-scope="scope">
+                  <slot v-bind="scope" :name="el"></slot>
+                </template>
+              </component>
+            </el-form-item>
+          </template>
+          <el-form-item v-if="isSearch" :style="{marginLeft: parentOption.labelWidth || '140px'}">
+            <slot name="menuForm"></slot>
+            <el-button type="primary" :size="controlSize" @click="submitForm">查询</el-button>
+            <el-button :size="controlSize" :plain="true" @click="resetForm">重置</el-button>
+            <el-button
+              v-if="option.items.length > 5"
+              :size="controlSize"
+              type="text"
+              @click="expand = !expand"
+            >
+              {{ expand ? "收起" : "展开" }}
+              <i
+                :class="expand ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
+              ></i>
+            </el-button>
+          </el-form-item>
         </div>
-      </template>
+      </component>
+      <form-menu v-if="!isSearch">
+        <template slot="menuForm" slot-scope="scope">
+          <slot name="menuForm" v-bind="scope"></slot>
+        </template>
+      </form-menu>
     </el-form>
   </div>
 </template>
 
 <script>
-// import { deepClone, getObjType } from "@/utils/util.js";
-// import { calcCascader } from "@/utils/dataformat";
-import { throttle } from "@/utils/util.js"
+import { throttle, arraySort, setAsVal, deepClone, vaildData } from "../../utils/util.js";
+import { validatenull } from '../../utils/validate.js';
+import mock from "../../utils/mock.js";
+import { getLabel, getComponent, getPlaceholder } from "../../utils/dataformat.js";
+import permission from '../../utils/permission';
+import Group from '../Group/index.vue';
+import formMenu from "./menu.vue";
+import { KEY_COMPONENT_NAME } from "../../global/variable.js";
 
 export default {
   name: "YgpForm",
+  components: { formMenu, [`${KEY_COMPONENT_NAME}group`]: Group },
+  directives: {
+    permission
+  },
   props: {
     option: {
       type: Object,
@@ -217,148 +158,180 @@ export default {
         return {};
       },
     },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
-    labelWidth: {
-      type: String,
-      default: "140px",
-    },
-    size: {
-      type: String,
-      default: "small",
-      validator: (value) => {
-        const types = ["large", "medium", "small", "mini"];
-        const valid = types.indexOf(value.toLowerCase()) !== -1 || value === "";
-        if (!valid) {
-          throw new Error(
-            `Size must be one of ['large', 'medium', 'small', 'mini']`
-          );
-        }
-        return valid;
-      },
-    },
-    // submitLoading: {
-    //   type: Boolean,
-    //   default: false,
-    // },
-    value: {
-      type: Object,
-      // required: true,
-      default: () => {
-        return {};
-      },
-    },
     dic: {
       type: Object,
-      validator: (value) => {
-        return value || {};
-      },
-    },
-    count: {
-      type: Number,
-      default: 99,
     },
     enableEnterSearch: {
       type: Boolean,
       default: false,
-    }
+    },
+    defaultShowColumns: {
+      type: Number,
+      default: 3,
+    },
+    // 权限控制
+    permission: {
+      type: [Function, Object],
+      default: () => {
+        return {};
+      }
+    },
+    value: {
+      type: Object,
+      required: true,
+      default: () => {
+        return {};
+      },
+    },
   },
   data() {
     return {
+      expand: false,
+      activeName: "",
+      bindList: {},
       formData: {},
       formOption: {},
+      formCreate: false,
       submitLoading: false,
+      queryData: {},
+    };
+  },
+  provide() {
+    return {
+      formSafe: this,
     };
   },
   computed: {
-    // 组装group
+    columnSlot() {
+      return Object.keys(this.$scopedSlots).filter(
+        (item) => !this.propOption.map((ele) => ele.prop).includes(item)
+      );
+    },
+    count() {
+      if (this.isSearch) {
+        if (this.expand) {
+          return this.option.items.length;
+        }
+        return this.defaultShowColumns;
+      }
+      return 99;
+    },
+    controlSize() {
+      return this.option.size || "small";
+    },
+    isDetail() {
+      return this.option.detail;
+    },
+    isSearch() {
+      return this.option.search;
+    },
+    isTabs() {
+      return this.parentOption.tabs;
+    },
+    dynamicOption() {
+      let list = [];
+      this.propOption.forEach((ele) => {
+        if (ele.type == "dynamic" && this.vaildDisplay(ele)) {
+          list.push(ele);
+        }
+      });
+      return list;
+    },
+    propOption() {
+      let list = [];
+      this.columnOption.forEach((option) => {
+        option.items.forEach((column) => list.push(column));
+      });
+      return list;
+    },
     parentOption() {
-      // let option = deepClone(this.formOption);
-      let option = Object.assign(this.formOption);
+      let option = deepClone(this.formOption);
       let group = option.group;
       if (!group) {
         option = Object.assign(option, {
-          // group: [deepClone(option)]
-          group: [Object.assign(option)],
+          group: [deepClone(option)],
         });
       }
       return option;
     },
-    // 练级处理后的
     columnOption() {
       let list = [...this.parentOption.group] || [];
-      // list.forEach(ele => {
-      //处理级联属性
-      // ele.items = calcCascader(ele.items);
-      // });
+      list.forEach((ele) => {
+        //处理级联属性
+        // ele.items = calcCascader(ele.items);
+        //根据order排序
+        ele.items = arraySort(ele.items, "order", (a, b) => a.order - b.order);
+      });
       return list;
     },
+    tabsActive() {
+      return vaildData(this.formOption.tabsActive + "", "1");
+    },
+    groupName() {
+      return KEY_COMPONENT_NAME+'group'
+    }
   },
   watch: {
+    tabsActive: {
+      handler() {
+        this.activeName = this.tabsActive;
+      },
+      immediate: true,
+    },
     option: {
-      handler(val) {
-        this.formOption = val;
+      handler() {
+        this.init(false);
       },
       deep: true,
     },
     value: {
       handler(val) {
-        this.formData = val;
+        if (this.formCreate) {
+          this.setForm(val);
+        } else {
+          this.formData = val;
+        }
       },
-      // deep: true
+      deep: true,
+      immediate: true,
     },
   },
   created() {
-    this.formOption = this.option;
-    this.formData = this.value;
-    this.handleEnter = throttle(this.enterSearch, 300)
+    this.init();
+    this.handleEnter = throttle(this.enterSearch, 300);
+    this.queryData = (this.$route && this.$route.query) || {};
+    this.$nextTick(() => {
+      this.formCreate = true;
+    });
   },
   methods: {
+    getLabel,
+    getComponent,
+    getPlaceholder,
+    init() {
+      this.formOption = this.option;
+    },
     remote(callback, query) {
       this.$emit("remote", callback, query);
     },
-    getLabel(str) {
-      if (str && str.length) {
-        str = str.replace("：", "").replace(":", "") + "：";
-      }
-      return str;
-    },
-    /**
-     * 动态获取组件
-     */
-    getComponent(type) {
-      let result;
-      if ([undefined, "", "number", "textarea"].includes(type)) {
-        result = "input";
-      } else if (["date", "month"].includes(type)) {
-        result = "date-picker";
+    getPermission(key) {
+      if (typeof this.permission === "function") {
+        return this.permission(key, this.formData)
+      } else if (!validatenull(this.permission[key])) {
+        return this.permission[key]
       } else {
-        result = type;
-      }
-      return `ygp-${result}`;
-    },
-    // 获取属性 hide
-    getHide(column) {
-      if (Array.isArray(column.hide)) {
-        return column.hide.includes(this.$route.query.type);
-      } else if (typeof column.hide === "function") {
-        return column.hide(this.$route.query);
-      } else {
-        return column.hide;
+        return true;
       }
     },
-    getPlaceholder(column) {
-      if (typeof column.placeholder === "string") {
-        return column.placeholder;
-      } else if (typeof column.placeholder === "function") {
-        return column.placeholder({ queryData: this.$route.query, formData: this.formData });
-      } else if (column.type === "select" || column.type === "input-date") {
-        return `请选择${column.label || ""}`;
-      } else {
-        return `请输入${column.label || ""}`;
+    getItemProp(item, type, defaultValue) {
+      let result = item?.[type];
+      if (typeof result === "function") {
+        return result({
+          queryData: this.queryData,
+          formData: this.formData,
+        });
       }
+      return result || defaultValue;
     },
     // 获取枚举数据
     getOptions(column) {
@@ -368,47 +341,66 @@ export default {
         return column.options;
       }
     },
-    // 页面逻辑决定是否展示
-    getItemStatus(show) {
-      if (typeof show === "string") {
-        if (show === "onlyHideTableCol") {
-          //只隐藏表格不隐藏表单
-          return true;
-        }
-        return show === this.$route.query.type;
-      } else if (Array.isArray(show)) {
-        return show.includes(this.$route.query.type);
-      } else if (typeof show === "function") {
-        return show({ queryData: this.$route.query, formData: this.formData });
-      } else {
-        return show;
-      }
-    },
-    getItemBtnTitle(btnTitle) {
-      if (typeof btnTitle === "function") {
-        return btnTitle({queryData: this.$route.query, formData: this.formData});
-      } else {
-        return btnTitle
-      }
-    },
-    // 获取检验规则
-    getRules(rules) {
-      if (typeof rules === "function") {
-        return rules({
-          formData: this.formData,
-        });
-      } else {
-        return rules;
-      }
-    },
     emitEventHandler(event) {
       this.$emit(event, ...Array.from(arguments).slice(1));
+    },
+    //表单赋值
+    setForm(value) {
+      Object.keys(value).forEach((ele) => {
+        let result = value[ele];
+        let column = this.propOption.find((column) => column.prop == ele);
+        this.$set(this.formData, ele, result);
+        if (!column) return;
+        let prop = column.prop;
+        let bind = column.bind;
+        if (bind && !this.bindList[prop]) {
+          this.$watch("form." + prop, (n, o) => {
+            if (n != o) setAsVal(this.form, bind, n);
+          });
+          this.$watch("form." + bind, (n, o) => {
+            if (n != o) this.$set(this.form, prop, n);
+          });
+          this.$set(this.form, prop, eval("value." + bind));
+          this.bindList[prop] = true;
+        }
+      });
+      // this.forEachLabel();
     },
     handleChange(value) {
       this.$emit("change", value);
     },
     handleCascaderChange(value, prop) {
       this.$emit("change", value, prop);
+    },
+    handleMock() {
+      this.columnOption.forEach((column) => {
+        const formMock = mock(column.items, this.dic, this.formData, true);
+        if (!validatenull(formMock)) {
+          Object.keys(formMock).forEach((ele) => {
+            this.formData[ele] = formMock[ele];
+          });
+        }
+        column.items.forEach((item) => {
+          if (item.children) {
+            const type = item.children?.type || "crud";
+            const isCrud = type === "crud";
+            if (isCrud) {
+              this.formData[item.prop] = this.formData[item.prop].map(
+                (el, i) => {
+                  const crudMock = mock(
+                    item.children.columns,
+                    this.dic,
+                    this.formData[item.prop][i],
+                    true
+                  );
+                  return Object.assign(el, crudMock);
+                }
+              );
+            }
+          }
+        });
+      });
+      this.$emit("mock-change", this.formData);
     },
     handleSubmit() {
       this.submitLoading = true;
@@ -418,8 +410,8 @@ export default {
       this.$emit("handleSubmit");
     },
     enterSearch() {
-      if(this.enableEnterSearch){
-        this.submitForm()
+      if (this.enableEnterSearch) {
+        this.submitForm();
       }
     },
     submitForm() {
@@ -432,13 +424,76 @@ export default {
         });
       });
     },
+    isGroupShow(item, index) {
+      if (this.isTabs) {
+        return index === this.activeName || index === 0;
+      } else {
+        return this.vaildDisplay(item);
+      }
+    },
+    // 验证表单是否显隐
+    vaildDisplay(column) {
+      if (!validatenull(column.display)) {
+        return vaildData(column.display, true);
+      } else {
+        return true;
+      }
+    },
+    validate(callback) {
+      this.$refs.ruleForm.validate((valid, msg) => {
+        let dynamicList = [];
+        let dynamicName = [];
+        let dynamicError = {};
+        this.dynamicOption.forEach((ele) => {
+          let isForm = ele.children.type === "form";
+          dynamicName.push(ele.prop);
+          if (isForm) {
+            if (!validatenull(this.$refs[ele.prop][0].$refs.main)) {
+              this.$refs[ele.prop][0].$refs.main.forEach((ele) => {
+                dynamicList.push(ele.validateCellForm());
+              });
+            }
+          } else {
+            dynamicList.push(
+              this.$refs[ele.prop][0].$refs.main.validateCellForm()
+            );
+          }
+        });
+        Promise.all(dynamicList).then((res) => {
+          res.forEach((error, index) => {
+            if (!validatenull(error)) {
+              dynamicError[dynamicName[index]] = error;
+            }
+          });
+          let result = Object.assign(dynamicError, msg);
+          if (validatenull(result)) {
+            callback(true);
+          } else {
+            callback(false);
+          }
+        });
+      });
+    },
+    submit() {
+      this.validate((valid, msg) => {
+        if (valid) {
+          this.$emit("submit", this.formData);
+        } else {
+          this.$emit("error", msg);
+        }
+      });
+    },
     exportForm() {
       this.$emit("export", this.formData);
     },
     resetForm() {
       this.$refs["ruleForm"].resetFields();
-      this.$emit("reset");
+      this.$emit("reset", this.formData);
     },
   },
 };
 </script>
+
+<style lang="scss" scpoed>
+@import "./_index.scss";
+</style>

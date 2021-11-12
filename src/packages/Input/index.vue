@@ -3,7 +3,6 @@
     <el-input-number
       v-if="type === 'number'"
       v-model="text"
-      style="width: 100%;"
       :size="size"
       :readonly="readonly"
       :disabled="disabled"
@@ -30,6 +29,7 @@
       :placeholder="placeholder"
       :maxlength="maxlength"
       :show-password="showPassword"
+      :style="{'width': type === 'textarea' ? '100%' : ''}"
       @input="handleChange"
       @focus="$emit('focus')"
       @blur="handleBlur"
@@ -124,8 +124,7 @@ export default {
     handleBlur() {
       if (this.text) {
         this.text = this.text.trim();
-        this.$emit("input", this.text);
-      }else {
+      } else {
         this.text = this.text
       }
     }

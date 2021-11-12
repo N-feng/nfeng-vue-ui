@@ -4,7 +4,7 @@
     <el-date-picker
       v-if="range === false"
       v-model="text"
-      :style="`width:${width || '100%'}`"
+      :style="`width:${width}`"
       :value-format="format"
       :format="format"
       :disabled="disabled"
@@ -18,7 +18,7 @@
     <el-date-picker
       v-else-if="range === true"
       v-model="text"
-      :style="`width:${width || '100%'}`"
+      :style="`width:${width}`"
       :value-format="format"
       :format="format"
       :picker-options="pickerOptions || defaultPickerOptions"
@@ -109,7 +109,7 @@ export default {
 };
 </script>
 <style  lang="scss" scoped>
-// .date-picker{
-//   line-height:33.4px;
-// }
+.date-picker{
+  line-height:33.4px;
+}
 </style>

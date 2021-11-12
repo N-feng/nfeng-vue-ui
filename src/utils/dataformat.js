@@ -73,3 +73,37 @@ export const getStartAndEndByMonth = (key) => (date) => {
     [`end${upperKey}`]: endDate,
   }
 }
+
+/**
+ * 动态获取组件
+ */
+export const getComponent = (type, component) => {
+  let result = type || 'input';
+  const DATE_LIST = ["date", "month"];
+  const KEY_COMPONENT_NAME = 'ygp-';
+  if (!validatenull(component)) {
+    return component
+  } else if ([undefined, "", "number", "textarea"].includes(type)) {
+    result = "input";
+  } else if (DATE_LIST.includes(type)) {
+    result = "date-picker";
+  }
+  return KEY_COMPONENT_NAME + result;
+}
+
+export const getPlaceholder = (column) => {
+  const SELECT_LIST = ["select", "input-date", "date"]
+  if (SELECT_LIST.includes(column.type)) {
+    return `请选择${column.label || ""}`
+  } else {
+    return `请输入${column.label || ""}`
+  }
+}
+
+export const getLabel = (column) => {
+  const label = column.label;
+  if (label && label.length) {
+    return label.replace("：", "").replace(":", "") + "：";
+  }
+  return label;
+}
