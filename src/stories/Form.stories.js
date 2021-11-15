@@ -28,7 +28,7 @@ const formData = {}
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   // components: { MyButton },
-  template: '<ygp-form v-bind="$props" v-model="formData" />',
+  template: '<div><ygp-form v-bind="$props" v-model="formData" />{{formData}}</div>',
 });
 
 export const Secondary = Template.bind({});
