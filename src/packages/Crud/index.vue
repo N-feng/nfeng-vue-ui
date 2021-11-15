@@ -117,10 +117,10 @@ import columnSlot from "./column-slot.vue";
 import columnMenu from "./column-menu.vue";
 import dialogColumn from "./dialog-column.vue";
 import dialogForm from "./dialog-form.vue";
-import { validatenull } from "@/utils/validate";
+import { validatenull } from "../../utils/validate";
 import { defaultColumn } from "./config.js";
-import { arraySort } from "@/utils/util";
-import permission from '@/utils/permission';
+import { arraySort } from "../../utils/util";
+import permission from '../../utils/permission';
 
 export default {
   name: "YgpCrud",

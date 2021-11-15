@@ -1,7 +1,7 @@
 import axios from "axios";
 import store from "../store";
 import { router } from "@/router";
-import { getLocalToken } from "@/utils/auth.js";
+import { getLocalToken } from "./auth.js";
 import { Message } from "element-ui";
 
 const service = axios.create({

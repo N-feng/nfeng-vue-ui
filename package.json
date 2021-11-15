@@ -10,6 +10,7 @@
     "build-storybook": "build-storybook"
   },
   "dependencies": {
+    "@storybook/addon-storysource": "^6.3.12",
     "core-js": "^3.6.5",
     "element-ui": "^2.15.6",
     "moment": "^2.29.1",

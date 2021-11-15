@@ -2,8 +2,8 @@ import components from './index';
 // import utils from '../src/utils';
 import './styles/index.scss';
 
-import { validatenull } from '@/utils/validate.js';
-import { deepClone, vaildData } from '@/utils/util';
+import { validatenull } from '../utils/validate.js';
+import { deepClone, vaildData } from '../utils/util';
 
 let prototypes = {
   deepClone,
@@ -12,7 +12,6 @@ let prototypes = {
 };
 
 function install(Vue, options = { extComponents: [] }) {
-  console.log(options)
   if (install.installed) return;
 
   Object.keys(components).map(ele => {

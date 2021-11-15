@@ -96,7 +96,7 @@
 </template>
 
 <script>
-import { validatenull } from "@/utils/validate";
+import { validatenull } from "../../utils/validate";
 
 export default {
   inject: ["crud"],

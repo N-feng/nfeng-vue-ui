@@ -44,7 +44,7 @@
 <script>
 import { getPrivateDownloadUrl, getPrivateDownloadUrls } from "@/api/enums.js";
 import { randomWord, compressUpload } from "./utils";
-import request from "@/utils/request";
+import request from "../../utils/request";
 
 const postData = []
 

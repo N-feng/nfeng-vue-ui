@@ -7,8 +7,7 @@
       :size="controlSize"
       :label-width="parentOption.labelWidth || '140px'"
     >
-      <component
-        :is="groupName"
+      <ygp-group
         v-for="(item, index) in columnOption"
         :key="item.label"
         :is-tabs="isTabs"
@@ -124,7 +123,7 @@
             </el-button>
           </el-form-item>
         </div>
-      </component>
+      </ygp-group>
       <form-menu v-if="!isSearch">
         <template slot="menuForm" slot-scope="scope">
           <slot name="menuForm" v-bind="scope"></slot>
@@ -140,13 +139,11 @@ import { validatenull } from '../../utils/validate.js';
 import mock from "../../utils/mock.js";
 import { getLabel, getComponent, getPlaceholder } from "../../utils/dataformat.js";
 import permission from '../../utils/permission';
-import Group from '../Group/index.vue';
 import formMenu from "./menu.vue";
-import { KEY_COMPONENT_NAME } from "../../global/variable.js";
 
 export default {
   name: "YgpForm",
-  components: { formMenu, [`${KEY_COMPONENT_NAME}group`]: Group },
+  components: { formMenu },
   directives: {
     permission
   },
@@ -267,9 +264,6 @@ export default {
     tabsActive() {
       return vaildData(this.formOption.tabsActive + "", "1");
     },
-    groupName() {
-      return KEY_COMPONENT_NAME+'group'
-    }
   },
   watch: {
     tabsActive: {

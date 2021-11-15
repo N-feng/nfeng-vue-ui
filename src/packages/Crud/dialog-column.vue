@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { arraySort } from "@/utils/util";
+import { arraySort } from "../../utils/util";
 
 export default {
   inject: ["crud"],

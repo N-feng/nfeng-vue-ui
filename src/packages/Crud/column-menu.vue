@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import permission from '@/utils/permission';
+import permission from '../../utils/permission';
 
 export default {
   inject: ["crud"],

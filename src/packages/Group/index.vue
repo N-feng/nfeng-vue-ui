@@ -31,8 +31,10 @@
 </template>
 
 <script>
-export default {
-  // name: "YgpGroup",
+import create from "../../utils/create";
+
+export default create({
+  name: "group",
   props: {
     isTabs: {
       type: Boolean,
@@ -71,7 +73,7 @@ export default {
       this.$emit("tab-click", tab, event);
     },
   },
-};
+});
 </script>
 
 <style lang="scss">
