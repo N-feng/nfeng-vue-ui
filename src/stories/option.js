@@ -1,21 +1,22 @@
 var DIC = {
   VAILD: [{
-    label: '真',
-    value: 'true'
+    name: '真',
+    code: 'true'
   }, {
-    label: '假',
-    value: 'false'
+    name: '假',
+    code: 'false'
   }],
   SEX: [{
-    label: '男',
-    value: 0
+    name: '男',
+    code: 0
   }, {
-    label: '女',
-    value: 1
+    name: '女',
+    code: 1
   }]
 }
 
 export const option = {
+  mockBtn:true,
   items: [{
     label: "用户名",
     prop: "username",
@@ -60,7 +61,7 @@ export const option = {
     label: "类型",
     prop: "type",
     type: "select",
-    dicData: DIC.VAILD,
+    options: DIC.VAILD,
     span: 6,
     mock: {
       type: 'dic',
@@ -71,7 +72,7 @@ export const option = {
     prop: "grade",
     span: 6,
     type: "checkbox",
-    dicData: DIC.VAILD,
+    options: DIC.VAILD,
     mock: {
       type: 'dic',
     },
@@ -81,7 +82,7 @@ export const option = {
     prop: "switch",
     span: 6,
     type: "switch",
-    dicData: DIC.SEX,
+    options: DIC.SEX,
     mock: {
       type: 'dic'
     },
@@ -93,7 +94,7 @@ export const option = {
     prop: "sex",
     span: 6,
     type: "radio",
-    dicData: DIC.SEX,
+    options: DIC.SEX,
     mock: {
       type: 'dic'
     }

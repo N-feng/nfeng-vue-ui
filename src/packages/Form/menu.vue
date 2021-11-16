@@ -28,9 +28,9 @@
       :size="formSafe.controlSize"
       type="primary"
       :loading="submitLoading"
-      @click="handleSubmit"
+      @click="onSubmit"
     >提交</el-button>
-    <el-button :size="formSafe.controlSize" @click="formSafe.$emit('handleCancel')">返回</el-button>
+    <el-button :size="formSafe.controlSize" @click="onCancel">返回</el-button>
     <slot name="menuForm" :size="formSafe.controlSize"></slot>
   </div>
 </template>
@@ -51,12 +51,15 @@ export default {
   },
   methods: {
     vaildData,
-    handleSubmit() {
+    onSubmit() {
       this.submitLoading = true;
       setTimeout(() => {
         this.submitLoading = false;
       }, 5000);
-      this.formSafe.submit();
+      this.formSafe.onSubmit();
+    },
+    onCancel() {
+      this.formSafe.$emit('onCancel');
     },
     handleCell(val) {
       this.formSafe.option.detail = val;

@@ -38,16 +38,15 @@ export const formInitVal = (list = []) => {
     // ) {
     //   tableForm[ele.prop] = [];
     // } else
-    console.log(ele.type)
     if (["checkbox"].includes(ele.type)) {
       formData[ele.prop] = []
     } else if (
-      ["rate", "slider", "number"].includes(ele.type) ||
-      ele.dataType === "number"
+      ['rate', 'slider', 'number'].includes(ele.type) ||
+      ele.dataType === 'number'
     ) {
-      formData[ele.prop] = undefined
+      formData[ele.prop] = undefined;
     } else {
-      formData[ele.prop] = ""
+      formData[ele.prop] = ''
     }
     // if (ele.bind) {
     //   tableForm = createObj(tableForm, ele.bind);

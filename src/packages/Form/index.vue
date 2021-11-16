@@ -1,5 +1,5 @@
 <template>
-  <div :class="{'query-filter': isSearch, 'pro-form': !isSearch, 'form-detail': isDetail}">
+  <div :class="{'query-filter': isSearch, 'pro-form': !isSearch, 'form-detail': isDetail}">{{formData}}
     <el-form
       ref="ruleForm"
       :inline="true"
@@ -137,7 +137,7 @@
 import { throttle, arraySort, setAsVal, deepClone, vaildData } from "../../utils/util.js";
 import { validatenull } from '../../utils/validate.js';
 import mock from "../../utils/mock.js";
-import { getLabel, getComponent, getPlaceholder } from "../../utils/dataformat.js";
+import { getLabel, getComponent, getPlaceholder, formInitVal } from "../../utils/dataformat.js";
 import permission from '../../utils/permission';
 import formMenu from "./menu.vue";
 
@@ -262,8 +262,11 @@ export default {
       return list;
     },
     tabsActive() {
-      return vaildData(this.formOption.tabsActive + "", "1");
+      return vaildData(this.formOption.tabsActive + '', '1');
     },
+    isMock () {
+      return this.vaildData(this.parentOption.mockBtn, false);
+    }
   },
   watch: {
     tabsActive: {
@@ -295,6 +298,7 @@ export default {
     this.handleEnter = throttle(this.enterSearch, 300);
     this.queryData = (this.$route && this.$route.query) || {};
     this.$nextTick(() => {
+      this.dataFormat();
       this.formCreate = true;
     });
   },
@@ -304,6 +308,11 @@ export default {
     getPlaceholder,
     init() {
       this.formOption = this.option;
+    },
+    // 初始化表单
+    dataFormat() {
+      let value = deepClone(formInitVal(this.propOption));
+      this.setForm(value)
     },
     remote(callback, query) {
       this.$emit("remote", callback, query);
@@ -374,6 +383,8 @@ export default {
             this.formData[ele] = formMock[ele];
           });
         }
+
+        // 处理动态表单mock数据
         column.items.forEach((item) => {
           if (item.children) {
             const type = item.children?.type || "crud";
@@ -393,7 +404,9 @@ export default {
             }
           }
         });
+
       });
+      this.clearValidate();
       this.$emit("mock-change", this.formData);
     },
     handleSubmit() {
@@ -433,6 +446,9 @@ export default {
         return true;
       }
     },
+    clearValidate(list) {
+      this.$refs.ruleForm.clearValidate(list);
+    },
     validate(callback) {
       this.$refs.ruleForm.validate((valid, msg) => {
         let dynamicList = [];
@@ -468,12 +484,12 @@ export default {
         });
       });
     },
-    submit() {
+    onSubmit() {
       this.validate((valid, msg) => {
         if (valid) {
-          this.$emit("submit", this.formData);
+          this.$emit("onSubmit", this.formData);
         } else {
-          this.$emit("error", msg);
+          this.$emit("onError", msg);
         }
       });
     },

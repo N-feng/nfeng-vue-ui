@@ -19,20 +19,33 @@ export default {
       control: { type: 'select' },
       options: ['small', 'medium', 'large'],
     },
-    // value: {}
+    // value: {},
+    onClick: { action: 'clicked' },
+    // Assigns the argType to the Events category
+    onCancel: {
+      table: {
+        category: 'Events'
+      }
+    },
+    onSubmit: {
+      table: {
+        category: 'Events'
+      }
+    },
   },
+  parameters: { actions: { argTypesRegex: '^on.*' } },
 };
 
-const formData = {}
+let formData = {}
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   // components: { MyButton },
-  template: '<div><ygp-form v-bind="$props" v-model="formData" />{{formData}}</div>',
+  template: '<ygp-form @onCancel="onCancel" @onSubmit="onSubmit" v-bind="$props" v-model="formData" />',
 });
 
-export const Secondary = Template.bind({});
-Secondary.args = {
+export const Base = Template.bind({});
+Base.args = {
   label: 'Button',
   option,
   value: {},

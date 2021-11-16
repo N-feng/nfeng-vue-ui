@@ -47,7 +47,7 @@ export default {
     },
     isSingle: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     disabled: {
       type: Boolean,
