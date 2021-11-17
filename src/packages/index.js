@@ -6,6 +6,7 @@ import Input from "./Input/index.vue";
 import Select from "./Select/index.vue";
 import Radio from "./Radio/index.vue";
 import Checkbox from "./Checkbox/index.vue";
+import Switch from "./Switch/index.vue";
 import DatePicker from "./DatePicker/index.vue";
 import DialogTable from "./DialogTable/index.vue";
 // import CityPicker from "./CityPicker/index.vue";
@@ -21,6 +22,7 @@ export default {
   Select,
   Radio,
   Checkbox,
+  Switch,
   DatePicker,
   DialogTable,
   // Upload,

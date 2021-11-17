@@ -9,40 +9,43 @@
       :false-label="falseLabel"
       @change="handleChange"
     ></el-checkbox>
-    
-    <el-checkbox-group v-else-if="isButtonCheckbox" v-model="text" :size="size" @input="handleChange">
+
+    <el-checkbox-group
+      v-else-if="isButtonCheckbox"
+      v-model="text"
+      :size="size"
+      @input="handleChange"
+    >
       <el-checkbox
-        v-for="(option, index) in options" 
+        v-for="(option, index) in options"
         :key="index + '_local'"
         class="button-checkbox"
-        :label="getValue(option, valueKey)"
+        :label="option[valueKey]"
         border
-        >{{ getLabel(option, labelKey) }}</el-checkbox
+        >{{ option[labelKey] }}</el-checkbox
       >
     </el-checkbox-group>
     <el-checkbox-group v-else v-model="text" :size="size" @input="handleChange">
-      <el-checkbox v-for="(option, index) in options" :key="index + '_local'" :label="getValue(option, valueKey)">{{
-        getLabel(option, labelKey)
-      }}</el-checkbox>
+      <el-checkbox
+        v-for="(option, index) in options"
+        :key="index + '_local'"
+        :label="option[valueKey]"
+        >{{ option[labelKey] }}</el-checkbox
+      >
     </el-checkbox-group>
   </div>
 </template>
 
 <script>
-export default {
-  name: "YgpCheckbox",
+import create from "../../common/create.js";
+import props from "../../common/props.js";
+import event from "../../common/event.js";
+
+export default create({
+  name: "checkbox",
+  mixins: [props(), event()],
   props: {
-    value: {},
     size: {
-      type: String,
-    },
-    options: {
-      type: Array,
-    },
-    valueKey: {
-      type: String,
-    },
-    labelKey: {
       type: String,
     },
     isSingle: {
@@ -63,35 +66,7 @@ export default {
       default: false,
     },
   },
-  data() {
-    return {
-      text: undefined,
-    }
-  },
-  watch: {
-    value: {
-      handler(val) {
-        this.text = val
-      },
-      immediate: true,
-    },
-  },
-  created() {
-    this.text = this.value || this.value === 0 ? this.value : []
-  },
-  methods: {
-    getLabel(option, labelKey) {
-      return typeof option === "object" ? option[labelKey || "name"] : option
-    },
-    getValue(option, valueKey) {
-      return typeof option === "object" ? option[valueKey || "code"] : option
-    },
-    handleChange(value) {
-      this.$emit("input", value)
-      this.$emit("change", value)
-    },
-  },
-}
+});
 </script>
 
 <style lang="scss">
@@ -99,24 +74,24 @@ export default {
   margin-right: 0 !important;
   overflow: hidden;
   position: relative;
-  .el-checkbox__input{
+  .el-checkbox__input {
     display: none;
   }
-  .el-checkbox__label{
+  .el-checkbox__label {
     padding-left: 5px;
   }
   &:after {
-    content:'';
+    content: "";
     display: none;
     position: absolute;
     right: -13px;
     bottom: -13px;
     height: 20px;
     width: 20px;
-    background-color: #FE5F23;
+    background-color: #fe5f23;
     transform: rotate(45deg);
   }
-  &.is-checked::after{
+  &.is-checked::after {
     display: block;
   }
 }

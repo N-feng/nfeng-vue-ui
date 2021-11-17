@@ -7,6 +7,7 @@ module.exports = {
     "@storybook/addon-links",
     "@storybook/addon-essentials",
     "@storybook/preset-scss",
-    "@storybook/addon-storysource" // 新增
+    "@storybook/addon-storysource", // 新增
+    "storybook-addon-preview/register",
   ]
 }

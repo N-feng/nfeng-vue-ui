@@ -6,21 +6,24 @@
       :size="formSafe.controlSize"
       icon="el-icon-edit-outline"
       @click="formSafe.handleMock"
-    >模拟</el-button>
+      >模拟</el-button
+    >
     <template v-if="formSafe.parentOption.cellBtn">
       <el-button
         v-if="formSafe.isDetail"
         v-permission="formSafe.getPermission('editBtn')"
         :size="formSafe.controlSize"
         @click="handleCell(false)"
-      >编辑</el-button>
+        >编辑</el-button
+      >
       <el-button
         v-if="!formSafe.isDetail"
         v-permission="formSafe.getPermission('saveBtn')"
         :size="formSafe.controlSize"
         type="primary"
         @click="handleCell(true)"
-      >保存</el-button>
+        >保存</el-button
+      >
     </template>
     <el-button
       v-if="vaildData(formSafe.parentOption.submitBtn, true)"
@@ -29,7 +32,16 @@
       type="primary"
       :loading="submitLoading"
       @click="onSubmit"
-    >提交</el-button>
+      >提交</el-button
+    >
+    <el-button
+      :icon="formSafe.parentOption.emptyIcon || 'el-icon-delete'"
+      :size="formSafe.controlSize"
+      :loading="formSafe.allDisabled"
+      v-if="vaildData(formSafe.parentOption.emptyBtn, true)"
+      @click="formSafe.resetForm"
+      >{{ vaildData(formSafe.parentOption.emptyText, "清 空") }}</el-button
+    >
     <el-button :size="formSafe.controlSize" @click="onCancel">返回</el-button>
     <slot name="menuForm" :size="formSafe.controlSize"></slot>
   </div>
@@ -59,7 +71,7 @@ export default {
       this.formSafe.onSubmit();
     },
     onCancel() {
-      this.formSafe.$emit('onCancel');
+      this.formSafe.$emit("onCancel");
     },
     handleCell(val) {
       this.formSafe.option.detail = val;

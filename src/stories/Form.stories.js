@@ -1,57 +1,84 @@
-import ElementUI from 'element-ui';
-import 'element-ui/lib/theme-chalk/index.css';
+import ElementUI from "element-ui";
+import "element-ui/lib/theme-chalk/index.css";
 import Vue from "vue";
-Vue.use(ElementUI)
-// import MyButton from '../packages/Form/index.vue';
+Vue.use(ElementUI);
 
-import NfengUI from '../packages/main'
-Vue.use(NfengUI)
+import NfengUI from "../packages/main";
+Vue.use(NfengUI);
 
-import { option } from './option';
+import { previewTemplate } from "storybook-addon-preview";
+
+import { base,
+  // rules
+} from "./options";
 
 export default {
-  title: 'Example/Form',
-  // component: MyButton,
-  // More on argTypes: https://storybook.js.org/docs/vue/api/argtypes
+  title: "Example/Form",
   argTypes: {
-    backgroundColor: { control: 'color' },
-    size: {
-      control: { type: 'select' },
-      options: ['small', 'medium', 'large'],
-    },
-    // value: {},
-    onClick: { action: 'clicked' },
-    // Assigns the argType to the Events category
     onCancel: {
       table: {
-        category: 'Events'
-      }
+        category: "Events",
+      },
     },
     onSubmit: {
       table: {
-        category: 'Events'
-      }
+        category: "Events",
+      },
     },
   },
-  parameters: { actions: { argTypesRegex: '^on.*' } },
 };
 
-let formData = {}
+let formData = {};
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  // components: { MyButton },
-  template: '<ygp-form @onCancel="onCancel" @onSubmit="onSubmit" v-bind="$props" v-model="formData" />',
+  template: `
+    <div>
+      <p>formData：{{formData}}</p>
+      <ygp-form @onCancel="onCancel" @onSubmit="onSubmit" v-bind="$props" v-model="formData" />
+    </div>
+  `,
 });
 
+// 基础
 export const Base = Template.bind({});
+Base.parameters = {
+  preview: [
+    {
+      tab: "Vue",
+      template: previewTemplate`
+<div>
+  <p>formData：{{formData}}</p>
+  <ygp-form @onCancel="onCancel" @onSubmit="onSubmit" v-bind="$props" v-model="formData" />
+</div>
+      `,
+      language: "html",
+      copy: true,
+    },
+    {
+      tab: "Js",
+      template: previewTemplate`
+data () {
+  return {
+    option: ${JSON.stringify(base)}
+  }
+}
+      `,
+      language: "js",
+      copy: true,
+    },
+  ],
+};
 Base.args = {
-  label: 'Button',
-  option,
-  value: {},
+  background: "#ff0",
+  label: "Button",
+  option: base,
   formData,
 };
 
-export const Result = () => ({
-  template: '<div>1111</div>'
-})
+// 数据验证
+// export const Rules = Template.bind({});
+// Rules.args = {
+//   option: rules,
+//   formData,
+// };

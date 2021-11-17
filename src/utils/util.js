@@ -6,6 +6,20 @@ export function setAsVal(obj, bind = '', value = '') {
 }
 
 /**
+ * 字符串数据类型转化
+ */
+export const detailDataType = (value, type) => {
+  if (validatenull(value)) return value
+  if (type === 'number') {
+    return Number(value);
+  } else if (type === 'string') {
+    return value + '';
+  } else {
+    return value;
+  }
+};
+
+/**
  * 根据值查找对应的序号
  */
 export const findArray = (dic, value, valueKey = "value") => {

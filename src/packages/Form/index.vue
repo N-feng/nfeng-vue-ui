@@ -1,5 +1,5 @@
 <template>
-  <div :class="{'query-filter': isSearch, 'pro-form': !isSearch, 'form-detail': isDetail}">{{formData}}
+  <div :class="{'query-filter': isSearch, 'pro-form': !isSearch, 'form-detail': isDetail}">
     <el-form
       ref="ruleForm"
       :inline="true"
@@ -67,19 +67,14 @@
                 :disabled="getItemProp(column, 'disabled')"
                 @change="handleCascaderChange(value,column.prop)"
               ></el-cascader>
-              <el-switch
-                v-else-if="column.type === 'switch'"
-                v-model="formData[column.prop]"
-                active-color="#13ce66"
-                @change="handleChange"
-              ></el-switch>
+
               <!-- 动态组件 -->
               <component
                 :is="getComponent(column.type)"
                 v-else
                 :ref="column.prop"
                 v-model="formData[column.prop]"
-                v-bind="column"
+                :column="column"
                 :dic="dic"
                 :size="parentOption.size"
                 :maxlength="column.maxlength"
@@ -137,7 +132,7 @@
 import { throttle, arraySort, setAsVal, deepClone, vaildData } from "../../utils/util.js";
 import { validatenull } from '../../utils/validate.js';
 import mock from "../../utils/mock.js";
-import { getLabel, getComponent, getPlaceholder, formInitVal } from "../../utils/dataformat.js";
+import { getLabel, getComponent, getPlaceholder, formInitVal } from "../../common/dataformat.js";
 import permission from '../../utils/permission';
 import formMenu from "./menu.vue";
 
@@ -311,8 +306,8 @@ export default {
     },
     // 初始化表单
     dataFormat() {
-      let value = deepClone(formInitVal(this.propOption));
-      this.setForm(value)
+      let { tableForm } = deepClone(formInitVal(this.propOption));
+      this.setForm(tableForm)
     },
     remote(callback, query) {
       this.$emit("remote", callback, query);

@@ -1,6 +1,6 @@
-import { validatenull } from "./validate"
-import { findObject } from "./util"
-import moment from "moment"
+import { validatenull } from '../utils/validate';
+import { DIC_SPLIT, ARRAY_LIST, ARRAY_VALUE_LIST, MULTIPLE_LIST } from '../global/variable';
+import { detailDataType, findObject } from '../utils/util';
 
 /**
  * 计算级联属性
@@ -24,52 +24,68 @@ export const calcCascader = (list = []) => {
 }
 
 /**
+ * 初始化数据格式
+ */
+export const initVal = (value, column) => {
+  let { type, multiple, dataType, separator = DIC_SPLIT, alone, emitPath } = column
+  let list = value;
+  if (
+    (MULTIPLE_LIST.includes(type) && multiple) ||
+    ARRAY_VALUE_LIST.includes(type) && emitPath !== false
+  ) {
+    if (!Array.isArray(list)) {
+      if (validatenull(list)) {
+        list = [];
+      } else {
+        list = (list + '').split(separator) || [];
+      }
+    }
+    // 数据转化
+    list.forEach((ele, index) => {
+      list[index] = detailDataType(ele, dataType);
+    });
+    if (ARRAY_LIST.includes(type) && validatenull(list) && alone) list = [''];
+  } else {
+    list = detailDataType(list, dataType)
+  }
+  return list;
+};
+
+/**
  * 表单初始化值
  */
 
 export const formInitVal = (list = []) => {
-  let formData = {}
+  let tableForm = {}
   list.forEach((ele) => {
-    // if (
-    //   ARRAY_VALUE_LIST.includes(ele.type) ||
-    //   (MULTIPLE_LIST.includes(ele.type) && ele.multiple) ||
-    //   ele.range ||
-    //   ele.dataType === "array"
-    // ) {
-    //   tableForm[ele.prop] = [];
-    // } else
+    if (
+      ARRAY_VALUE_LIST.includes(ele.type) ||
+      (MULTIPLE_LIST.includes(ele.type) && ele.multiple) ||
+      ele.range ||
+      ele.dataType === "array"
+    ) {
+      tableForm[ele.prop] = [];
+    } else
     if (["checkbox"].includes(ele.type)) {
-      formData[ele.prop] = []
+      tableForm[ele.prop] = []
     } else if (
       ['rate', 'slider', 'number'].includes(ele.type) ||
       ele.dataType === 'number'
     ) {
-      formData[ele.prop] = undefined;
+      tableForm[ele.prop] = undefined;
     } else {
-      formData[ele.prop] = ''
+      tableForm[ele.prop] = ''
     }
     // if (ele.bind) {
     //   tableForm = createObj(tableForm, ele.bind);
     // }
     // 表单默认值设置
     if (!validatenull(ele.value)) {
-      formData[ele.prop] = ele.value
+      tableForm[ele.prop] = ele.value
     }
   })
-  return formData
-}
-
-/**
- * 根据月份获取月头和月尾
- */
-export const getStartAndEndByMonth = (key) => (date) => {
-  if (!date) return {}
-  let upperKey = key.charAt(0).toUpperCase() + key.substr(1)
-  let startDate = `${moment(date).startOf("month").format("YYYY-MM-DD")}`
-  let endDate = `${moment(date).endOf("month").format("YYYY-MM-DD")}`
   return {
-    [`start${upperKey}`]: startDate,
-    [`end${upperKey}`]: endDate,
+    tableForm
   }
 }
 
