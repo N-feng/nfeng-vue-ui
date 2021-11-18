@@ -13,6 +13,10 @@ export default function () {
           return {}
         }
       },
+      type: {
+        type: String,
+        default: ''
+      },
       options: {
         type: Array,
         default: () => {

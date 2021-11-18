@@ -74,6 +74,7 @@
                 v-else
                 :ref="column.prop"
                 v-model="formData[column.prop]"
+                v-bind="column"
                 :column="column"
                 :dic="dic"
                 :size="parentOption.size"

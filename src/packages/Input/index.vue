@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-input-number
-      v-if="type === 'number'"
+      v-if="typeParam === 'number'"
       v-model="text"
       :size="size"
       :readonly="readonly"
@@ -28,8 +28,8 @@
       :disabled="disabled"
       :placeholder="placeholder"
       :maxlength="maxlength"
-      :show-password="showPassword"
-      :style="{'width': type === 'textarea' ? '100%' : ''}"
+      :show-password="typeParam === 'password' ? showPassword : false"
+      :style="{'width': typeParam === 'textarea' ? '100%' : ''}"
       @input="handleChange"
       @focus="$emit('focus')"
       @blur="handleBlur"
@@ -40,12 +40,14 @@
 </template>
 
 <script>
-export default {
-  name: "YgpInput",
+import create from '../../common/create';
+import props from "../../common/props.js";
+import event from "../../common/event.js";
+
+export default create({
+  name: "input",
+  mixins: [props(), event()],
   props: {
-    type: {
-      type: String
-    },
     modelType: {
       type: String
     },
@@ -89,45 +91,26 @@ export default {
     },
     showPassword:{
       type: Boolean,
-      default: false
+      default: true
     },
-    value: {}
   },
-  data() {
-    return {
-      text: undefined
-    };
-  },
-  watch: {
-    value: {
-      handler(val) {
-        this.text = val;
+  computed: {
+    typeParam () {
+      if (this.type === "textarea") {
+        return "textarea";
+      } else if (this.type === "password") {
+        return "password";
+      } else {
+        return "text";
       }
-    },
-    text: {
-      handler(val) {
-        if (val === null) {
-          this.text = undefined;
-        }
-      },
-      deep: true
     }
   },
-  created() {
-    this.text = this.value;
-  },
   methods: {
-    handleChange(value) {
-      this.$emit("input", value);
-      this.$emit("change", value);
-    },
     handleBlur() {
       if (this.text) {
         this.text = this.text.trim();
-      } else {
-        this.text = this.text
       }
     }
   }
-};
+});
 </script>

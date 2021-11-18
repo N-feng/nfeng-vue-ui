@@ -6,13 +6,14 @@ Vue.use(ElementUI);
 import NfengUI from "../packages/main";
 Vue.use(NfengUI);
 
+// import Form from '../packages/Form/index.vue';
+
 import { previewTemplate } from "storybook-addon-preview";
 
-import { base,
-  // rules
-} from "./options";
+import { base, rules } from "./options";
 
 export default {
+  // component: Form,
   title: "Example/Form",
   argTypes: {
     onCancel: {
@@ -28,9 +29,8 @@ export default {
   },
 };
 
-let formData = {};
-
 const Template = (args, { argTypes }) => ({
+  // components: { Form },
   props: Object.keys(argTypes),
   template: `
     <div>
@@ -70,15 +70,40 @@ data () {
   ],
 };
 Base.args = {
-  background: "#ff0",
-  label: "Button",
   option: base,
-  formData,
+  formData: {},
 };
 
 // 数据验证
-// export const Rules = Template.bind({});
-// Rules.args = {
-//   option: rules,
-//   formData,
-// };
+export const Rules = Template.bind({});
+Rules.parameters = {
+  preview: [
+    {
+      tab: "Vue",
+      template: previewTemplate`
+<div>
+  <p>formData：{{formData}}</p>
+  <ygp-form @onCancel="onCancel" @onSubmit="onSubmit" v-bind="$props" v-model="formData" />
+</div>
+      `,
+      language: "html",
+      copy: true,
+    },
+    {
+      tab: "Js",
+      template: previewTemplate`
+data () {
+  return {
+    option: ${JSON.stringify(rules)}
+  }
+}
+      `,
+      language: "js",
+      copy: true,
+    },
+  ],
+};
+Rules.args = {
+  option: rules,
+  formData: {},
+};
