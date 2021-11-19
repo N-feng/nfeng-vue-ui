@@ -1,0 +1,20 @@
+export const base = {
+  align:'center',
+  menuAlign:'center',
+  header:true,
+  fullscreenBtn:true,
+  columnBtn:true,
+  menu:true,
+  editBtn:true,
+  delBtn:true,
+  columns:[
+    {
+      label:'姓名',
+      prop:'name'
+    },
+    {
+      label:'性别',
+      prop:'sex'
+    }
+  ]
+}

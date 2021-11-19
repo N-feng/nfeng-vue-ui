@@ -26,23 +26,23 @@
       >
     </template>
     <el-button
-      v-if="vaildData(formSafe.parentOption.submitBtn, true)"
+      v-if="vaildData(formSafe.parentOption.submitBtn,true)"
       v-permission="formSafe.getPermission('submitBtn')"
+      :icon="formSafe.parentOption.submitIcon || 'el-icon-check'"
       :size="formSafe.controlSize"
       type="primary"
       :loading="submitLoading"
-      @click="onSubmit"
-      >提交</el-button
+      @click="handleSubmit"
+      >{{vaildData(formSafe.parentOption.submitText, "提 交")}}</el-button
     >
     <el-button
+      v-if="vaildData(formSafe.parentOption.emptyBtn,true)"
       :icon="formSafe.parentOption.emptyIcon || 'el-icon-delete'"
       :size="formSafe.controlSize"
       :loading="formSafe.allDisabled"
-      v-if="vaildData(formSafe.parentOption.emptyBtn, true)"
       @click="formSafe.resetForm"
       >{{ vaildData(formSafe.parentOption.emptyText, "清 空") }}</el-button
     >
-    <el-button :size="formSafe.controlSize" @click="onCancel">返回</el-button>
     <slot name="menuForm" :size="formSafe.controlSize"></slot>
   </div>
 </template>
@@ -63,15 +63,12 @@ export default {
   },
   methods: {
     vaildData,
-    onSubmit() {
+    handleSubmit() {
       this.submitLoading = true;
       setTimeout(() => {
         this.submitLoading = false;
       }, 5000);
-      this.formSafe.onSubmit();
-    },
-    onCancel() {
-      this.formSafe.$emit("onCancel");
+      this.formSafe.submit();
     },
     handleCell(val) {
       this.formSafe.option.detail = val;

@@ -285,7 +285,7 @@ export default {
       return this.controlSize;
     },
     controlSize() {
-      return this.tableOption.size;
+      return this.tableOption.size || 'small';
     },
   },
   watch: {
@@ -597,6 +597,10 @@ export default {
       this.tableIndex = index;
       this.$emit("input", this.tableForm);
       this.$refs.dialogForm.show("view");
+    },
+    // 删除
+    rowDel (row, index) {
+      this.$emit("onRowDel", row, index)
     },
     getRowKey(row) {
       if (typeof this.tableOption.rowKey === "function") {

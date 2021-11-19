@@ -15,7 +15,8 @@
       :option="formOption"
       :dic="crud.dic"
       @handleCancel="hide"
-      @submit="handleSubmit"
+      @reset-change="hide"
+      @onSubmit="handleSubmit"
     ></ygp-form>
   </component>
 </template>
@@ -55,6 +56,15 @@ export default {
       if (this.isView) {
         option.detail = true;
         option.submitBtn = false;
+      } else {
+        if (this.isEdit) {
+          option.submitText = '修 改';
+          option.submitBtn = option.updateBtn;
+          option.submitIcon = option.updateBtnIcon || 'el-icon-circle-check'
+        }
+        option.emptyText = '取 消';
+        option.emptyBtn = option.cancelBtn;
+        option.emptyIcon = option.cancelBtnIcon || 'el-icon-circle-close';
       }
 
       return option;
@@ -77,7 +87,7 @@ export default {
     },
     // 更新
     rowUpdate() {
-      this.crud.$emit("row-update", this.crud.tableForm);
+      this.crud.$emit("onRowUpdate", this.crud.tableForm);
     },
     // 隐藏表单
     hide() {

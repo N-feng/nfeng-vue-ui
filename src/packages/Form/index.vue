@@ -22,7 +22,7 @@
             <el-form-item
               v-if="vaildDisplay(column) && cindex < count"
               :key="column.prop"
-              :class="['ygp-form__item', {'full-width': ['radio', 'textarea', 'upload'].includes(column.type)}]"
+              :class="['ygp-form__item', {'full-width': ['radio', 'textarea', 'upload', 'dynamic'].includes(column.type)}]"
               :prop="column.prop"
               :label="getLabel(column)"
               :label-width="column.labelWidth || item.labelWidth || parentOption.labelWidth"
@@ -88,7 +88,7 @@
                 :range="column.range"
                 :column-slot="columnSlot"
                 @keyup.enter.native="handleEnter"
-                @change="(value, option, crudColumn, crudScope) => $emit('change', value, option, crudColumn ? crudColumn : column, crudScope)"
+                @change="(value, option, crudColumn, crudScope) => $emit('onChange', value, option, crudColumn ? crudColumn : column, crudScope)"
                 @focus="$emit('focus', column.prop)"
                 @remote="(callback, query) => $emit('remote', callback, query, column.prop)"
                 @validateField="$refs.ruleForm.validateField(column.prop)"
@@ -130,8 +130,8 @@
 </template>
 
 <script>
-import { throttle, arraySort, setAsVal, deepClone, vaildData } from "../../utils/util.js";
 import { validatenull } from '../../utils/validate.js';
+import { throttle, deepClone, vaildData, clearVal, setAsVal, arraySort } from "../../utils/util.js";
 import mock from "../../utils/mock.js";
 import { getLabel, getComponent, getPlaceholder, formInitVal } from "../../common/dataformat.js";
 import permission from '../../utils/permission';
@@ -168,6 +168,10 @@ export default {
       default: () => {
         return {};
       }
+    },
+    reset: {
+      type: Boolean,
+      default: true
     },
     value: {
       type: Object,
@@ -308,7 +312,7 @@ export default {
     // 初始化表单
     dataFormat() {
       let { tableForm } = deepClone(formInitVal(this.propOption));
-      this.setForm(tableForm)
+      this.setForm(Object.assign(tableForm, this.formData))
     },
     remote(callback, query) {
       this.$emit("remote", callback, query);
@@ -443,7 +447,7 @@ export default {
       }
     },
     clearValidate(list) {
-      this.$refs.ruleForm.clearValidate(list);
+      this.$refs.ruleForm?.clearValidate(list);
     },
     validate(callback) {
       this.$refs.ruleForm.validate((valid, msg) => {
@@ -480,7 +484,7 @@ export default {
         });
       });
     },
-    onSubmit() {
+    submit() {
       this.validate((valid, msg) => {
         if (valid) {
           this.$emit("onSubmit", this.formData);
@@ -493,8 +497,16 @@ export default {
       this.$emit("export", this.formData);
     },
     resetForm() {
-      this.$refs["ruleForm"].resetFields();
-      this.$emit("reset", this.formData);
+      if (this.reset) {
+        this.clearVal();
+        this.$nextTick(() => this.clearValidate())
+      }
+      this.$emit("reset-change");
+    },
+    clearVal () {
+      this.formData = clearVal(this.formData)
+      this.$emit("input", this.formData);
+      this.$emit("change", this.formData);
     },
   },
 };

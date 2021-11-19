@@ -1,7 +1,7 @@
-import { validatenull } from './validate';
+import { validatenull } from "./validate";
 
-export function setAsVal(obj, bind = '', value = '') {
-  eval('obj.' + bind + '=`' + value + '`');
+export function setAsVal(obj, bind = "", value = "") {
+  eval("obj." + bind + "=`" + value + "`");
   return obj;
 }
 
@@ -9,11 +9,11 @@ export function setAsVal(obj, bind = '', value = '') {
  * 字符串数据类型转化
  */
 export const detailDataType = (value, type) => {
-  if (validatenull(value)) return value
-  if (type === 'number') {
+  if (validatenull(value)) return value;
+  if (type === "number") {
     return Number(value);
-  } else if (type === 'string') {
-    return value + '';
+  } else if (type === "string") {
+    return value + "";
   } else {
     return value;
   }
@@ -35,7 +35,7 @@ export function findObject(list, value, key = "prop") {
   let result = -1;
   let type = (() => {
     let result;
-    list.forEach(ele => {
+    list.forEach((ele) => {
       if (ele.column) {
         result = "group";
       }
@@ -43,7 +43,7 @@ export function findObject(list, value, key = "prop") {
     return result;
   })();
   if (type === "group") {
-    list.forEach(ele => {
+    list.forEach((ele) => {
       const val = findArray(ele.column, value, key);
       if (val !== -1) result = val;
     });
@@ -53,7 +53,7 @@ export function findObject(list, value, key = "prop") {
   return result;
 }
 
-export const getObjType = obj => {
+export const getObjType = (obj) => {
   var toString = Object.prototype.toString;
   var map = {
     "[object Boolean]": "boolean",
@@ -65,7 +65,7 @@ export const getObjType = obj => {
     "[object RegExp]": "regExp",
     "[object Undefined]": "undefined",
     "[object Null]": "null",
-    "[object Object]": "object"
+    "[object Object]": "object",
   };
   if (obj instanceof Element) {
     return "element";
@@ -75,17 +75,12 @@ export const getObjType = obj => {
 /**
  * 对象深拷贝
  */
-export const deepClone = data => {
+export const deepClone = (data) => {
   var type = getObjType(data);
   var obj;
-  if (type === "array") {
-    obj = [];
-  } else if (type === "object") {
-    obj = {};
-  } else {
-    // 不再具有下一层次
-    return data;
-  }
+  if (type === "array") obj = [];
+  else if (type === "object") obj = {};
+  else return data;
   if (type === "array") {
     for (var i = 0, len = data.length; i < len; i++) {
       data[i] = (() => {
@@ -109,98 +104,44 @@ export const deepClone = data => {
   }
   return obj;
 };
-
-// 获取指定时间前后 n 天的日期，n 为正负整数
-export function getDay(n, date = new Date()) {
-  var timestamp = (new Date(date)).getTime();
-  var newDate = new Date(parseInt(timestamp + n * 86400000))
-  var y = newDate.getFullYear()
-  var m = newDate.getMonth() + 1
-  m = m < 10 ? ('0' + m) : m
-  var d = newDate.getDate()
-  d = d < 10 ? ('0' + d) : d
-  const time = y + '-' + m + '-' + d
-  return time
-}
-
-export function getSeconds(n) {
-  var timestamp = (new Date()).getTime();
-  var date = new Date(parseInt(timestamp + n * 86400000))
-  var y = date.getFullYear()
-  var m = date.getMonth() + 1
-  m = m < 10 ? ('0' + m) : m
-  var d = date.getDate()
-  d = d < 10 ? ('0' + d) : d
-  var h = date.getHours()
-  var M = date.getMinutes()
-  var s = date.getSeconds()
-  const time = y + '-' + m + '-' + d + "-" + h + ":" + M + ":" + s
-  console.log("时间", time)
-  return time
-}
-
-//格式化金额数字，formatMoney(10000,2) => 10000.00 -> 10,000.00
-export function formatMoney(s1, n) {
-  if(!s1) return '0.00';
-  var flag = ""
-  if (s1 < 0) {
-    flag = "-"
-  }
-  var s2 = Math.abs(s1)
-  n = n > 0 && n <= 20 ? n : 2;
-  s2 = parseFloat((s2 + "").replace(/[^\d\\.-]/g, "")).toFixed(n) + "";
-  var l = s2.split(".")[0].split("").reverse(), r = s2.split(".")[1];
-  var t = "";
-  for (var i = 0; i < l.length; i++) {
-    t += l[i] + ((i + 1) % 3 === 0 && (i + 1) !== l.length ? "," : "");
-  }
-  return flag + t.split("").reverse().join("") + "." + r;
-}
-// 判断数组是否有相同元素 isRepeat([1,2,3,3])=> true isRepeat([1,2,3,4])=> false
-export function isRepeat(ary) {
-  var nary = ary.sort();
-  for (var i = 0; i < nary.length - 1; i++) {
-    if (nary[i] != nary[i + 1]) {
-      return true
-    }
-  }
-}
-
-// 节流
-export function throttle(fn, delay){
-  let timer = null
-    return function() {
-       if(!timer){
-        fn()
-        timer = setTimeout(() => {
-           timer = null
-           clearTimeout(timer)
-        }, delay)
-       }
-    }
-}
-
-// 数字保留两位小数
-export function keepTwoDecimal(num) {
-  let result = parseFloat(num)
-  if (isNaN(result)) {
-    new Error("传递参数错误，请检查！")
-    return false
-  }
-  result = Math.round(num * 100) / 100
-  return result
-}
-
 export const arraySort = (list = [], prop, callback) => {
   return list.filter(ele => !validatenull(ele[prop])).sort((a, b) => callback(a, b)).concat(list.filter(ele => validatenull(ele[prop])));
 }
+export const clearVal = (obj, list = []) => {
+  if (!obj) return {};
+  Object.keys(obj).forEach((ele) => {
+    if (list.includes(ele)) return;
+    else if (!validatenull(obj[ele])) {
+      let type = getObjType(obj[ele]);
+      if (type === "array") obj[ele] = [];
+      else if (type === "object") obj[ele] = {};
+      else if (["number", "boolean"].includes(type)) obj[ele] = undefined;
+      else obj[ele] = "";
+    }
+  });
+  return obj;
+};
 
 /**
  * 验证是否存在true/false
  */
- export const vaildData = (val, dafult) => {
-  if (typeof val === 'boolean') {
+export const vaildData = (val, dafult) => {
+  if (typeof val === "boolean") {
     return val;
   }
   return !validatenull(val) ? val : dafult;
 };
+
+// 节流
+export function throttle(fn, delay) {
+  let timer = null;
+  return function () {
+    if (!timer) {
+      fn();
+      timer = setTimeout(() => {
+        timer = null;
+        clearTimeout(timer);
+      }, delay);
+    }
+  };
+}

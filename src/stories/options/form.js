@@ -1,28 +1,6 @@
-var DIC = {
-  VAILD: [
-    {
-      name: "真",
-      code: "true",
-    },
-    {
-      name: "假",
-      code: "false",
-    },
-  ],
-  SEX: [
-    {
-      name: "男",
-      code: "0",
-    },
-    {
-      name: "女",
-      code: "1",
-    },
-  ],
-};
-
 export const base = {
   mockBtn: true,
+  emptyBtn: true,
   items: [
     {
       label: "用户名",
@@ -70,7 +48,8 @@ export const base = {
       label: "类型",
       prop: "type",
       type: "select",
-      options: DIC.VAILD,
+      // options: DIC.VAILD,
+      dicName: "VAILD",
       span: 6,
       mock: {
         type: "dic",
@@ -81,7 +60,8 @@ export const base = {
       prop: "grade",
       span: 6,
       type: "checkbox",
-      options: DIC.VAILD,
+      // options: DIC.VAILD,
+      dicName: "VAILD",
       mock: {
         type: "dic",
       },
@@ -91,7 +71,8 @@ export const base = {
       prop: "switch",
       span: 6,
       type: "switch",
-      options: DIC.SEX,
+      // options: DIC.SEX,
+      dicName: "SEX",
       mock: {
         type: "dic",
       },
@@ -103,7 +84,8 @@ export const base = {
       prop: "sex",
       span: 6,
       type: "radio",
-      options: DIC.SEX,
+      // options: DIC.SEX,
+      dicName: "SEX",
       mock: {
         type: "dic",
       },
@@ -234,3 +216,156 @@ export const rules = {
     },
   ],
 };
+
+export const dic = {
+  items: [
+    {
+      label: 'options本地字典',
+      prop: 'options',
+      type:'select',
+      // dicName: 'text',
+      // props: {
+      //   label: 'name',
+      //   value: 'code'
+      // },
+      options:[{
+        name:'本地字典1',
+        code:0
+      },{
+        name:'本地字典2',
+        code:1
+      }],
+    },
+    {
+      label: 'dicName本地字典',
+      prop: 'dicName',
+      type:'select',
+      dicName: 'text',
+      // props: {
+      //   label: 'name',
+      //   value: 'code'
+      // },
+      // options:[{
+      //   name:'本地字典1',
+      //   code:0
+      // },{
+      //   name:'本地字典2',
+      //   code:1
+      // }],
+    },
+    // {
+    //   label: 'Get字典',
+    //   prop: 'text1',
+    //   props: {
+    //     label: 'name',
+    //     value: 'code'
+    //   },
+    //   dicUrl: `${baseUrl}/getProvince`,
+    //   dicQuery:{
+    //     a:1
+    //   },
+    //   type:'select'
+    // },
+    // {
+    //   label: 'Post字典',
+    //   prop: 'text2',
+    //   props: {
+    //     label: 'name',
+    //     value: 'code'
+    //   },
+    //   dicUrl: `${baseUrl}/getProvince`,
+    //   dicMethod:'post',
+    //   dicQuery:{
+    //     a:1
+    //   },
+    //   type:'select'
+    // }
+  ]
+}
+
+export const dynamic = {
+  items: [
+    {
+      label: '输入框',
+      prop: "input1",
+      span:12,
+      // row: true
+    },
+    {
+      label: '子表单',
+      prop: 'dynamic',
+      type: 'dynamic',
+      // class: "form-dynamic",
+      span:24,
+      children: {
+        align: 'center',
+        headerAlign: 'center',
+        rowAdd:(done)=>{
+          this.$message.success('新增回调');
+            done({
+              input:'默认值'
+            });
+        },
+        rowDel:(row,done)=>{
+          this.$message.success('删除回调'+JSON.stringify(row));
+          done();
+        },
+        columns: [{
+          width: 200,
+          label: '输入框',
+          prop: "input",
+          formslot: true,
+        }, {
+          width: 200,
+          label: '选择框',
+          prop: "select",
+          propName: "selectName",
+          type: 'select',
+          rules:[{
+            type:'number',
+            required:true,
+            message:'请选择选择框',
+          }],
+          options: [{
+            label: '测试1',
+            value: 1
+          }, {
+            label: '测试2',
+            value: 2
+          }]
+        }, {
+          width: 200,
+          label: '多选',
+          prop: "checkbox",
+          propName: "checkboxName",
+          type: 'checkbox',
+          options: [{
+            label: '测试1',
+            value: 1
+          }, {
+            label: '测试2',
+            value: 2
+          }]
+        }, {
+          width: 200,
+          label: '开关',
+          prop: "switch",
+          propName: "switchName",
+          type: 'switch',
+          options: [{
+            label: '测试1',
+            value: 1
+          }, {
+            label: '测试2',
+            value: 2
+          }]
+        }, {
+          width: 200,
+          label: '数字框',
+          prop: "number",
+          type: 'number'
+        }]
+      }
+    }
+  ]
+}

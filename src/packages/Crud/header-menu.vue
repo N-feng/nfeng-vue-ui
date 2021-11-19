@@ -21,30 +21,30 @@
       </template>
       <el-button
         v-if="crud.tableOption.fullscreenBtn"
-        :icon="crud.fullscreen ? 'el-icon-news' : 'el-icon-full-screen'"
+        :icon="crud.fullscreen?'el-icon-news':'el-icon-full-screen'"
         circle
-        :size="crud.size"
+        :size="crud.isMediumSize"
         @click="handleFullScreen"
       ></el-button>
       <el-button
         v-if="crud.tableOption.refreshBtn"
         icon="el-icon-refresh"
         circle
-        :size="crud.size"
+        :size="crud.isMediumSize"
         @click="crud.refreshChange"
       ></el-button>
       <el-button
         v-if="crud.tableOption.searchShowBtn"
         icon="el-icon-search"
         circle
-        :size="crud.size"
+        :size="crud.isMediumSize"
         @click="crud.$refs.headerSearch.handleSearchShow()"
       ></el-button>
       <el-button
         v-if="crud.tableOption.columnBtn"
         icon="el-icon-s-operation"
         circle
-        :size="crud.size"
+        :size="crud.isMediumSize"
         @click="crud.$refs.dialogColumn.columnBox = true"
       ></el-button>
     </div>

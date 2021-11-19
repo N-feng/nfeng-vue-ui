@@ -9,5 +9,5 @@ module.exports = {
     "@storybook/preset-scss",
     // "@storybook/addon-storysource", // 新增
     "storybook-addon-preview/register",
-  ]
+  ],
 }

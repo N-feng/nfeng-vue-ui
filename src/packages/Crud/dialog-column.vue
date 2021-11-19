@@ -4,6 +4,7 @@
     :modal-append-to-body="false"
     append-to-body
     title="列显隐"
+    size="600px"
     :visible.sync="columnBox"
   >
     <div style="padding: 30px 10px 60px 30px;">
