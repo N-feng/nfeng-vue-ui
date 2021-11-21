@@ -83,7 +83,7 @@ export default {
     },
     // 保存
     rowSave() {
-      this.crud.$emit("row-save", this.crud.tableForm);
+      this.crud.$emit("onRowSave", this.crud.tableForm);
     },
     // 更新
     rowUpdate() {

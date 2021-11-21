@@ -14,9 +14,9 @@
     <!--  表单表格之间插槽  -->
     <slot name="middleDiv" />
     <!-- 表格 -->
-    <div class="table-component" :class="[{'table--fullscreen':fullscreen}]">
+    <div class="table-component" :class="[{ 'table--fullscreen': fullscreen }]">
       <!-- 表格功能列 -->
-      <header-menu v-if="vaildData(tableOption.header,true)" ref="headerMenu">
+      <header-menu v-if="vaildData(tableOption.header, true)" ref="headerMenu">
         <template slot="menuLeft" slot-scope="scope">
           <slot name="menuLeft" v-bind="scope"></slot>
         </template>
@@ -47,6 +47,8 @@
           :summary-method="tableOption.summaryMethod"
           :row-class-name="tableRowClassName"
           :height="tableOption.height"
+          :stripe="tableOption.stripe"
+          :border="tableOption.border"
           @current-change="(currentRow, oldCurrentRow) => emitEventHandler('current-change', currentRow, oldCurrentRow)"
           @selection-change="selectionChange"
           @row-click="rowClick"
@@ -63,14 +65,18 @@
           </template>
           <div>
             <column-default ref="columnDefault">
-              <template slot="expand" slot-scope="{row,index}">
+              <template slot="expand" slot-scope="{ row, index }">
                 <slot :row="row" :index="index" name="expand"></slot>
               </template>
             </column-default>
             <!-- 动态列 -->
             <template v-for="column in list">
-              <column-slot :key="column.label" :column="column">
-                <template v-for="item in mainSlot" :slot="item" slot-scope="scope">
+              <column-slot :key="column.label" :column="column" :column-option="columnOption">
+                <template
+                  v-for="item in mainSlot"
+                  :slot="item"
+                  slot-scope="scope"
+                >
                   <slot v-bind="scope" :name="item"></slot>
                 </template>
               </column-slot>
@@ -120,12 +126,12 @@ import dialogForm from "./dialog-form.vue";
 import { validatenull } from "../../utils/validate";
 import { defaultColumn } from "./config.js";
 import { arraySort } from "../../utils/util";
-import permission from '../../utils/permission';
+import permission from "../../utils/permission";
 
 export default {
   name: "YgpCrud",
   directives: {
-    permission
+    permission,
   },
   provide() {
     return {
@@ -169,7 +175,7 @@ export default {
       type: [Function, Object],
       default: () => {
         return {};
-      }
+      },
     },
     value: {
       type: Object,
@@ -285,7 +291,7 @@ export default {
       return this.controlSize;
     },
     controlSize() {
-      return this.tableOption.size || 'small';
+      return this.tableOption.size || "small";
     },
   },
   watch: {
@@ -350,9 +356,9 @@ export default {
     },
     getPermission(key, row, index) {
       if (typeof this.permission === "function") {
-        return this.permission(key, row, index)
+        return this.permission(key, row, index);
       } else if (!this.validatenull(this.permission[key])) {
-        return this.permission[key]
+        return this.permission[key];
       } else {
         return true;
       }
@@ -574,6 +580,9 @@ export default {
       }
       this.$emit("row-edit", val, JSON.parse(JSON.stringify(row)));
     },
+    rowAdd() {
+      this.$refs.dialogForm.show("add");
+    },
     //对象克隆
     rowClone(row) {
       let rowData = {};
@@ -599,8 +608,8 @@ export default {
       this.$refs.dialogForm.show("view");
     },
     // 删除
-    rowDel (row, index) {
-      this.$emit("onRowDel", row, index)
+    rowDel(row, index) {
+      this.$emit("onRowDel", row, index);
     },
     getRowKey(row) {
       if (typeof this.tableOption.rowKey === "function") {
@@ -731,18 +740,16 @@ export default {
       this.propOption.forEach((column) => {
         if (this.defaultBind[column.prop] === true) return;
         this.defaultColumn.forEach((ele) => {
-          if (!this.objectOption[column.prop][ele.prop] && ele.prop == "index")
-            this.$set(this.objectOption[column.prop], ele.prop, "");
+          if (!this.objectOption[column.prop][ele.prop] && ele.prop == "index") this.$set(this.objectOption[column.prop], ele.prop, "");
           if (["hide", "filters", "index", "sortable"].includes(ele.prop)) {
-            this.$watch(`objectOption.${column.prop}.${ele.prop}`, () =>
-              this.refreshTable()
-            );
+            this.$watch(`objectOption.${column.prop}.${ele.prop}`, () => this.refreshTable())
           }
         });
         this.defaultBind[column.prop] = true;
       });
     },
     refreshTable(callback) {
+      console.log("refreshTable");
       this.reload = false;
       this.$nextTick(() => {
         this.reload = true;

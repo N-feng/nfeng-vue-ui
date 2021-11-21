@@ -41,6 +41,7 @@
     <!-- 序号 -->
     <el-table-column
       v-if="crud.tableOption.index"
+      fixed="left"
       type="index"
       width="50"
       align="center"

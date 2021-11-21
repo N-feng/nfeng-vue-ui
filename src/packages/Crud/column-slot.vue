@@ -102,6 +102,7 @@ export default {
   inject: ["crud"],
   props: {
     column: Object,
+    columnOption: Array,
   },
   methods: {
     getSlotName(item = {}, type = "D", slot) {

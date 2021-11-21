@@ -1,11 +1,20 @@
 <template>
   <div class="crud__menu">
     <div class="crud__left">
+      <el-button
+        type="primary"
+        @click="crud.rowAdd"
+        icon="el-icon-plus"
+        v-permission="crud.getPermission('addBtn')"
+        :size="crud.isMediumSize"
+        v-if="crud.tableOption.addBtn"
+      >新 增</el-button>
       <div v-if="crud.tableOption.tableTitleRequire" class="red-star">*</div>
       <span
         class="crud-title"
         :class="{ 'crud-title-large': crud.tableOption.titleSize === 'large' }"
-      >{{ crud.tableOption.tableTitle }}</span>
+        >{{ crud.tableOption.tableTitle }}</span
+      >
       <slot name="menuLeft" :size="crud.size"></slot>
     </div>
     <div class="crud__right">
@@ -17,11 +26,12 @@
           :size="item.size ? item.size : crud.size"
           :type="item.type"
           @click="crud.$emit(item.operate, crud.searchForm)"
-        >{{ item.title }}</el-button>
+          >{{ item.title }}</el-button
+        >
       </template>
       <el-button
         v-if="crud.tableOption.fullscreenBtn"
-        :icon="crud.fullscreen?'el-icon-news':'el-icon-full-screen'"
+        :icon="crud.fullscreen ? 'el-icon-news' : 'el-icon-full-screen'"
         circle
         :size="crud.isMediumSize"
         @click="handleFullScreen"
@@ -52,8 +62,12 @@
 </template>
 
 <script>
+import permission from '../../utils/permission';
 export default {
   inject: ["crud"],
+  directives: {
+    permission
+  },
   methods: {
     handleFullScreen() {
       if (this.crud.fullscreen) {

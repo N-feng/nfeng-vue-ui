@@ -12,17 +12,17 @@ export default {
   // component: Form,
   title: "Example/Crud",
   argTypes: {
+    onRowSave: {
+      table: {
+        category: "Events",
+      },
+    },
     onRowUpdate: {
       table: {
         category: "Events",
       },
     },
     onRowDel: {
-      table: {
-        category: "Events",
-      },
-    },
-    onSubmit: {
       table: {
         category: "Events",
       },
@@ -37,7 +37,7 @@ const Template = (args, { argTypes }) => {
     template: `
       <div>
         <p>tableData：{{tableData}}</p>
-        <ygp-crud @onRowUpdate="onRowUpdate" @onRowDel="onRowDel" @onSubmit="onSubmit" v-bind="$props" :data="tableData" :dic="dic" />
+        <ygp-crud @onRowSave="onRowSave" @onRowUpdate="onRowUpdate" @onRowDel="onRowDel" v-bind="$props" :option="{...option,stripe,index}" :data="tableData" :dic="dic" />
       </div>
     `,
   };
@@ -63,4 +63,6 @@ Base.args = {
     }
   ],
   dic: {},
+  stripe: false,
+  index: false,
 }

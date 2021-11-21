@@ -2,11 +2,13 @@ export const base = {
   align:'center',
   menuAlign:'center',
   header:true,
+  addBtn:true,
   fullscreenBtn:true,
   columnBtn:true,
   menu:true,
   editBtn:true,
   delBtn:true,
+  index:false,
   columns:[
     {
       label:'姓名',
