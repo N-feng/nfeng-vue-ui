@@ -25,6 +25,23 @@
         </template>
       </header-menu>
       <!-- 表格提示标语 -->
+      <el-tag class="crud__tip" v-if="tableOption.selection">
+        <span class="crud__tip-name">
+          当前表格已选择
+          <span class="crud__tip-count">{{ selectLen }}</span>
+          项
+        </span>
+        <el-button
+          type="text"
+          size="small"
+          @click="selectClear"
+          v-permission="getPermission('selectClearBtn')"
+          v-if="
+            vaildData(tableOption.selectClearBtn, true) && tableOption.selection
+          "
+          >清 空</el-button
+        >
+      </el-tag>
       <slot name="tip" />
       <!-- 表格主体 -->
       <el-form
@@ -49,10 +66,10 @@
           :height="tableOption.height"
           :stripe="tableOption.stripe"
           :border="tableOption.border"
-          @current-change="(currentRow, oldCurrentRow) => emitEventHandler('current-change', currentRow, oldCurrentRow)"
+          @current-change="currentRowChange"
           @selection-change="selectionChange"
           @row-click="rowClick"
-          @sort-change="({ column, prop, order }) => emitEventHandler('sort-change', { column, prop, order })"
+          @sort-change="sortChange"
         >
           <!-- 暂无数据提醒 -->
           <template slot="empty">
@@ -71,7 +88,11 @@
             </column-default>
             <!-- 动态列 -->
             <template v-for="column in list">
-              <column-slot :key="column.label" :column="column" :column-option="columnOption">
+              <column-slot
+                :key="column.label"
+                :column="column"
+                :column-option="columnOption"
+              >
                 <template
                   v-for="item in mainSlot"
                   :slot="item"
@@ -192,7 +213,7 @@ export default {
       },
     },
     rowSelection: {
-      type: Object,
+      type: Boolean,
     },
     selectedRowKeys: {
       type: Array,
@@ -292,6 +313,9 @@ export default {
     },
     controlSize() {
       return this.tableOption.size || "small";
+    },
+    selectLen() {
+      return this.tableSelect ? this.tableSelect.length : 0;
     },
   },
   watch: {
@@ -408,7 +432,9 @@ export default {
         column.label !== "操作" &&
         column.type !== "check"
       ) {
-        this.rowCheck(!this.getCheck(row), row);
+        // this.rowCheck(!this.getCheck(row), row);
+        const val = !this.$refs.columnDefault.getCheck(row);
+        this.$refs.columnDefault.rowCheck(val, row);
       }
     },
     // 表格组件-搜索表单回调
@@ -498,6 +524,13 @@ export default {
     emitEventHandler(event) {
       this.$emit(event, ...Array.from(arguments).slice(1));
     },
+    selectClear() {
+      this.$refs.table.clearSelection();
+    },
+    //设置单选
+    currentRowChange(currentRow, oldCurrentRow) {
+      this.$emit("current-row-change", currentRow, oldCurrentRow);
+    },
     //刷新事件
     refreshChange() {
       this.$emit("refresh-change");
@@ -515,7 +548,11 @@ export default {
     // 选择回调
     selectionChange(val) {
       this.tableSelect = val;
-      this.$emit("selection-change", this.tableSelect);
+      this.$emit("onSelectionChange", this.tableSelect);
+    },
+    // 排序回调
+    sortChange(val) {
+      this.$emit("sort-change", val);
     },
     allCheck(val) {
       if (val) {
@@ -551,6 +588,7 @@ export default {
       }
     },
     rowCheck(val, row) {
+      console.log("val: ", val);
       const rowKey = this.getRowKey(row);
       if (val) {
         const selectedRowKeys = this.selectedRowKeys.concat([rowKey]);
@@ -618,7 +656,7 @@ export default {
       if (typeof this.tableOption.rowKey === "string") {
         return row[this.tableOption.rowKey];
       }
-      return row.key;
+      return row.key || row.id;
     },
     getCheck(row) {
       return this.selectedRowKeys.includes(this.getRowKey(row));
@@ -740,9 +778,12 @@ export default {
       this.propOption.forEach((column) => {
         if (this.defaultBind[column.prop] === true) return;
         this.defaultColumn.forEach((ele) => {
-          if (!this.objectOption[column.prop][ele.prop] && ele.prop == "index") this.$set(this.objectOption[column.prop], ele.prop, "");
+          if (!this.objectOption[column.prop][ele.prop] && ele.prop == "index")
+            this.$set(this.objectOption[column.prop], ele.prop, "");
           if (["hide", "filters", "index", "sortable"].includes(ele.prop)) {
-            this.$watch(`objectOption.${column.prop}.${ele.prop}`, () => this.refreshTable())
+            this.$watch(`objectOption.${column.prop}.${ele.prop}`, () =>
+              this.refreshTable()
+            );
           }
         });
         this.defaultBind[column.prop] = true;

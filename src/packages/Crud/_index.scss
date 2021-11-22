@@ -10,7 +10,9 @@
 }
 
 .crud__menu {
-  padding: 0 20px 12px;
+  // padding: 0 20px 12px;
+  // min-height: 40px;
+  padding-bottom: 8px;
   display: flex;
   justify-content: space-between;
 }
@@ -29,7 +31,7 @@
 }
 
 .crud-component {
-  background: #FFFFFF;
+  background: #ffffff;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -60,6 +62,19 @@
     .crud-title-large {
       font-size: 20px;
     }
+  }
+
+  // 提示
+  .crud__tip {
+    margin-bottom: 10px;
+  }
+  .crud__tip-name {
+    margin-right: 10px;
+  }
+  .crud__tip-count {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 3px;
   }
 
   // 表格
@@ -111,7 +126,7 @@
         overflow: visible;
       }
     }
-    
+
     .pagination {
       padding-top: 12px;
       text-align: right;
@@ -134,7 +149,6 @@
       padding: 0;
     }
   }
-
 }
 
 // form组件 + crud组件
@@ -148,8 +162,8 @@
 }
 
 .dialog-search-btns {
-  .el-form-item__content{
-    margin-left: 20px!important;
+  .el-form-item__content {
+    margin-left: 20px !important;
   }
 }
 
@@ -187,13 +201,13 @@
 // 修复列表页样式
 .list-component {
   .el-table__header-wrapper {
-    width: calc(100% - 9px)!important;
+    width: calc(100% - 9px) !important;
   }
   // .el-table__fixed-right {
   //   height: calc(100% - 8px)!important;
   // }
   .el-table--scrollable-y .el-table__fixed-right {
-    right: 9px!important;
+    right: 9px !important;
   }
 }
 
@@ -268,6 +282,4 @@
       }
     }
   }
-
 }
-
