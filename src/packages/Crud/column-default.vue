@@ -32,11 +32,14 @@
           v-if="crud.tableOption.checkAll !== false"
           v-model="crud.checkAll"
           :indeterminate="crud.isIndeterminate"
-          @change="(val) => allCheck(val, scope)"
+          @change="(val) => crud.allCheck(val, scope)"
         ></el-checkbox>
       </template>
       <template slot-scope="{ row }">
-        <el-checkbox :value="getCheck(row)" @change="(val) => rowCheck(val, row)"></el-checkbox>
+        <el-checkbox
+          :value="crud.getCheck(row)"
+          @change="(val) => crud.rowCheck(val, row)"
+        ></el-checkbox>
       </template>
     </el-table-column>
 
@@ -55,34 +58,5 @@
 <script>
 export default {
   inject: ["crud"],
-  data() {
-    return {
-      hasSelected: []
-    }
-  },
-  created() {
-    this.init()
-  },
-  methods: {
-    init () {
-      this.hasSelected = this.crud.selectedRowKeys.map(item => item);
-    },
-    rowCheck(val, row) {
-      const rowKey = this.crud.getRowKey(row);
-      console.log('111')
-      if (val) {
-        this.hasSelected.push(rowKey);
-      } else {
-        const index = this.hasSelected.findIndex((item) => item === rowKey);
-        this.hasSelected.splice(index, 1);
-      }
-      this.crud.$emit('onSelectChange', this.hasSelected);
-      this.crud.$emit("update:selectedRowKeys", this.hasSelected);
-    },
-    getCheck(row) {
-      const rowKey = this.crud.getRowKey(row);
-      return this.hasSelected.includes(rowKey);
-    }
-  }
 };
 </script>

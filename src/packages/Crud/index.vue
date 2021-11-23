@@ -148,9 +148,11 @@ import { validatenull } from "../../utils/validate";
 import { defaultColumn } from "./config.js";
 import { arraySort } from "../../utils/util";
 import permission from "../../utils/permission";
+import rowSelection from "./rowSelection";
 
 export default {
   name: "YgpCrud",
+  mixins: [rowSelection],
   directives: {
     permission,
   },
@@ -240,8 +242,6 @@ export default {
       },
       searchForm: {},
       expand: false,
-      checkAll: false,
-      isIndeterminate: false,
       objectOption: {},
       defaultColumn,
       defaultBind: {},
@@ -336,8 +336,8 @@ export default {
       immediate: true,
     },
     data: {
-      handler(val) {
-        this.tableDataInit(val);
+      handler() {
+        this.dataInit();
       },
       deep: true,
     },
@@ -346,23 +346,10 @@ export default {
         this.searchForm = val;
       },
     },
-    selectedRowKeys: {
-      handler(val) {
-        if (this.tableOption.rowSelection) {
-          this.checkAll =
-            this.tableData.length > 0 &&
-            this.tableData.every((row) => this.getCheck(row));
-          this.isIndeterminate =
-            val.length > 0 &&
-            this.tableData.some((row) => this.getCheck(row)) &&
-            !this.tableData.every((row) => this.getCheck(row));
-        }
-      },
-      // immediate: true,
-    },
   },
   created() {
-    this.tableDataInit(this.data);
+    // 初始化数据
+    this.dataInit(this.data);
     this.formDataInit();
     this.pageDataInit();
     this.onLoad();
@@ -432,9 +419,7 @@ export default {
         column.label !== "操作" &&
         column.type !== "check"
       ) {
-        // this.rowCheck(!this.getCheck(row), row);
-        const val = !this.$refs.columnDefault.getCheck(row);
-        this.$refs.columnDefault.rowCheck(val, row);
+        this.rowCheck(!this.getCheck(row), row);
       }
     },
     // 表格组件-搜索表单回调
@@ -442,17 +427,8 @@ export default {
       this.$emit("crudFormChange", value, option, formData);
     },
     // 表格数据初始化
-    tableDataInit(data) {
+    dataInit(data) {
       this.tableData = data;
-      if (this.tableOption.rowSelection) {
-        this.checkAll =
-          this.tableData.length > 0 &&
-          this.tableData.every((row) => this.getCheck(row));
-        this.isIndeterminate =
-          this.selectedRowKeys.length > 0 &&
-          this.tableData.some((row) => this.getCheck(row)) &&
-          !this.tableData.every((row) => this.getCheck(row));
-      }
     },
     // 搜索表单数据初始化
     formDataInit() {
@@ -554,57 +530,6 @@ export default {
     sortChange(val) {
       this.$emit("sort-change", val);
     },
-    allCheck(val) {
-      if (val) {
-        // 新增选择的数据
-        let selected = this.tableData.filter((row) => {
-          if (
-            this.selectedRowKeys.some((item) => item === this.getRowKey(row))
-          ) {
-            return false;
-          }
-          return true;
-        });
-        let selectedRowKeys = this.selectedRowKeys.concat(
-          selected.map((row) => this.getRowKey(row))
-        );
-
-        this.$emit("update:selectedRowKeys", selectedRowKeys);
-        this.$emit("all-check", val, JSON.parse(JSON.stringify(selected)));
-      } else {
-        // 已经选择的数据
-        let selected = this.tableData.filter((item) => {
-          if (this.tableData.some((row) => this.getRowKey(row) === item)) {
-            return false;
-          }
-          return true;
-        });
-        let selectedRowKeys = this.selectedRowKeys.filter((item) => {
-          return !selected.map((row) => this.getRowKey(row)).includes(item);
-        });
-
-        this.$emit("update:selectedRowKeys", selectedRowKeys);
-        this.$emit("all-check", val, selected);
-      }
-    },
-    rowCheck(val, row) {
-      console.log("val: ", val);
-      const rowKey = this.getRowKey(row);
-      if (val) {
-        const selectedRowKeys = this.selectedRowKeys.concat([rowKey]);
-        this.$emit("update:selectedRowKeys", selectedRowKeys);
-      } else {
-        const selectedRowKeys = this.selectedRowKeys.map((item) => item);
-        const index = this.selectedRowKeys.findIndex((item) => item === rowKey);
-        if (index !== -1) {
-          selectedRowKeys.splice(index, 1);
-        }
-        this.$emit("update:selectedRowKeys", selectedRowKeys);
-      }
-      this.$nextTick(() => {
-        this.$emit("row-check", val, JSON.parse(JSON.stringify(row)));
-      });
-    },
     //行编辑点击
     rowCell(val, row) {
       const rowKey = this.getRowKey(row);
@@ -657,9 +582,6 @@ export default {
         return row[this.tableOption.rowKey];
       }
       return row.key || row.id;
-    },
-    getCheck(row) {
-      return this.selectedRowKeys.includes(this.getRowKey(row));
     },
     getSlotList(list = [], slot, propList) {
       propList = propList.map((ele) => ele.prop);

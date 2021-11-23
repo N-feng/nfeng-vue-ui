@@ -91,9 +91,11 @@ Base.args = {
   option: base,
   tableData,
   dic: {},
+  selectedRowKeys: [],
   stripe: false,
   index: false,
   selection: false,
+  rowSelection: false,
 };
 
 // 多选
@@ -102,7 +104,7 @@ Selection.args = {
   option: selection,
   tableData,
   dic: {},
-  selectedRowKeys: [5],
+  selectedRowKeys: [3, 5],
   stripe: false,
   index: false,
   selection: true,
