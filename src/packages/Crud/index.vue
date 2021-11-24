@@ -4,7 +4,7 @@
     <header-search
       ref="headerSearch"
       :search="searchForm"
-      @submit="searchSubmit"
+      @onSubmit="searchSubmit"
       @reset="searchReset"
     >
       <template slot="searchMenu" slot-scope="scope">
@@ -457,17 +457,6 @@ export default {
       this.onLoad();
       // 请求数据清空已选择行
       this.clearSelection();
-    },
-    // 表格提交回调
-    submitForm() {
-      return new Promise((resolve) => {
-        this.$refs.cellForm.validate((valid, msg) => {
-          resolve({ formData: this.cellForm, errorData: msg, valid });
-          if (valid) {
-            this.$emit("submit", this.cellForm);
-          }
-        });
-      });
     },
     // 对部分表单字段进行校验
     validateCellForm() {

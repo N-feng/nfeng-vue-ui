@@ -6,7 +6,7 @@ Vue.use(ElementUI);
 import NfengUI from "../packages/main";
 Vue.use(NfengUI);
 
-import { base, selection } from "./options/crud";
+import {base, search, selection} from "./options/crud";
 
 export default {
   // component: Form,
@@ -36,6 +36,11 @@ export default {
       table: {
         category: "Events"
       }
+    },
+    onSubmit: {
+      table: {
+        category: "Events"
+      }
     }
   },
 };
@@ -47,16 +52,16 @@ const Template = (args, { argTypes }) => {
     template: `
       <div>
         <p>tableData: {{tableData}}</p>
-        <ygp-crud
-          @onRowSave="onRowSave"
-          @onRowUpdate="onRowUpdate"
-          @onRowDel="onRowDel"
-          @onSelectionChange="onSelectionChange"
-          @onSelectChange="onSelectChange"
-          v-bind="$props"
-          :option="{...option,stripe,index,selection,rowSelection}"
-          :data="tableData"
-          :dic="dic" />
+        <ygp-crud v-bind="$props" 
+                  :option="{...option,stripe,index,selection,rowSelection}" 
+                  :data="tableData" 
+                  :dic="dic" 
+                  @onRowSave="onRowSave" 
+                  @onRowUpdate="onRowUpdate" 
+                  @onRowDel="onRowDel" 
+                  @onSelectionChange="onSelectionChange" 
+                  @onSelectChange="onSelectChange" 
+                  @onSubmit="onSubmit" />
       </div>
     `,
   };
@@ -110,3 +115,16 @@ Selection.args = {
   selection: true,
   rowSelection: false,
 };
+
+// 搜索
+export const Search = Template.bind({});
+Search.args = {
+  option: search,
+  tableData,
+  dic: {},
+  selectedRowKeys: [],
+  stripe: false,
+  index: false,
+  selection: false,
+  rowSelection: false,
+}

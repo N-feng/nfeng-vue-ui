@@ -5,7 +5,7 @@
         v-model="searchForm"
         :option="option"
         :dic="crud.dic"
-        @submit="formData => $emit('submit', formData)"
+        @onSubmit="handleSubmit"
         @reset="formData => $emit('reset', formData)"
       >
         <template slot="menuForm" slot-scope="scope">
@@ -21,6 +21,7 @@
 
 <script>
 import { deepClone } from "../../utils/util";
+import {formInitVal} from "../../common/dataformat";
 // import QueryFilter from "../Form/QueryFilter.vue";
 
 export default {
@@ -37,6 +38,9 @@ export default {
   },
   data() {
     return {
+      defaultForm: {
+        searchForm: {}
+      },
       searchShow: true,
       searchForm: {},
     };
@@ -63,6 +67,8 @@ export default {
           if (ele.search) {
             ele = Object.assign(ele, {
               order: ele.searchOrder,
+              rules: ele.searchRules,
+              value: ele.searchValue,
               range: ele.range || ele.searchRange,
             });
             column.push(ele);
@@ -78,6 +84,7 @@ export default {
         result.items = detailColumn(deepClone(this.propOption));
         result = Object.assign(result, {
           search: true,
+          submitText: '搜 索'
         });
         return result;
       };
@@ -89,6 +96,12 @@ export default {
     },
   },
   watch: {
+    'crud.propOption': {
+      handler () {
+        this.dataFormat();
+      },
+      immediate: true,
+    },
     search: {
       handler() {
         this.searchForm = Object.assign(this.searchForm, this.search);
@@ -98,9 +111,15 @@ export default {
     },
   },
   methods: {
+    handleSubmit (formData) {
+      this.crud.$emit("onSubmit", formData)
+    },
     handleSearchShow() {
       this.searchShow = !this.searchShow;
     },
+    dataFormat () {
+      this.defaultForm = formInitVal(this.option.items);
+    }
   },
 };
 </script>

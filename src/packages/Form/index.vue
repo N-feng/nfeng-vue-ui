@@ -102,25 +102,14 @@
               </component>
             </el-form-item>
           </template>
-          <el-form-item v-if="isSearch" :style="{marginLeft: parentOption.labelWidth || '140px'}">
-            <slot name="menuForm"></slot>
-            <el-button type="primary" :size="controlSize" @click="submitForm">查询</el-button>
-            <el-button :size="controlSize" :plain="true" @click="resetForm">重置</el-button>
-            <el-button
-              v-if="option.items.length > 5"
-              :size="controlSize"
-              type="text"
-              @click="expand = !expand"
-            >
-              {{ expand ? "收起" : "展开" }}
-              <i
-                :class="expand ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
-              ></i>
-            </el-button>
-          </el-form-item>
+          <form-menu v-if="isSearch" :is-search="isSearch">
+            <template slot="menuForm" slot-scope="scope">
+              <slot name="menuForm" v-bind="scope"></slot>
+            </template>
+          </form-menu>
         </div>
       </ygp-group>
-      <form-menu v-if="!isSearch">
+      <form-menu v-if="!isSearch" :is-search="isSearch">
         <template slot="menuForm" slot-scope="scope">
           <slot name="menuForm" v-bind="scope"></slot>
         </template>
@@ -184,7 +173,8 @@ export default {
   data() {
     return {
       expand: false,
-      activeName: "",
+      activeName: '',
+      allDisabled: false,
       bindList: {},
       formData: {},
       formOption: {},
@@ -265,7 +255,7 @@ export default {
       return vaildData(this.formOption.tabsActive + '', '1');
     },
     isMock () {
-      return this.vaildData(this.parentOption.mockBtn, false);
+      return vaildData(this.parentOption.mockBtn, false);
     }
   },
   watch: {
@@ -306,6 +296,7 @@ export default {
     getLabel,
     getComponent,
     getPlaceholder,
+    vaildData,
     init() {
       this.formOption = this.option;
     },
@@ -418,18 +409,8 @@ export default {
     },
     enterSearch() {
       if (this.enableEnterSearch) {
-        this.submitForm();
+        this.submit();
       }
-    },
-    submitForm() {
-      return new Promise((resolve) => {
-        this.$refs["ruleForm"].validate((valid, msg) => {
-          resolve({ formData: this.formData, errorData: msg, valid });
-          if (valid) {
-            this.$emit("submit", this.formData);
-          }
-        });
-      });
     },
     isGroupShow(item, index) {
       if (this.isTabs) {
@@ -464,9 +445,7 @@ export default {
               });
             }
           } else {
-            dynamicList.push(
-              this.$refs[ele.prop][0].$refs.main.validateCellForm()
-            );
+            dynamicList.push(this.$refs[ele.prop][0].$refs.main.validateCellForm());
           }
         });
         Promise.all(dynamicList).then((res) => {
@@ -484,29 +463,37 @@ export default {
         });
       });
     },
+    resetForm() {
+      this.$refs.ruleForm.resetFields();
+      // if (this.reset) {
+      //   this.clearVal();
+      //   this.$nextTick(() => this.clearValidate())
+      // }
+      // this.$emit("reset-change");
+    },
+    clearVal () {
+      this.formData = clearVal(this.formData);
+      this.$emit("input", this.formData);
+      this.$emit("change", this.formData);
+    },
+    show () {
+      this.allDisabled = true;
+    },
+    hide () {
+      this.allDisabled = false;
+    },
     submit() {
       this.validate((valid, msg) => {
         if (valid) {
+          this.show();
+          setTimeout(() => {
+            this.hide();
+          }, 5000);
           this.$emit("onSubmit", this.formData);
         } else {
           this.$emit("onError", msg);
         }
       });
-    },
-    exportForm() {
-      this.$emit("export", this.formData);
-    },
-    resetForm() {
-      if (this.reset) {
-        this.clearVal();
-        this.$nextTick(() => this.clearValidate())
-      }
-      this.$emit("reset-change");
-    },
-    clearVal () {
-      this.formData = clearVal(this.formData)
-      this.$emit("input", this.formData);
-      this.$emit("change", this.formData);
     },
   },
 };
