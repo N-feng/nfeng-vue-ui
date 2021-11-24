@@ -46,7 +46,7 @@ const Template = (args, { argTypes }) => {
     props: Object.keys(argTypes),
     template: `
       <div>
-        <p>tableData：{{tableData}}</p>
+        <p>tableData: {{tableData}}</p>
         <ygp-crud
           @onRowSave="onRowSave"
           @onRowUpdate="onRowUpdate"

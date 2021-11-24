@@ -11,7 +11,7 @@
       <template v-if="['button','text','icon'].includes(menuType)">
         <template v-if="crud.tableOption.cellBtn">
           <el-button
-            v-if="crud.tableOption.editBtn && !crud.editableKeys.includes(crud.getRowKey(row))"
+            v-if="crud.tableOption.editBtn && !crud.editableKeys.includes(crud.handleGetRowKeys(row))"
             v-permission="crud.getPermission('viewBtn',row,$index)"
             type="text"
             size="small"
@@ -19,7 +19,7 @@
             @click.stop="crud.rowCell(true,row)"
           >编辑</el-button>
           <el-button
-            v-if="crud.tableOption.editBtn && crud.editableKeys.includes(crud.getRowKey(row))"
+            v-if="crud.tableOption.editBtn && crud.editableKeys.includes(crud.handleGetRowKeys(row))"
             v-permission="crud.getPermission('saveBtn',row,$index)"
             type="text"
             size="small"

@@ -64,7 +64,7 @@
       >{{scope.row[column.prop]}}</div>
       <!-- 表单控件 -->
       <el-form-item
-        v-else-if="crud.getItemShow(column.edit) || crud.editableKeys.includes(crud.getRowKey(scope.row))"
+        v-else-if="crud.getItemShow(column.edit) || crud.editableKeys.includes(crud.handleGetRowKeys(scope.row))"
         :prop="`list.${scope.$index}.${column.prop}`"
         :rules="crud.getRules(column.rules, scope.row)"
       >

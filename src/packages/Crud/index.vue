@@ -25,7 +25,7 @@
         </template>
       </header-menu>
       <!-- 表格提示标语 -->
-      <el-tag class="crud__tip" v-if="tableOption.selection">
+      <el-tag class="crud__tip" v-if="tableOption.selection || tableOption.rowSelection">
         <span class="crud__tip-name">
           当前表格已选择
           <span class="crud__tip-count">{{ selectLen }}</span>
@@ -36,11 +36,7 @@
           size="small"
           @click="selectClear"
           v-permission="getPermission('selectClearBtn')"
-          v-if="
-            vaildData(tableOption.selectClearBtn, true) && tableOption.selection
-          "
-          >清 空</el-button
-        >
+          v-if="vaildData(tableOption.selectClearBtn, true) && tableOption.selection || tableOption.rowSelection">清 空</el-button>
       </el-tag>
       <slot name="tip" />
       <!-- 表格主体 -->
@@ -56,7 +52,7 @@
           v-if="reload"
           ref="table"
           :data="cellForm.list"
-          :row-key="tableOption.rowKey"
+          :row-key="handleGetRowKeys"
           :size="controlSize"
           :expand-row-keys="tableOption.expandRowKeys"
           :default-expand-all="tableOption.defaultExpandAll"
@@ -80,34 +76,25 @@
               ></ygp-empty>
             </div>
           </template>
-          <div>
-            <column-default ref="columnDefault">
-              <template slot="expand" slot-scope="{ row, index }">
-                <slot :row="row" :index="index" name="expand"></slot>
+          <column :columnOption="columnOption">
+            <column-default ref="columnDefault"
+                            slot="header">
+              <template slot-scope="{ row, index }"
+                        slot="expand">
+                <slot :row="row"
+                      :index="index"
+                      name="expand"></slot>
               </template>
+              <column-select ref="columnSelect"
+                             slot="select"
+                             :hasSelected.sync="hasSelected"></column-select>
             </column-default>
-            <!-- 动态列 -->
-            <template v-for="column in list">
-              <column-slot
-                :key="column.label"
-                :column="column"
-                :column-option="columnOption"
-              >
-                <template
-                  v-for="item in mainSlot"
-                  :slot="item"
-                  slot-scope="scope"
-                >
-                  <slot v-bind="scope" :name="item"></slot>
-                </template>
-              </column-slot>
-            </template>
-            <column-menu>
+            <column-menu slot="footer">
               <template slot="menu" slot-scope="scope">
                 <slot name="menu" v-bind="scope"></slot>
               </template>
             </column-menu>
-          </div>
+          </column>
         </el-table>
       </el-form>
       <div class="footer">
@@ -139,20 +126,20 @@
 <script>
 import headerSearch from "./header-search.vue";
 import headerMenu from "./header-menu.vue";
+import column from "./column.vue";
 import columnDefault from "./column-default.vue";
-import columnSlot from "./column-slot.vue";
+import columnSelect from "./column-select.vue";
 import columnMenu from "./column-menu.vue";
 import dialogColumn from "./dialog-column.vue";
 import dialogForm from "./dialog-form.vue";
 import { validatenull } from "../../utils/validate";
 import { defaultColumn } from "./config.js";
-import { arraySort } from "../../utils/util";
 import permission from "../../utils/permission";
-import rowSelection from "./rowSelection";
+import init from "./init";
 
 export default {
   name: "YgpCrud",
-  mixins: [rowSelection],
+  mixins: [init()],
   directives: {
     permission,
   },
@@ -164,8 +151,9 @@ export default {
   components: {
     headerSearch, // 搜索
     headerMenu, // 菜单头部
+    column, // 列
     columnDefault, // 默认列
-    columnSlot, // 动态列
+    columnSelect, // 选择列
     columnMenu, // 操作栏
     dialogColumn, // 显隐列
     dialogForm, // 表单
@@ -247,6 +235,7 @@ export default {
       defaultBind: {},
       fullscreen: false,
       editableKeys: [],
+      hasSelected: [],
     };
   },
   computed: {
@@ -271,16 +260,6 @@ export default {
       return {
         list,
       };
-    },
-    list() {
-      let result = [...this.columnOption];
-      result = arraySort(
-        result,
-        "index",
-        (a, b) =>
-          this.objectOption[a.prop]?.index - this.objectOption[b.prop]?.index
-      );
-      return result;
     },
     mainSlot() {
       let result = [];
@@ -315,6 +294,9 @@ export default {
       return this.tableOption.size || "small";
     },
     selectLen() {
+      if (this.tableOption.rowSelection) {
+        return this.hasSelected.length;
+      }
       return this.tableSelect ? this.tableSelect.length : 0;
     },
   },
@@ -346,6 +328,13 @@ export default {
         this.searchForm = val;
       },
     },
+    selectedRowKeys: {
+      handler(val) {
+        this.hasSelected = val;
+      },
+      deep: true,
+      immediate: true,
+    },
   },
   created() {
     // 初始化数据
@@ -374,31 +363,22 @@ export default {
         return true;
       }
     },
+    handleGetRowKeys (row) {
+      const rowKey = row[this.rowKey] || JSON.stringify(row);
+      return rowKey;
+    },
     // 表格行样式
     tableRowClassName({ row }) {
-      let key = this.tableOption.rowKey;
-      if (key) {
-        //有rowKey-支持跨页
-        let selected =
-          this.tableSelect.find((f) => f[key] === row[key]) ||
-          this.getCheck(row);
-        return `${selected ? "selected" : ""} ${
-          (this.tableOption.rowClassName &&
-            this.tableOption.rowClassName({ row })) ||
-          ""
-        }`;
-      } else {
-        //没有rowKey-不支持跨页
-        let selected2 =
-          this.tableSelect.find(
-            (f) => JSON.stringify(f) === JSON.stringify(row)
-          ) || this.getCheck(row);
-        return `${selected2 ? "selected" : ""} ${
-          (this.tableOption.rowClassName &&
-            this.tableOption.rowClassName({ row })) ||
-          ""
-        }`;
+      let rowKey = this.handleGetRowKeys(row);
+      let selected = this.tableSelect.find((r) => this.handleGetRowKeys(r) === rowKey);
+      if (this.tableOption.rowSelection) {
+        selected = this.hasSelected.includes(rowKey);
       }
+      let className = [{"selected": selected}];
+      if (typeof this.tableOption.rowClassName === "function") {
+        className.concat(this.tableOption.rowClassName(row));
+      }
+      return className;
     },
     //可选表格-当前行点击处理
     rowClick(row, column) {
@@ -414,19 +394,24 @@ export default {
           this.$refs.table.toggleRowSelection(row);
         }
       }
+
       if (
         this.tableOption.rowSelection &&
         column.label !== "操作" &&
         column.type !== "check"
       ) {
-        this.rowCheck(!this.getCheck(row), row);
+        let rowKey = this.handleGetRowKeys(row);
+        let selected = !this.hasSelected.includes(rowKey);
+        if (selected) {
+          this.hasSelected.push(rowKey);
+        } else {
+          let index = this.hasSelected.findIndex((item) => item === rowKey);
+          this.hasSelected.splice(index, 1);
+        }
+        // this.$emit("update:selectedRowKeys", this.hasSelected);
+        this.$emit("onSelectChange", this.hasSelected);
       }
     },
-    // 表格组件-搜索表单回调
-    crudFormChange(value, option, formData) {
-      this.$emit("crudFormChange", value, option, formData);
-    },
-    // 表格数据初始化
     dataInit(data) {
       this.tableData = data;
     },
@@ -446,10 +431,6 @@ export default {
     pageDataInit() {
       this.pageData = Object.assign(this.pageData, this.page);
       this.updateValue();
-    },
-    // 导出按钮
-    exportForm() {
-      this.$emit("export-form", this.searchForm);
     },
     // 查询按钮回调
     searchSubmit(formData) {
@@ -502,6 +483,8 @@ export default {
     },
     selectClear() {
       this.$refs.table.clearSelection();
+      this.hasSelected = [];
+      this.$emit("update:selectedRowKeys", []);
     },
     //设置单选
     currentRowChange(currentRow, oldCurrentRow) {
@@ -532,7 +515,7 @@ export default {
     },
     //行编辑点击
     rowCell(val, row) {
-      const rowKey = this.getRowKey(row);
+      const rowKey = this.handleGetRowKeys(row);
       if (val) {
         this.editableKeys.push(rowKey);
       } else {
@@ -573,15 +556,6 @@ export default {
     // 删除
     rowDel(row, index) {
       this.$emit("onRowDel", row, index);
-    },
-    getRowKey(row) {
-      if (typeof this.tableOption.rowKey === "function") {
-        return this.tableOption.rowKey(row);
-      }
-      if (typeof this.tableOption.rowKey === "string") {
-        return row[this.tableOption.rowKey];
-      }
-      return row.key || row.id;
     },
     getSlotList(list = [], slot, propList) {
       propList = propList.map((ele) => ele.prop);
@@ -712,7 +686,6 @@ export default {
       });
     },
     refreshTable(callback) {
-      console.log("refreshTable");
       this.reload = false;
       this.$nextTick(() => {
         this.reload = true;

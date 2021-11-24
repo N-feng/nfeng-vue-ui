@@ -40,7 +40,7 @@ const Template = (args, { argTypes }) => {
     props: Object.keys(argTypes),
     template: `
       <div>
-        <p>formData：{{formData}}</p>
+        <p>formData: {{formData}}</p>
         <ygp-form @onChange="onChange" @onCancel="onCancel" @onSubmit="onSubmit" v-bind="$props" v-model="formData" :dic="dic" />
       </div>
     `,
