@@ -28,7 +28,7 @@
                :icon="formSafe.parentOption.emptyIcon || 'el-icon-delete'"
                :size="formSafe.controlSize"
                :loading="formSafe.allDisabled"
-               @click="formSafe.resetForm">{{ vaildData(formSafe.parentOption.emptyText, "清 空") }}</el-button>
+               @click="formSafe.resetForm">{{vaildData(formSafe.parentOption.emptyText, "清 空")}}</el-button>
     <el-button v-if="formSafe.option.items.length > 5"
                :size="formSafe.controlSize"
                type="text"

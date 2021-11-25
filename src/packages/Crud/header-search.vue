@@ -1,12 +1,11 @@
 <template>
   <el-collapse-transition>
-    <el-card v-show="searchShow && searchFlag" shadow="never">
+    <el-card v-if="searchShow && searchFlag" shadow="never">
       <ygp-form
         v-model="searchForm"
         :option="option"
         :dic="crud.dic"
         @onSubmit="handleSubmit"
-        @reset="formData => $emit('reset', formData)"
       >
         <template slot="menuForm" slot-scope="scope">
           <slot
@@ -22,11 +21,9 @@
 <script>
 import { deepClone } from "../../utils/util";
 import {formInitVal} from "../../common/dataformat";
-// import QueryFilter from "../Form/QueryFilter.vue";
 
 export default {
   name: "HeaderSearch",
-  // components: { QueryFilter },
   inject: ["crud"],
   props: {
     search: {

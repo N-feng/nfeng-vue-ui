@@ -1,3 +1,5 @@
+import moment from "moment";
+
 export const base = {
   align:'center',
   menuAlign:'center',
@@ -48,6 +50,7 @@ export const search = {
       message: "请输入姓名",
       trigger: "blur"
     }],
+    searchOrder: 1
   },{
     label: '日期',
     prop: 'date',
@@ -55,6 +58,13 @@ export const search = {
     searchSpan:12,
     searchRange:true,
     search:true,
+    value: [
+      moment(new Date())
+          .subtract(15, "days")
+          .format("YYYY-MM-DD"),
+      moment(new Date()).add(15, "days").format("YYYY-MM-DD")
+    ],
+    searchOrder: 3
   }, {
     label:'性别',
     prop:'sex',

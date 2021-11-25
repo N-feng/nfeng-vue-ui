@@ -18,8 +18,13 @@
 </template>
 
 <script>
-export default {
-  name: "YgpDynamic",
+  import create from '../../common/create';
+  import props from "../../common/props";
+  import event from "../../common/event";
+
+export default create({
+  name: "dynamic",
+  mixins: [props(), event()],
   props: {
     columnSlot: {
       type: Array,
@@ -33,15 +38,9 @@ export default {
         return {};
       },
     },
-    value: {},
     dic: {
       type: Object,
     },
-  },
-  data() {
-    return {
-      text: undefined,
-    };
   },
   computed: {
     showType() {
@@ -63,18 +62,7 @@ export default {
       );
     },
   },
-  watch: {
-    value: {
-      handler() {
-        this.initVal();
-      },
-      immediate: true,
-    },
-  },
   methods: {
-    initVal() {
-      this.text = this.value;
-    },
     getSlotName(item = {}, type = "D", slot) {
       let result = {
         F: "Form",
@@ -90,5 +78,5 @@ export default {
       return name;
     },
   },
-};
+});
 </script>

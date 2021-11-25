@@ -179,7 +179,8 @@ export default {
       formData: {},
       formOption: {},
       formCreate: false,
-      submitLoading: false,
+      formDefault: {},
+      formVal: {},
       queryData: {},
     };
   },
@@ -276,6 +277,7 @@ export default {
         if (this.formCreate) {
           this.setForm(val);
         } else {
+          // this.formVal = Object.assign(this.formVal, val || {});
           this.formData = val;
         }
       },
@@ -304,6 +306,10 @@ export default {
     dataFormat() {
       let { tableForm } = deepClone(formInitVal(this.propOption));
       this.setForm(Object.assign(tableForm, this.formData))
+
+      // this.formDefault = formInitVal(this.propOption);
+      // let value = deepClone(this.formDefault.tableForm);
+      // this.setForm(deepClone(Object.assign(value, this.formVal)));
     },
     remote(callback, query) {
       this.$emit("remote", callback, query);
@@ -354,7 +360,7 @@ export default {
           this.$watch("form." + bind, (n, o) => {
             if (n != o) this.$set(this.form, prop, n);
           });
-          this.$set(this.form, prop, eval("value." + bind));
+          this.$set(this.formData, prop, eval("value." + bind));
           this.bindList[prop] = true;
         }
       });
@@ -399,13 +405,6 @@ export default {
       });
       this.clearValidate();
       this.$emit("mock-change", this.formData);
-    },
-    handleSubmit() {
-      this.submitLoading = true;
-      setTimeout(() => {
-        this.submitLoading = false;
-      }, 5000);
-      this.$emit("handleSubmit");
     },
     enterSearch() {
       if (this.enableEnterSearch) {
@@ -464,15 +463,14 @@ export default {
       });
     },
     resetForm() {
-      this.$refs.ruleForm.resetFields();
-      // if (this.reset) {
-      //   this.clearVal();
-      //   this.$nextTick(() => this.clearValidate())
-      // }
-      // this.$emit("reset-change");
+      if (this.reset) {
+        this.clearVal();
+        this.$nextTick(() => this.clearValidate())
+      }
+      this.$emit("reset-change");
     },
     clearVal () {
-      this.formData = clearVal(this.formData);
+      this.formData = clearVal(this.formData, []);
       this.$emit("input", this.formData);
       this.$emit("change", this.formData);
     },

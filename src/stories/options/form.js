@@ -5,12 +5,13 @@ export const base = {
     {
       label: "用户名",
       prop: "username",
+      value: "small",
       tip: "这是信息提示",
       span: 8,
-      maxlength: 3,
+      // maxlength: 3,
       suffixIcon: "el-icon-tickets",
       prefixIcon: "el-icon-tickets",
-      minlength: 2,
+      // minlength: 2,
       mock: {
         type: "name",
         en: true,

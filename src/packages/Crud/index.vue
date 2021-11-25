@@ -258,7 +258,7 @@ export default {
         return eval(result.join("&&"));
       });
       return {
-        list,
+        list
       };
     },
     mainSlot() {
