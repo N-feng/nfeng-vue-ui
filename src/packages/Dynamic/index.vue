@@ -1,6 +1,6 @@
 <template>
   <div style="width: 100%;">
-    <YgpCrud
+    <YgpCrud v-if="isCrud"
       ref="main"
       :dic="dic"
       :option="option"

@@ -42,6 +42,7 @@ export const initVal = (value, column) => {
     alone,
     emitPath,
   } = column;
+
   let list = value;
   if (
     (MULTIPLE_LIST.includes(type) && multiple) ||
@@ -58,7 +59,7 @@ export const initVal = (value, column) => {
     list.forEach((ele, index) => {
       list[index] = detailDataType(ele, dataType);
     });
-    if (ARRAY_LIST.includes(type) && validatenull(list) && alone) list = [""];
+    if (ARRAY_LIST.includes(type) && validatenull(list) && alone) list = [''];
   } else {
     list = detailDataType(list, dataType);
   }

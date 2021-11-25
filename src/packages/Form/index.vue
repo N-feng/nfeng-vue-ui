@@ -73,8 +73,8 @@
                 :is="getComponent(column.type)"
                 v-else
                 :ref="column.prop"
-                v-model="formData[column.prop]"
                 v-bind="column"
+                v-model="formData[column.prop]"
                 :column="column"
                 :dic="dic"
                 :size="parentOption.size"
@@ -277,8 +277,8 @@ export default {
         if (this.formCreate) {
           this.setForm(val);
         } else {
-          // this.formVal = Object.assign(this.formVal, val || {});
-          this.formData = val;
+          this.formVal = Object.assign(this.formVal, val || {});
+          // this.formData = val;
         }
       },
       deep: true,
@@ -304,12 +304,12 @@ export default {
     },
     // 初始化表单
     dataFormat() {
-      let { tableForm } = deepClone(formInitVal(this.propOption));
-      this.setForm(Object.assign(tableForm, this.formData))
+      // let { tableForm } = deepClone(formInitVal(this.propOption));
+      // this.setForm(Object.assign(tableForm, this.formData))
 
-      // this.formDefault = formInitVal(this.propOption);
-      // let value = deepClone(this.formDefault.tableForm);
-      // this.setForm(deepClone(Object.assign(value, this.formVal)));
+      this.formDefault = formInitVal(this.propOption);
+      let value = deepClone(this.formDefault.tableForm);
+      this.setForm(deepClone(Object.assign(value, this.formVal)));
     },
     remote(callback, query) {
       this.$emit("remote", callback, query);
@@ -351,18 +351,18 @@ export default {
         let column = this.propOption.find((column) => column.prop == ele);
         this.$set(this.formData, ele, result);
         if (!column) return;
-        let prop = column.prop;
-        let bind = column.bind;
-        if (bind && !this.bindList[prop]) {
-          this.$watch("form." + prop, (n, o) => {
-            if (n != o) setAsVal(this.form, bind, n);
-          });
-          this.$watch("form." + bind, (n, o) => {
-            if (n != o) this.$set(this.form, prop, n);
-          });
-          this.$set(this.formData, prop, eval("value." + bind));
-          this.bindList[prop] = true;
-        }
+        // let prop = column.prop;
+        // let bind = column.bind;
+        // if (bind && !this.bindList[prop]) {
+        //   this.$watch("form." + prop, (n, o) => {
+        //     if (n != o) setAsVal(this.form, bind, n);
+        //   });
+        //   this.$watch("form." + bind, (n, o) => {
+        //     if (n != o) this.$set(this.form, prop, n);
+        //   });
+        //   this.$set(this.form, prop, eval("value." + bind));
+        //   this.bindList[prop] = true;
+        // }
       });
       // this.forEachLabel();
     },

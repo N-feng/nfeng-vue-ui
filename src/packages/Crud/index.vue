@@ -412,8 +412,8 @@ export default {
         this.$emit("onSelectChange", this.hasSelected);
       }
     },
-    dataInit(data) {
-      this.tableData = data;
+    dataInit() {
+      this.tableData = this.data;
     },
     // 搜索表单数据初始化
     formDataInit() {
