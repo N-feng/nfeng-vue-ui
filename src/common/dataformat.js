@@ -104,6 +104,30 @@ export const formInitVal = (list = []) => {
 };
 
 /**
+ * 搜索框获取动态组件
+ */
+export const getSearchType = (column) => {
+  const type = column.type;
+  const range = column.searchRange;
+  let result = type;
+  if (['radio', 'checkbox', 'switch'].includes(type)) {
+    result = 'select';
+  } else if (DATE_LIST.includes(type)) {
+    let rangeKey = 'range';
+    if (range) {
+      if (!type.includes(rangeKey)) {
+        result = type + rangeKey;
+      } else {
+        result = type;
+      }
+    } else result = type.replace(rangeKey, '');
+  } else if (['textarea'].includes(type)) {
+    result = 'input';
+  }
+  return result;
+};
+
+/**
  * 动态获取组件
  */
 export const getComponent = (type, component) => {
@@ -111,7 +135,7 @@ export const getComponent = (type, component) => {
   if (!validatenull(component)) {
     return component;
   } else if (DATE_LIST.includes(type)) {
-    result = 'date-picker';
+    result = 'date';
   } else if (['password', 'textarea', 'number'].includes(type)) {
     result = 'input';
   }

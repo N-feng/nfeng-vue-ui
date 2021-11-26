@@ -6,7 +6,7 @@ Vue.use(ElementUI);
 import NfengUI from "../packages/main";
 Vue.use(NfengUI);
 
-import {base, search, selection} from "./options/crud";
+import {base, search, selection, cell} from "./options/crud";
 
 export default {
   // component: Form,
@@ -51,7 +51,7 @@ const Template = (args, { argTypes }) => {
     props: Object.keys(argTypes),
     template: `
       <div>
-        <p>tableData: {{tableData}}</p>
+<!--        <p>tableData: {{tableData}}</p>-->
         <ygp-crud v-bind="$props" 
                   :option="{...option,stripe,index,selection,rowSelection}" 
                   :data="tableData" 
@@ -72,21 +72,25 @@ const tableData = [
     id: 1,
     name: "张三",
     sex: "男",
+    age:18,
   },
   {
     id: 2,
     name: "李四",
     sex: "女",
+    age:18,
   },
   {
     id: 3,
     name: "王五",
     sex: "女",
+    age:22,
   },
   {
     id: 4,
     name: "赵六",
     sex: "男",
+    age:22,
   },
 ];
 
@@ -120,6 +124,19 @@ Selection.args = {
 export const Search = Template.bind({});
 Search.args = {
   option: search,
+  tableData,
+  dic: {},
+  selectedRowKeys: [],
+  stripe: false,
+  index: false,
+  selection: false,
+  rowSelection: false,
+}
+
+// 行编辑
+export const Cell = Template.bind({});
+Cell.args = {
+  option: cell,
   tableData,
   dic: {},
   selectedRowKeys: [],

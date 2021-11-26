@@ -20,7 +20,7 @@
 
 <script>
 import { deepClone } from "../../utils/util";
-import {formInitVal} from "../../common/dataformat";
+import {formInitVal, getSearchType} from "../../common/dataformat";
 
 export default {
   name: "HeaderSearch",
@@ -63,6 +63,7 @@ export default {
         list.forEach((ele) => {
           if (ele.search) {
             ele = Object.assign(ele, {
+              type: getSearchType(ele),
               order: ele.searchOrder,
               rules: ele.searchRules,
               value: ele.searchValue,

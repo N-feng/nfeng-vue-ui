@@ -1,7 +1,7 @@
 <template>
   <!-- 操作栏 -->
   <el-table-column
-    v-if="crud.tableOption.menu&&crud.getPermission('menu')"
+    v-if="vaildData(crud.tableOption.menu, true)&&crud.getPermission('menu')"
     fixed="right"
     label="操作"
     align="center"
@@ -11,7 +11,7 @@
       <template v-if="['button','text','icon'].includes(menuType)">
         <template v-if="crud.tableOption.cellBtn">
           <el-button
-            v-if="crud.tableOption.editBtn && !crud.editableKeys.includes(crud.handleGetRowKeys(row))"
+            v-if="vaildData(crud.tableOption.editBtn,true)&&!crud.editableKeys.includes(crud.handleGetRowKeys(row))"
             v-permission="crud.getPermission('viewBtn',row,$index)"
             type="text"
             size="small"
@@ -19,13 +19,22 @@
             @click.stop="crud.rowCell(true,row)"
           >编辑</el-button>
           <el-button
-            v-if="crud.tableOption.editBtn && crud.editableKeys.includes(crud.handleGetRowKeys(row))"
+            v-if="vaildData(crud.tableOption.editBtn,true)&&crud.editableKeys.includes(crud.handleGetRowKeys(row))"
             v-permission="crud.getPermission('saveBtn',row,$index)"
             type="text"
             size="small"
             icon="el-icon-edit"
             @click.stop="crud.rowCell(false,row)"
           >保存</el-button>
+          <el-button :type="menuText('danger')"
+                     icon="el-icon-circle-close"
+                     :size="crud.isMediumSize"
+                     @click.stop="crud.rowCancel(row,$index)"
+                     v-if="crud.editableKeys.includes(crud.handleGetRowKeys(row))">
+            <template v-if="!isIconMenu">
+              取 消
+            </template>
+          </el-button>
         </template>
         <el-button
           v-if="crud.tableOption.viewBtn"
@@ -36,7 +45,7 @@
           @click="crud.rowView(row,$index)"
         >查看</el-button>
         <el-button
-          v-if="crud.tableOption.editBtn && !crud.tableOption.cellBtn"
+          v-if="vaildData(crud.tableOption.editBtn,true)&&!crud.tableOption.cellBtn"
           v-permission="crud.getPermission('editBtn',row,$index)"
           type="text"
           size="small"
@@ -44,7 +53,7 @@
           @click.stop="crud.rowEdit(row,$index)"
         >编辑</el-button>
         <el-popconfirm
-          v-if="crud.tableOption.delBtn"
+          v-if="vaildData(crud.tableOption.delBtn,true)"
           v-permission="crud.getPermission('delBtn',row,$index)"
           class="btn-del"
           confirm-button-text="好的"
@@ -65,6 +74,7 @@
 
 <script>
 import permission from '../../utils/permission';
+import { vaildData } from "../../utils/util";
 
 export default {
   inject: ["crud"],
@@ -75,9 +85,18 @@ export default {
     menuType() {
       return this.crud.tableOption.menuType || "text";
     },
+    isIconMenu () {
+      return this.menuType === "icon"
+    },
     isMenu() {
       return this.menuType === "menu";
     },
   },
+  methods: {
+    vaildData,
+    menuText (value) {
+      return ['text', 'menu'].includes(this.menuType) ? "text" : value;
+    },
+  }
 };
 </script>

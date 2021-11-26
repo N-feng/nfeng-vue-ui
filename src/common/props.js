@@ -13,7 +13,19 @@ export default function () {
           return {}
         }
       },
+      size: {
+        type: String,
+        default: ''
+      },
+      disabled: {
+        type: Boolean,
+        default: false
+      },
       type: {
+        type: String,
+        default: ''
+      },
+      placeholder: {
         type: String,
         default: ''
       },

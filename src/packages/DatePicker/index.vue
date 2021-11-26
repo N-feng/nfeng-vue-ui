@@ -34,9 +34,13 @@
 
 <script>
 import moment from "moment";
+import create from "../../common/create";
+import props from "../../common/props";
+import event from "../../common/event";
 let curDate = null;
-export default {
-  name: "YgpDatePicker",
+export default create({
+  name: "date",
+  mixins: [props(), event()],
   props: {
     format: {
       type: String,
@@ -46,21 +50,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    size: {
-      type: String
-    },
-    value: {},
     width: {},
-    disabled: {
-      type: Boolean,
-      default: false
-    },
-    type: {
-      type: String
-    },
-    placeholder: {
-      type: String
-    },
     pickerOptions: {
       type: Object
     },
@@ -71,7 +61,6 @@ export default {
   },
   data() {
     return {
-      text: undefined,
       defaultPickerOptions: {
         onPick({ maxDate, minDate }) {
           if (maxDate === null) {
@@ -84,31 +73,14 @@ export default {
       },
     };
   },
-  watch: {
-    value: {
-      handler(val) {
-        this.text = val;
-      },
-    }
-  },
-  created() {
-    this.text = this.value;
-  },
   methods: {
-    initVal() {
-      this.text = this.value;
-    },
     handleBlur() {
       curDate = null;
     },
-    handleChange(value) {
-      this.$emit("input", value);
-      this.$emit("change", value);
-    }
   }
-};
+});
 </script>
-<style  lang="scss" scoped>
+<style lang="scss" scoped>
 .date-picker{
   line-height:33.4px;
 }

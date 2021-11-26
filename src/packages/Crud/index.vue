@@ -509,11 +509,15 @@ export default {
         this.editableKeys.push(rowKey);
       } else {
         const index = this.editableKeys.findIndex((item) => item === rowKey);
-        if (index !== -1) {
-          this.editableKeys.splice(index, 1);
-        }
+        this.editableKeys.splice(index, 1);
       }
       this.$emit("row-edit", val, JSON.parse(JSON.stringify(row)));
+    },
+    //行取消
+    rowCancel (row) {
+      const rowKey = this.handleGetRowKeys(row);
+      const index = this.editableKeys.findIndex(item => item === rowKey);
+      this.editableKeys.splice(index, 1);
     },
     rowAdd() {
       this.$refs.dialogForm.show("add");

@@ -58,7 +58,7 @@ export const search = {
     searchSpan:12,
     searchRange:true,
     search:true,
-    value: [
+    searchValue: [
       moment(new Date())
           .subtract(15, "days")
           .format("YYYY-MM-DD"),
@@ -81,5 +81,61 @@ export const search = {
     label: '内容6',
     prop: 'text6',
     search:true,
+  }]
+}
+
+export const cell = {
+  addBtn:false,
+  addRowBtn:true,
+  cellBtn:true,
+  menuWidth:250,
+  columns: [{
+    label:'姓名',
+    prop: 'name',
+    cell: true,
+    rules: [
+      {
+        required: true,
+        message: '请输入姓名',
+        trigger: 'blur'
+      }
+    ]
+  },{
+    label:'性别',
+    prop: 'sex',
+    type:'select',
+    dicData:[{
+      label:'男',
+      value:0
+    },{
+      label:'女',
+      value:1
+    }],
+    cell: true
+  },{
+    label:'年龄',
+    prop: 'age',
+    slot:true,
+    formslot:true,
+    dicData:[{
+      label:'男',
+      value:0
+    },{
+      label:'女',
+      value:1
+    }],
+    rules: [
+      {
+        required: true,
+        message: '请输入年龄',
+        trigger: 'blur'
+      }
+    ],
+    cell: true
+  },{
+    label:'开关',
+    prop: 'switch',
+    type:'switch',
+    cell: true
   }]
 }
