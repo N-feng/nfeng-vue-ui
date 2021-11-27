@@ -16,7 +16,7 @@
             type="text"
             size="small"
             icon="el-icon-edit"
-            @click.stop="crud.rowCell(true,row)"
+            @click.stop="crud.rowCell({...row,$cellEdit:true})"
           >编辑</el-button>
           <el-button
             v-if="vaildData(crud.tableOption.editBtn,true)&&crud.editableKeys.includes(crud.handleGetRowKeys(row))"
@@ -24,7 +24,7 @@
             type="text"
             size="small"
             icon="el-icon-edit"
-            @click.stop="crud.rowCell(false,row)"
+            @click.stop="crud.rowCell({...row,$cellEdit:false}, $index)"
           >保存</el-button>
           <el-button :type="menuText('danger')"
                      icon="el-icon-circle-close"

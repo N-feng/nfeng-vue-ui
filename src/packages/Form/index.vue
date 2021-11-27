@@ -120,7 +120,7 @@
 
 <script>
 import { validatenull } from '../../utils/validate.js';
-import { throttle, deepClone, vaildData, clearVal, setAsVal, arraySort } from "../../utils/util.js";
+import { throttle, deepClone, vaildData, clearVal, arraySort } from "../../utils/util.js";
 import mock from "../../utils/mock.js";
 import { getLabel, getComponent, getPlaceholder, formInitVal } from "../../common/dataformat.js";
 import permission from '../../utils/permission';

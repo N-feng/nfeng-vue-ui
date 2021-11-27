@@ -9,6 +9,16 @@
         :size="crud.isMediumSize"
         v-if="crud.tableOption.addBtn"
       >新 增</el-button>
+      <el-button type="primary"
+                 @click="crud.rowCellAdd"
+                 icon="el-icon-plus"
+                 v-permission="crud.getPermission('addRowBtn')"
+                 :size="crud.isMediumSize"
+                 v-if="vaildData(crud.tableOption.addRowBtn,true)">
+        <template v-if="!crud.isIconMenu">
+          新 增
+        </template>
+      </el-button>
       <div v-if="crud.tableOption.tableTitleRequire" class="red-star">*</div>
       <span
         class="crud-title"

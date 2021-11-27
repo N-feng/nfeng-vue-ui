@@ -85,8 +85,11 @@ export const search = {
 }
 
 export const cell = {
-  addBtn:false,
+  // header:true,
+  // addBtn:true,
   addRowBtn:true,
+  fullscreenBtn:true,
+  columnBtn:true,
   cellBtn:true,
   menuWidth:250,
   columns: [{

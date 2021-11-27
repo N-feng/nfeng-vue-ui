@@ -135,6 +135,7 @@ import dialogForm from "./dialog-form.vue";
 import { validatenull } from "../../utils/validate";
 import { defaultColumn } from "./config.js";
 import permission from "../../utils/permission";
+import { formInitVal } from "../../common/dataformat";
 import init from "./init";
 
 export default {
@@ -235,6 +236,7 @@ export default {
       defaultBind: {},
       fullscreen: false,
       editableKeys: [],
+      btnDisabled: false,
       hasSelected: [],
     };
   },
@@ -466,6 +468,20 @@ export default {
         });
       });
     },
+    validateCellField (index) {
+      let result = true
+      for (const item of this.$refs.cellForm.fields) {
+        if (item.prop.split('.')[1] == index) {
+          this.$refs.cellForm.validateField(item.prop, (error) => {
+            if (error) {
+              result = false
+            }
+          })
+        }
+        if (!result) break
+      }
+      return result
+    },
     // 表格操作回调
     emitEventHandler(event) {
       this.$emit(event, ...Array.from(arguments).slice(1));
@@ -502,22 +518,61 @@ export default {
     sortChange(val) {
       this.$emit("sort-change", val);
     },
-    //行编辑点击
-    rowCell(val, row) {
-      const rowKey = this.handleGetRowKeys(row);
-      if (val) {
-        this.editableKeys.push(rowKey);
-      } else {
-        const index = this.editableKeys.findIndex((item) => item === rowKey);
-        this.editableKeys.splice(index, 1);
-      }
-      this.$emit("row-edit", val, JSON.parse(JSON.stringify(row)));
+    //单元格新增
+    rowCellAdd (row = {}) {
+      let len = this.tableData.length
+      let id = `add-${len}`
+      let formDefault = formInitVal(this.propOption).tableForm;
+      row = this.deepClone(
+        Object.assign(
+          {
+            // $cellEdit: true,
+            // $index: len,
+            id
+          },
+          formDefault,
+          row
+        ))
+      this.tableData.push(row);
+      // this.formIndexList.push(len);
+      this.editableKeys.push(id);
+      // setTimeout(() => this.$refs.columnDefault.setSort())
     },
     //行取消
-    rowCancel (row) {
+    rowCancel (row, index) {
+      const rowKey = row[this.rowKey];
+      if (rowKey.indexOf('add') !== -1) {
+        this.tableData.splice(index);
+        return;
+      }
+      this.editableKeys = this.editableKeys.filter(item => item !== rowKey);
+    },
+    //行编辑点击
+    rowCell(row, index) {
+      if (row.$cellEdit) {
+        this.rowCellEdit(row);
+      } else {
+        this.rowCellUpdate(row, index);
+      }
+    },
+    // 单元格编辑
+    rowCellEdit (row) {
       const rowKey = this.handleGetRowKeys(row);
-      const index = this.editableKeys.findIndex(item => item === rowKey);
-      this.editableKeys.splice(index, 1);
+      this.editableKeys.push(rowKey);
+    },
+    rowCellUpdate (row, index) {
+      var result = this.validateCellField(index)
+      const done = () => {
+        const rowKey = row[this.rowKey];
+        this.editableKeys = this.editableKeys.filter(item => item !== rowKey);
+      }
+      const loading = () => {
+        this.btnDisabled = false;
+      }
+      if (result) {
+        this.btnDisabled = true;
+        this.$emit("row-update", row, index, done, loading);
+      }
     },
     rowAdd() {
       this.$refs.dialogForm.show("add");

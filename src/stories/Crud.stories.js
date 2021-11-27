@@ -41,7 +41,7 @@ export default {
       table: {
         category: "Events"
       }
-    }
+    },
   },
 };
 
@@ -61,9 +61,27 @@ const Template = (args, { argTypes }) => {
                   @onRowDel="onRowDel" 
                   @onSelectionChange="onSelectionChange" 
                   @onSelectChange="onSelectChange" 
-                  @onSubmit="onSubmit" />
+                  @onSubmit="onSubmit" 
+                  @row-update="addUpdate" />
       </div>
     `,
+
+    methods: {
+      addUpdate (form,index,done,loading) {
+        console.log(form)
+        this.$message.success('模拟网络请求')
+        setTimeout(() => {
+          this.$message.success('关闭按钮等待')
+          loading()
+        }, 1000)
+        setTimeout(() => {
+          this.$message.success(
+            '编辑数据' + JSON.stringify(form) + '数据序号' + index
+          )
+          done()
+        }, 2000)
+      }
+    }
   };
 };
 
