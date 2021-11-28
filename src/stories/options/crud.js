@@ -54,7 +54,7 @@ export const search = {
   },{
     label: '日期',
     prop: 'date',
-    type:'datetime',
+    type:'date',
     searchSpan:12,
     searchRange:true,
     search:true,
@@ -106,16 +106,18 @@ export const cell = {
   },{
     label:'性别',
     prop: 'sex',
+    propName: 'sexName',
     type:'select',
-    dicData:[{
-      label:'男',
-      value:0
+    options:[{
+      name:'男',
+      code:0
     },{
-      label:'女',
-      value:1
+      name:'女',
+      code:1
     }],
     cell: true
-  },{
+  },
+    {
     label:'年龄',
     prop: 'age',
     slot:true,
@@ -135,7 +137,8 @@ export const cell = {
       }
     ],
     cell: true
-  },{
+  },
+    {
     label:'开关',
     prop: 'switch',
     type:'switch',

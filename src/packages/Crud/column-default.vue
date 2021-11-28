@@ -36,5 +36,27 @@
 <script>
 export default {
   inject: ["crud"],
+  data () {
+    return {
+      dropRowClass: '.el-table__body-wrapper > table > tbody'
+    }
+  },
+  methods: {
+    setSort () {
+      this.rowDrop()
+      // this.columnDrop()
+    },
+    rowDrop () {
+      const el = this.crud.$refs.table.$el.querySelectorAll(this.dropRowClass)[0]
+      this.crud.tableDrop(el, evt => {
+        console.log(evt)
+        const oldIndex = evt.oldIndex;
+        const newIndex = evt.newIndex;
+        const targetRow = this.crud.tableData.splice(oldIndex, 1)[0]
+        this.crud.tableData.splice(newIndex, 0, targetRow)
+        this.crud.$emit('sortable-change', oldIndex, newIndex, targetRow, this.crud.tableData)
+      })
+    },
+  }
 };
 </script>

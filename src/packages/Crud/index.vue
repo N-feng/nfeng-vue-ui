@@ -79,7 +79,7 @@
           <column :columnOption="columnOption">
             <column-default ref="columnDefault"
                             slot="header">
-              <template slot-scope="{ row, index }"
+              <template slot-scope="{row,index}"
                         slot="expand">
                 <slot :row="row"
                       :index="index"
@@ -135,6 +135,7 @@ import dialogForm from "./dialog-form.vue";
 import { validatenull } from "../../utils/validate";
 import { defaultColumn } from "./config.js";
 import permission from "../../utils/permission";
+import { deepClone } from "../../utils/util";
 import { formInitVal } from "../../common/dataformat";
 import init from "./init";
 
@@ -236,11 +237,17 @@ export default {
       defaultBind: {},
       fullscreen: false,
       editableKeys: [],
+      // formIndexList: [],
+      formCascaderList: {},
+      btnDisabledList: {},
       btnDisabled: false,
       hasSelected: [],
     };
   },
   computed: {
+    isSortable () {
+      return this.tableOption.sortable;
+    },
     cellForm() {
       let list = this.tableData;
       list = list.filter((ele) => {
@@ -266,13 +273,9 @@ export default {
     mainSlot() {
       let result = [];
       this.propOption.forEach((item) => {
-        if (this.$scopedSlots[item.prop]) result.push(item.prop);
+        if (this.$scopedSlots[item.prop]) result.push(item.prop)
       });
-      return this.getSlotList(
-        ["Header", "Form"],
-        this.$scopedSlots,
-        this.propOption
-      ).concat(result);
+      return this.getSlotList(["Header", "Form"], this.$scopedSlots, this.propOption).concat(result)
     },
     propOption() {
       let result = [];
@@ -366,7 +369,7 @@ export default {
       }
     },
     handleGetRowKeys (row) {
-      const rowKey = row[this.rowKey] || JSON.stringify(row);
+      const rowKey = row[this.rowKey];
       return rowKey;
     },
     // 表格行样式
@@ -416,6 +419,13 @@ export default {
     },
     dataInit() {
       this.tableData = this.data;
+      //初始化序列的参数
+      this.tableData.forEach((ele, index) => {
+        if (ele.$cellEdit && !this.formCascaderList[index]) {
+          this.formCascaderList[index] = deepClone(ele);
+        }
+        ele.$index = index;
+      });
     },
     // 搜索表单数据初始化
     formDataInit() {
@@ -518,60 +528,92 @@ export default {
     sortChange(val) {
       this.$emit("sort-change", val);
     },
+    //行编辑点击
+    rowCell(row, index) {
+      if (row.$cellEdit) {
+        this.rowCellUpdate(row, index);
+      } else {
+        this.rowCellEdit(row, index);
+      }
+    },
     //单元格新增
     rowCellAdd (row = {}) {
       let len = this.tableData.length
-      let id = `add-${len}`
+      // let id = `add-${len}`
       let formDefault = formInitVal(this.propOption).tableForm;
-      row = this.deepClone(
+      row = deepClone(
         Object.assign(
           {
-            // $cellEdit: true,
-            // $index: len,
-            id
+            $cellEdit: true,
+            $index: len,
+            // [this.rowKey]: id
+            // id
           },
           formDefault,
-          row
+          // row
         ))
       this.tableData.push(row);
       // this.formIndexList.push(len);
-      this.editableKeys.push(id);
+      // this.editableKeys.push(id);
       // setTimeout(() => this.$refs.columnDefault.setSort())
     },
     //行取消
     rowCancel (row, index) {
-      const rowKey = row[this.rowKey];
-      if (rowKey.indexOf('add') !== -1) {
-        this.tableData.splice(index);
+      if (validatenull(row[this.rowKey])) {
+        this.tableData.splice(index, 1);
         return;
       }
-      this.editableKeys = this.editableKeys.filter(item => item !== rowKey);
-    },
-    //行编辑点击
-    rowCell(row, index) {
-      if (row.$cellEdit) {
-        this.rowCellEdit(row);
-      } else {
-        this.rowCellUpdate(row, index);
-      }
+      this.formCascaderList[index].$cellEdit = false;
+      //设置行数据
+      this.$set(this.tableData, index, this.formCascaderList[index]);
+      delete this.formCascaderList[index]
+      // const rowKey = row[this.rowKey];
+      // if (rowKey.indexOf('add') !== -1) {
+      //   this.tableData.splice(index);
+      //   return;
+      // }
+      // this.editableKeys = this.editableKeys.filter(item => item !== rowKey);
     },
     // 单元格编辑
-    rowCellEdit (row) {
-      const rowKey = this.handleGetRowKeys(row);
-      this.editableKeys.push(rowKey);
+    rowCellEdit (row, index) {
+      row.$cellEdit = true;
+      this.$set(this.tableData, index, row);
+      //缓冲行数据
+      this.formCascaderList[index] = deepClone(row);
+      // const rowKey = this.handleGetRowKeys(row);
+      // this.editableKeys.push(rowKey);
     },
     rowCellUpdate (row, index) {
       var result = this.validateCellField(index)
-      const done = () => {
-        const rowKey = row[this.rowKey];
-        this.editableKeys = this.editableKeys.filter(item => item !== rowKey);
+      const done = (form = {}) => {
+        console.log(form)
+        this.btnDisabledList[index] = false;
+        this.btnDisabled = false;
+        row.$cellEdit = false;
+
+        form = deepClone(Object.assign(form, row))
+        this.$set(this.tableData, index, form);
+
+        // this.$set(this.tableData, index, row);
+        // const rowKey = row[this.rowKey];
+        // this.editableKeys = this.editableKeys.filter(item => item !== rowKey);
       }
       const loading = () => {
+        this.btnDisabledList[index] = false;
         this.btnDisabled = false;
       }
       if (result) {
+        this.btnDisabledList[index] = true;
         this.btnDisabled = true;
-        this.$emit("row-update", row, index, done, loading);
+
+        const form = deepClone(row);
+        delete form.$cellEdit
+        delete form.$index
+        if (validatenull(row[this.rowKey])) {
+          this.$emit("row-save", form, done, loading);
+        } else {
+          this.$emit("row-update", form, index, done, loading);
+        }
       }
     },
     rowAdd() {
@@ -742,6 +784,21 @@ export default {
         callback && callback();
       });
     },
+    tableDrop (el, callback) {
+      if (this.isSortable) {
+        if (!window.Sortable) {
+          console.log("Sortable")
+          return
+        }
+        window.Sortable.create(el, {
+          ghostClass: 'avue-crud__ghost',
+          chosenClass: 'avue-crud__ghost',
+          animation: 500,
+          delay: 0,
+          onEnd: evt => callback(evt)
+        })
+      }
+    }
   },
 };
 </script>

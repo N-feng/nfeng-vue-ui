@@ -11,26 +11,29 @@
       <template v-if="['button','text','icon'].includes(menuType)">
         <template v-if="crud.tableOption.cellBtn">
           <el-button
-            v-if="vaildData(crud.tableOption.editBtn,true)&&!crud.editableKeys.includes(crud.handleGetRowKeys(row))"
+            v-if="vaildData(crud.tableOption.editBtn,true)&&!row.$cellEdit"
             v-permission="crud.getPermission('viewBtn',row,$index)"
             type="text"
-            size="small"
             icon="el-icon-edit"
-            @click.stop="crud.rowCell({...row,$cellEdit:true})"
+            size="small"
+            :disabled="crud.btnDisabledList[$index]"
+            @click.stop="crud.rowCell(row, $index)"
           >编辑</el-button>
           <el-button
-            v-if="vaildData(crud.tableOption.editBtn,true)&&crud.editableKeys.includes(crud.handleGetRowKeys(row))"
+            v-if="vaildData(crud.tableOption.editBtn,true)&&row.$cellEdit"
             v-permission="crud.getPermission('saveBtn',row,$index)"
             type="text"
-            size="small"
             icon="el-icon-edit"
-            @click.stop="crud.rowCell({...row,$cellEdit:false}, $index)"
+            size="small"
+            :disabled="crud.btnDisabledList[$index]"
+            @click.stop="crud.rowCell(row, $index)"
           >保存</el-button>
           <el-button :type="menuText('danger')"
                      icon="el-icon-circle-close"
                      :size="crud.isMediumSize"
+                     :disabled="crud.btnDisabledList[$index]"
                      @click.stop="crud.rowCancel(row,$index)"
-                     v-if="crud.editableKeys.includes(crud.handleGetRowKeys(row))">
+                     v-if="row.$cellEdit">
             <template v-if="!isIconMenu">
               取 消
             </template>
@@ -53,7 +56,7 @@
           @click.stop="crud.rowEdit(row,$index)"
         >编辑</el-button>
         <el-popconfirm
-          v-if="vaildData(crud.tableOption.delBtn,true)"
+          v-if="vaildData(crud.tableOption.delBtn,true) && !row.$cellEdit"
           v-permission="crud.getPermission('delBtn',row,$index)"
           class="btn-del"
           confirm-button-text="好的"

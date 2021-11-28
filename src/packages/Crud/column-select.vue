@@ -6,7 +6,7 @@
                          width="50"
                          align="center"
                          fixed="left">
-            <template slot="header" slot-scope="scope">
+            <template slot="header" slot-scope="{}">
                 <el-checkbox v-model="checkAll"
                              :indeterminate="isIndeterminate"
                              @change="handleSelectAll"></el-checkbox>

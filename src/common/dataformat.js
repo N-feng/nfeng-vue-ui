@@ -76,11 +76,8 @@ export const formInitVal = (list = []) => {
     if (
       ARRAY_VALUE_LIST.includes(ele.type) ||
       (MULTIPLE_LIST.includes(ele.type) && ele.multiple) ||
-      ele.range ||
-      ele.dataType === "array"
+      ele.range || ele.dataType === "array"
     ) {
-      tableForm[ele.prop] = [];
-    } else if (["checkbox"].includes(ele.type)) {
       tableForm[ele.prop] = [];
     } else if (
       ["rate", "slider", "number"].includes(ele.type) ||

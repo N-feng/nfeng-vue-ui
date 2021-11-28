@@ -1,20 +1,22 @@
 <template>
   <div class="crud__menu">
     <div class="crud__left">
-      <el-button
-        type="primary"
-        @click="crud.rowAdd"
-        icon="el-icon-plus"
-        v-permission="crud.getPermission('addBtn')"
-        :size="crud.isMediumSize"
-        v-if="crud.tableOption.addBtn"
-      >新 增</el-button>
+      <el-button type="primary"
+                 @click="crud.rowAdd"
+                 icon="el-icon-plus"
+                 v-permission="crud.getPermission('addBtn')"
+                 :size="crud.isMediumSize"
+                 v-if="vaildData(crud.tableOption.addBtn,true)&&!crud.tableOption.cellBtn">
+        <template v-if="!crud.isIconMenu">
+          新 增
+        </template>
+      </el-button>
       <el-button type="primary"
                  @click="crud.rowCellAdd"
                  icon="el-icon-plus"
                  v-permission="crud.getPermission('addRowBtn')"
                  :size="crud.isMediumSize"
-                 v-if="vaildData(crud.tableOption.addRowBtn,true)">
+                 v-if="vaildData(crud.tableOption.addRowBtn,true)&&crud.tableOption.cellBtn">
         <template v-if="!crud.isIconMenu">
           新 增
         </template>

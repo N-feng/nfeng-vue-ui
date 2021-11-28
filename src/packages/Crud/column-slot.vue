@@ -41,65 +41,65 @@
       </el-popover>
     </template>
     <!-- 自定义列模板 -->
-    <template slot-scope="scope">
+    <template slot-scope="{row,$index}">
       <!-- <span v-if="column.filter">{{ Vue.filter(column["filter"])(scope.row[column.prop]) }}</span> -->
       <span v-if="column.slotName">
         <slot
           :name="column.slotName"
-          :row="scope.row"
-          :$index="scope.$index"
-          :prop="`list.${scope.$index}.${column.prop}`"
+          :row="row"
+          :$index="$index"
+          :prop="`list.${$index}.${column.prop}`"
           :rules="column.rules"
           :placeholder="crud.getPlaceholder(column)"
         />
       </span>
       <span
         v-else-if="column.formatter"
-      >{{ column.formatter( scope.row, scope.column, scope.row[column.prop], scope.$index ) }}</span>
+      >{{column.formatter(row,column,row[column.prop],$index)}}</span>
       <div
         v-else-if="column.isEllipsis"
-        :title="scope.row[column.prop]"
-        :style="{ width: scope.column.width ? scope.column.width : '150px' }"
+        :title="row[column.prop]"
+        :style="{width:column.width?column.width:'150px'}"
         class="text-overflow"
-      >{{scope.row[column.prop]}}</div>
+      >{{row[column.prop]}}</div>
       <!-- 表单控件 -->
       <el-form-item
-        v-else-if="crud.getItemShow(column.edit) || crud.editableKeys.includes(crud.handleGetRowKeys(scope.row))"
-        :prop="`list.${scope.$index}.${column.prop}`"
-        :rules="crud.getRules(column.rules, scope.row)"
+        v-else-if="crud.getItemShow(column.edit)||row.$cellEdit"
+        :prop="`list.${$index}.${column.prop}`"
+        :rules="crud.getRules(column.rules,row)"
       >
         <el-tooltip
-          :content="(crud.listError[`list.${scope.$index}.${column.prop}`] || {}).msg"
-          :disabled="!(crud.listError[`list.${scope.$index}.${column.prop}`] || {}).valid"
+          :content="(crud.listError[`list.${$index}.${column.prop}`] || {}).msg"
+          :disabled="!(crud.listError[`list.${$index}.${column.prop}`] || {}).valid"
           placement="top"
         >
           <!-- 动态组件 -->
-          <component
-            :is="getComponent(column.type)"
-            v-model="scope.row[column.prop]"
-            v-bind="column"
+          <form-temp
+            :column="column"
             :width="undefined"
             :size="crud.size || 'small'"
             :placeholder="crud.getPlaceholder(column)"
-            :class="crud.getClassName(column.class, scope.row)"
-            :disabled="crud.getItemShow(column.disabled, scope.row)"
-            :options="crud.getOptions(column,scope.row)"
-            @focus="(value, option) => crud.$emit('focus', scope.row, scope.$index, column.prop, value, option)"
-            @change="(value, option) => crud.$emit('change', value, option, column, scope)"
-          ></component>
+            :class="crud.getClassName(column.class,row)"
+            :disabled="crud.getItemShow(column.disabled,row)"
+            :options="crud.getOptions(column,row)"
+            v-model="row[column.prop]"
+          ></form-temp>
         </el-tooltip>
       </el-form-item>
-      <span v-else-if="column.render" :class="column.class">{{ column.render(scope.row) }}</span>
-      <span v-else :class="column.class">{{ scope.row[column.propName || column.prop] }}</span>
+      <span v-else-if="column.render" :class="column.class">{{column.render(row)}}</span>
+      <span v-else :class="column.class">{{row[column.propName || column.prop]}}</span>
     </template>
   </el-table-column>
 </template>
 
 <script>
 import { validatenull } from "../../utils/validate";
-
+import formTemp from '../Form/temp'
 export default {
   inject: ["crud"],
+  components: {
+    formTemp
+  },
   props: {
     column: Object,
     columnOption: Array,
@@ -119,20 +119,6 @@ export default {
       let name = item.prop + result[type];
       if (slot) return slot[name];
       return name;
-    },
-    /**
-     * 动态获取组件
-     */
-    getComponent(type) {
-      let result;
-      if ([undefined, "", "number", "textarea"].includes(type)) {
-        result = "input";
-      } else if (["date", "month"].includes(type)) {
-        result = "date-picker";
-      } else {
-        result = type;
-      }
-      return `ygp-${result}`;
     },
     //表格筛选字典
     handleFilters(column, flag) {
