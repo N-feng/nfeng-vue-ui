@@ -1,24 +1,18 @@
 # nfeng-vue-ui
+基于Vue的后台插件，主要做了饿了么的二次封装，使组件使用更加配置化。
 
-## Project setup
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
+## Install
+```shell
+yarn add nfeng-vue-ui
 ```
 
-### Compiles and minifies for production
-```
-npm run build
+## Quick Start
+```javascript
+import NfengUI from 'nfeng-vue-ui'
+
+Vue.use(NfengUI)
 ```
 
-### Lints and fixes files
-```
-npm run lint
-```
+## Documents
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+See [https://n-feng.github.io/nfeng-vue-ui/](https://n-feng.github.io/nfeng-vue-ui/).
