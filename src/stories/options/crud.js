@@ -29,19 +29,19 @@ export const height = {
     {
       label:'姓名',
       prop:'name',
-      width:200,
+      minWidth:200,
       fixed:true
     }, {
       label:'性别',
-      width:300,
+      minWidth:300,
       prop:'sex'
     }, {
       label:'日期',
-      width:300,
+      minWidth:300,
       prop:'datetime'
     }, {
       label:'地址',
-      width:300,
+      minWidth:300,
       prop:'address'
     }
   ]
