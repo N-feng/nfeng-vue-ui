@@ -1,5 +1,7 @@
 <template>
-  <el-form-item :style="styleName" :class="className">
+  <el-form-item v-if="vaildData(formSafe.parentOption.menuBtn,true)"
+                :style="styleName"
+                :class="className">
     <el-button v-if="formSafe.isMock"
                type="primary"
                :size="formSafe.controlSize"
@@ -29,7 +31,7 @@
                :size="formSafe.controlSize"
                :loading="formSafe.allDisabled"
                @click="formSafe.resetForm">{{vaildData(formSafe.parentOption.emptyText, "清 空")}}</el-button>
-    <el-button v-if="formSafe.option.items.length > 5"
+    <el-button v-if="formSafe.option.items.length > 5 && isSearch"
                :size="formSafe.controlSize"
                type="text"
                @click="formSafe.expand = !formSafe.expand">{{ formSafe.expand ? "收起" : "展开" }}<i :class="formSafe.expand ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i></el-button>

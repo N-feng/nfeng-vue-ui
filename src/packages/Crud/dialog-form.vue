@@ -55,6 +55,7 @@ export default {
       delete option.columns;
       if (this.isView) {
         option.detail = true;
+        option.menuBtn = false;
         option.submitBtn = false;
       } else {
         if (this.isEdit) {
@@ -62,9 +63,9 @@ export default {
           option.submitBtn = option.updateBtn;
           option.submitIcon = option.updateBtnIcon || 'el-icon-circle-check'
         }
-        option.emptyText = '取 消';
         option.emptyBtn = option.cancelBtn;
         option.emptyIcon = option.cancelBtnIcon || 'el-icon-circle-close';
+        option.emptyText = '取 消';
       }
 
       return option;

@@ -23,6 +23,64 @@ export const base = {
   ]
 }
 
+export const height = {
+  height:300,
+  columns:[
+    {
+      label:'姓名',
+      prop:'name',
+      width:200,
+      fixed:true
+    }, {
+      label:'性别',
+      width:300,
+      prop:'sex'
+    }, {
+      label:'日期',
+      width:300,
+      prop:'datetime'
+    }, {
+      label:'地址',
+      width:300,
+      prop:'address'
+    }
+  ]
+}
+
+export const html = {
+  columns:[{
+    label:'姓名',
+    prop:'name',
+    html:true,
+    formatter:(val)=>{
+      // console.log(val)
+      return '<span style="color:red">'+val.name+'</span>'
+    }
+  }, {
+    label:'性别',
+    prop:'sex'
+  }]
+}
+
+export const view = {
+  viewBtn:true,
+  editBtn:false,
+  delBtn:false,
+  // menuWidth:80,
+  columns: [{
+    label: '姓名',
+    prop: 'name'
+  },{
+    label: '年龄',
+    prop: 'age'
+  },{
+    label:'地址',
+    span:24,
+    prop:'address',
+    type:'textarea'
+  }]
+}
+
 export const selection = {
   selection: true,
   align:'center',

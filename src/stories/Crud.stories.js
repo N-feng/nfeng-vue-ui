@@ -2,7 +2,7 @@ import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
 import Vue from "vue";
 import NfengUI from "../packages/main";
-import {base, search, selection, cell} from "./options/crud";
+import {base, search, selection, cell, html, view, height} from "./options/crud";
 import {previewTemplate} from "storybook-addon-preview";
 
 Vue.use(ElementUI);
@@ -42,6 +42,11 @@ export default {
         category: "Events"
       }
     },
+    onLoad: {
+      table: {
+        category: "Events"
+      }
+    }
   },
 };
 
@@ -53,7 +58,7 @@ const Template = (args, { argTypes }) => {
       <div>
 <!--        <p>tableData: {{tableData}}</p>-->
         <ygp-crud v-bind="$props" 
-                  :option="{...option,stripe,index,selection,rowSelection,cellBtn}" 
+                  :option="{...option,stripe,index,height,selection,rowSelection,cellBtn}" 
                   :data="tableData" 
                   :dic="dic" 
                   @onRowSave="onRowSave" 
@@ -63,7 +68,8 @@ const Template = (args, { argTypes }) => {
                   @onSelectChange="onSelectChange" 
                   @onSubmit="onSubmit" 
                   @row-update="addUpdate" 
-                  @row-save="rowSave" />
+                  @row-save="rowSave" 
+                  @onLoad="onLoad" />
       </div>
     `,
 
@@ -131,11 +137,13 @@ const tableData = [{
     name:"张三",
     sex:"男",
     age:18,
+    address:'码云的地址',
   },{
     id:2,
     name:"李四",
     sex:"女",
     age:18,
+    address:'码云的地址',
   },{
     id:3,
     name:"王五",
@@ -146,7 +154,27 @@ const tableData = [{
     name:"赵六",
     sex:"男",
     age:22,
-  }];
+  },{
+  id:5,
+  name:"孙七",
+  sex:"男",
+  age:22,
+},{
+  id:6,
+  name:"周八",
+  sex:"女",
+  age:22,
+},{
+  id:7,
+  name:"吴九",
+  sex:"女",
+  age:22,
+},{
+  id:8,
+  name:"郑十",
+  sex:"男",
+  age:22,
+}];
 
 // 基础
 export const Base = Template.bind({});
@@ -154,6 +182,7 @@ Base.parameters = parameters;
 Base.args = {
   option: base,
   tableData,
+  height: 230,
   dic: {},
   selectedRowKeys: [],
   stripe: false,
@@ -161,6 +190,35 @@ Base.args = {
   selection: false,
   rowSelection: false,
   cellBtn: false,
+  page: {}
+};
+
+// 固定列和表头
+export const Height = Template.bind({});
+Height.parameters = parameters;
+Height.args = {
+  ...Base.args,
+  option: height,
+  tableData,
+  height: 280,
+};
+
+// html语法转义
+export const Html = Template.bind({});
+Html.parameters = parameters;
+Html.args = {
+  ...Base.args,
+  option: html,
+  tableData,
+};
+
+// 查看内容
+export const View = Template.bind({});
+View.parameters = parameters;
+View.args = {
+  ...Base.args,
+  option: view,
+  tableData,
 };
 
 // 多选
@@ -179,7 +237,17 @@ Search.parameters = parameters;
 Search.args = {
   ...Base.args,
   option: search,
-}
+};
+
+// 分页
+export const Page = Template.bind({});
+Page.parameters = parameters;
+Page.args = {
+  ...Search.args,
+  page: {
+    total: 40
+  }
+};
 
 // 行编辑
 export const Cell = Template.bind({});

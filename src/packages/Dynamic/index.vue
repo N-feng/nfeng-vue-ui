@@ -1,6 +1,6 @@
 <template>
   <div style="width: 100%;">
-    <YgpCrud v-if="isCrud"
+    <ygp-crud v-if="isCrud"
       ref="main"
       :dic="dic"
       :option="option"
@@ -13,7 +13,7 @@
       <template v-for="item in columnSlot" :slot="getSlotName({prop:item},'F')" slot-scope="scope">
         <slot v-bind="scope" :name="item"></slot>
       </template>
-    </YgpCrud>
+    </ygp-crud>
   </div>
 </template>
 

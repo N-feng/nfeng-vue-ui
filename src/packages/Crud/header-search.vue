@@ -4,8 +4,10 @@
       <ygp-form
         v-model="searchForm"
         :option="option"
+        ref="form"
         :dic="crud.dic"
-        @onSubmit="handleSubmit"
+        @onSubmit="searchChange"
+        @reset-change="resetChange"
       >
         <template slot="menuForm" slot-scope="scope">
           <slot
@@ -108,15 +110,40 @@ export default {
       deep: true,
     },
   },
+  created() {
+    this.initFun();
+  },
   methods: {
     handleSubmit (formData) {
       this.crud.$emit("onSubmit", formData)
+    },
+    initFun () {
+      ['searchReset', 'searchChange'].forEach(ele => this.crud[ele] = this[ele])
+    },
+    // 搜索回调
+    searchChange (form, done) {
+      this.$emit("update:searchForm", form);
+      this.crud.onLoad();
+      this.crud.$emit("search-change", form, done);
+    },
+    // 搜索清空
+    resetChange () {
+      this.searchForm = deepClone(this.defaultForm.tableForm);
+      this.$emit("update:searchForm", this.defaultForm.tableForm);
+      this.crud.onLoad();
+      this.crud.$emit("search-reset", this.defaultForm.tableForm);
+    },
+    // 搜索清空
+    searchReset () {
+      this.$refs.form.resetForm();
     },
     handleSearchShow() {
       this.searchShow = !this.searchShow;
     },
     dataFormat () {
       this.defaultForm = formInitVal(this.option.items);
+      this.searchForm = deepClone(this.defaultForm.tableForm);
+      this.$emit('update:searchForm', this.searchForm);
     }
   },
 };

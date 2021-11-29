@@ -53,9 +53,9 @@
           :placeholder="crud.getPlaceholder(column)"
         />
       </span>
-      <span
-        v-else-if="column.formatter"
-      >{{column.formatter(row,column,row[column.prop],$index)}}</span>
+<!--      <span-->
+<!--        v-else-if="column.formatter"-->
+<!--      >{{column.formatter(row,column,row[column.prop],$index)}}</span>-->
       <div
         v-else-if="column.isEllipsis"
         :title="row[column.prop]"
@@ -87,13 +87,14 @@
         </el-tooltip>
       </el-form-item>
       <span v-else-if="column.render" :class="column.class">{{column.render(row)}}</span>
-      <span v-else :class="column.class">{{row[column.propName || column.prop]}}</span>
+      <span v-else :class="column.class" v-html="handleDetail(row,column)"></span>
     </template>
   </el-table-column>
 </template>
 
 <script>
 import { validatenull } from "../../utils/validate";
+import { detail } from "../../common/detail";
 import formTemp from '../Form/temp'
 export default {
   inject: ["crud"],
@@ -170,6 +171,11 @@ export default {
       if (type == "hide") return column.hide !== true;
       else return result;
     },
+    handleDetail (row, column) {
+      let result = row[column.propName || column.prop];
+      result = detail(row, column, this.crud.tableOption);
+      return result;
+    }
   },
 };
 </script>

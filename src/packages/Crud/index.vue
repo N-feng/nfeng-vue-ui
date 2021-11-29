@@ -3,7 +3,8 @@
     <!-- 搜索表单 -->
     <header-search
       ref="headerSearch"
-      :search="searchForm"
+      :search="search"
+      :searchForm.sync="searchForm"
       @onSubmit="searchSubmit"
       @reset="searchReset"
     >
@@ -102,18 +103,9 @@
           <slot name="footer"></slot>
         </div>
         <!-- 分页 -->
-        <el-pagination
-          v-if="pageData.total"
-          class="pagination"
-          background
-          :current-page.sync="pageData.currentPage"
-          :page-size="pageData.pageSize"
-          :page-sizes="pageData.pageSizes"
-          :layout="pageData.layout"
-          :total="pageData.total"
-          @size-change="sizeChange"
-          @current-change="pageChange"
-        ></el-pagination>
+        <table-page ref="tablePage"
+                    :page="page"
+                    :pageData.sync="pageData"></table-page>
       </div>
     </div>
     <!-- 动态列 -->
@@ -124,6 +116,7 @@
 </template>
 
 <script>
+  import create from "../../common/create";
 import headerSearch from "./header-search.vue";
 import headerMenu from "./header-menu.vue";
 import column from "./column.vue";
@@ -132,15 +125,15 @@ import columnSelect from "./column-select.vue";
 import columnMenu from "./column-menu.vue";
 import dialogColumn from "./dialog-column.vue";
 import dialogForm from "./dialog-form.vue";
+import tablePage from "./table-page";
 import { validatenull } from "../../utils/validate";
 import { defaultColumn } from "./config.js";
 import permission from "../../utils/permission";
 import { deepClone } from "../../utils/util";
 import { formInitVal } from "../../common/dataformat";
 import init from "./init";
-
-export default {
-  name: "YgpCrud",
+export default create({
+  name: "crud",
   mixins: [init()],
   directives: {
     permission,
@@ -151,14 +144,15 @@ export default {
     };
   },
   components: {
-    headerSearch, // 搜索
-    headerMenu, // 菜单头部
-    column, // 列
-    columnDefault, // 默认列
-    columnSelect, // 选择列
-    columnMenu, // 操作栏
-    dialogColumn, // 显隐列
-    dialogForm, // 表单
+    headerSearch, //搜索
+    headerMenu, //菜单头部
+    column, //列
+    columnDefault, //默认列
+    columnSelect, //选择列
+    columnMenu, //操作栏
+    dialogColumn, //显隐列
+    dialogForm, //表单
+    tablePage, //分页
   },
   props: {
     // 表格配置
@@ -175,6 +169,12 @@ export default {
       default: () => {
         return {};
       },
+    },
+    search: {
+      type: Object,
+      default () {
+        return {};
+      }
     },
     // 分页数据
     page: {
@@ -221,15 +221,7 @@ export default {
       tableSelect: [],
       tableForm: {},
       tableIndex: -1,
-      pageData: {
-        total: 0, // 总页数
-        pagerCount: 7, //超过多少条隐藏
-        currentPage: 1, // 当前页数
-        pageSize: 10, // 每页显示多少条
-        pageSizes: [10, 20, 30, 40, 50, 100],
-        layout: "total, sizes, prev, pager, next, jumper",
-        background: true, // 背景颜色
-      },
+      pageData: {},
       searchForm: {},
       expand: false,
       objectOption: {},
@@ -328,11 +320,11 @@ export default {
       },
       deep: true,
     },
-    value: {
-      handler(val) {
-        this.searchForm = val;
-      },
-    },
+    // value: {
+    //   handler(val) {
+    //     this.searchForm = val;
+    //   },
+    // },
     selectedRowKeys: {
       handler(val) {
         this.hasSelected = val;
@@ -344,11 +336,12 @@ export default {
   created() {
     // 初始化数据
     this.dataInit(this.data);
-    this.formDataInit();
-    this.pageDataInit();
-    this.onLoad();
+    // this.formDataInit();
+    // this.pageDataInit();
+    // this.onLoad();
+    console.log('created')
   },
-  activated() {
+  mounted() {
     this.onLoad();
   },
   methods: {
@@ -428,22 +421,17 @@ export default {
       });
     },
     // 搜索表单数据初始化
-    formDataInit() {
-      let searchForm = {};
-      if (!this.tableOption.columns) return;
-      this.tableOption.columns.forEach((column) => {
-        if (column.value !== undefined && column.value !== "") {
-          searchForm[column.prop] = column.value;
-        }
-      });
-      this.searchForm = Object.assign(searchForm, this.value);
-      return Object.assign(searchForm, this.value);
-    },
-    // 初始化分页数据
-    pageDataInit() {
-      this.pageData = Object.assign(this.pageData, this.page);
-      this.updateValue();
-    },
+    // formDataInit() {
+    //   let searchForm = {};
+    //   if (!this.tableOption.columns) return;
+    //   this.tableOption.columns.forEach((column) => {
+    //     if (column.value !== undefined && column.value !== "") {
+    //       searchForm[column.prop] = column.value;
+    //     }
+    //   });
+    //   this.searchForm = Object.assign(searchForm, this.value);
+    //   return Object.assign(searchForm, this.value);
+    // },
     // 查询按钮回调
     searchSubmit(formData) {
       this.searchForm = Object.assign(this.searchForm, formData);
@@ -465,7 +453,7 @@ export default {
       // this.formDataInit(); // vue2 缺陷 日期数组不通知值改变
       this.pageData.currentPage = 1;
       this.$emit("reset");
-      this.updateValue();
+      // this.updateValue();
       this.onLoad();
       // 请求数据清空已选择行
       this.clearSelection();
@@ -736,28 +724,10 @@ export default {
         return show;
       }
     },
-    // 更新分页数据
-    updateValue() {
-      this.$emit("update:page", this.pageData);
-    },
-    // 页大小回调
-    sizeChange(val) {
-      this.pageData.currentPage = 1;
-      this.pageData.pageSize = val;
-      this.updateValue();
-      this.onLoad();
-      this.$emit("size-change", val);
-    },
-    // 页码回调
-    pageChange(val) {
-      this.updateValue();
-      this.onLoad();
-      this.$emit("page-change", val);
-    },
     onLoad() {
-      this.$emit("on-load", {
+      this.$emit("onLoad", {
         pageData: this.pageData,
-        formData: this.searchForm,
+        searchForm: this.searchForm,
       });
     },
     columnInit() {
@@ -800,7 +770,7 @@ export default {
       }
     }
   },
-};
+});
 </script>
 
 <style lang="scss">
