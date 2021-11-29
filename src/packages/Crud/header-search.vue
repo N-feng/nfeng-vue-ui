@@ -128,8 +128,8 @@ export default {
     },
     // 搜索清空
     resetChange () {
-      this.searchForm = deepClone(this.defaultForm.tableForm);
-      this.$emit("update:searchForm", this.defaultForm.tableForm);
+      // this.searchForm = deepClone(this.defaultForm.tableForm);
+      // this.$emit("update:searchForm", this.defaultForm.tableForm);
       this.crud.onLoad();
       this.crud.$emit("search-reset", this.defaultForm.tableForm);
     },

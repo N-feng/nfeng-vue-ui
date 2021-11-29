@@ -470,7 +470,8 @@ export default {
       this.$emit("reset-change");
     },
     clearVal () {
-      this.formData = clearVal(this.formData, []);
+      // this.formData = clearVal(this.formData, []);
+      this.formData = deepClone(this.formDefault.tableForm);
       this.$emit("input", this.formData);
       this.$emit("change", this.formData);
     },

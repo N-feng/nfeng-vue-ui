@@ -312,12 +312,12 @@ export const dynamic = {
           done();
         },
         columns: [{
-          width: 200,
+          minWidth: 200,
           label: '输入框',
           prop: "input",
           formslot: true,
         }, {
-          width: 200,
+          minWidth: 200,
           label: '选择框',
           prop: "select",
           propName: "selectName",
@@ -335,7 +335,7 @@ export const dynamic = {
             value: 2
           }]
         }, {
-          width: 200,
+          minWidth: 200,
           label: '多选',
           prop: "checkbox",
           propName: "checkboxName",
@@ -348,7 +348,7 @@ export const dynamic = {
             value: 2
           }]
         }, {
-          width: 200,
+          minWidth: 200,
           label: '开关',
           prop: "switch",
           propName: "switchName",
@@ -361,7 +361,7 @@ export const dynamic = {
             value: 2
           }]
         }, {
-          width: 200,
+          minWidth: 200,
           label: '数字框',
           prop: "number",
           type: 'number'

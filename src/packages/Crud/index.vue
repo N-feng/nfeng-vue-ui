@@ -339,7 +339,7 @@ export default create({
     // this.formDataInit();
     // this.pageDataInit();
     // this.onLoad();
-    console.log('created')
+    // console.log('created')
   },
   mounted() {
     this.onLoad();
