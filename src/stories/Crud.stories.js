@@ -58,7 +58,7 @@ const Template = (args, { argTypes }) => {
       <div>
 <!--        <p>tableData: {{tableData}}</p>-->
         <ygp-crud v-bind="$props" 
-                  :option="{...option,stripe,index,height,selection,rowSelection,cellBtn}" 
+                  :option="{...option,stripe,index,selection,rowSelection,cellBtn}" 
                   :data="tableData" 
                   :dic="dic" 
                   @onRowSave="onRowSave" 
@@ -182,7 +182,7 @@ Base.parameters = parameters;
 Base.args = {
   option: base,
   tableData,
-  height: 230,
+  // height: 230,
   dic: {},
   selectedRowKeys: [],
   stripe: false,
