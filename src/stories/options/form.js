@@ -7,7 +7,7 @@ export const base = {
       prop: "username",
       value: "small",
       tip: "这是信息提示",
-      span: 8,
+      // span: 8,
       // maxlength: 3,
       suffixIcon: "el-icon-tickets",
       prefixIcon: "el-icon-tickets",
@@ -34,7 +34,7 @@ export const base = {
       mock: {
         type: "name",
       },
-      span: 8,
+      // span: 8,
     },
     // {
     //     label: "密码",
@@ -51,7 +51,7 @@ export const base = {
       type: "select",
       // options: DIC.VAILD,
       dicName: "VAILD",
-      span: 6,
+      // span: 6,
       mock: {
         type: "dic",
       },
@@ -59,7 +59,7 @@ export const base = {
     {
       label: "权限",
       prop: "grade",
-      span: 6,
+      // span: 6,
       type: "checkbox",
       // options: DIC.VAILD,
       dicName: "VAILD",
@@ -70,7 +70,7 @@ export const base = {
     {
       label: "开关",
       prop: "switch",
-      span: 6,
+      // span: 6,
       type: "switch",
       // options: DIC.SEX,
       dicName: "SEX",
@@ -83,7 +83,7 @@ export const base = {
     {
       label: "性别",
       prop: "sex",
-      span: 6,
+      // span: 6,
       type: "radio",
       // options: DIC.SEX,
       dicName: "SEX",
@@ -95,7 +95,7 @@ export const base = {
       label: "数字",
       prop: "number",
       type: "number",
-      span: 6,
+      // span: 6,
       precision: 2,
       mock: {
         type: "number",
@@ -109,7 +109,7 @@ export const base = {
     },
     {
       label: "网站",
-      span: 12,
+      // span: 12,
       prop: "url",
       prepend: "http://",
       mock: {
@@ -123,7 +123,7 @@ export const base = {
       label: "日期",
       prop: "date",
       type: "date",
-      span: 8,
+      // span: 8,
       format: "yyyy-MM-dd",
       valueFormat: "yyyy-MM-dd",
       mock: {
@@ -158,7 +158,7 @@ export const base = {
     // },
     {
       label: "地址",
-      span: 24,
+      // span: 24,
       prop: "address",
       mock: {
         type: "county",
@@ -166,7 +166,7 @@ export const base = {
     },
     {
       label: "建议",
-      span: 24,
+      // span: 24,
       prop: "adit",
       mock: {
         type: "word",
@@ -221,9 +221,10 @@ export const rules = {
 export const dic = {
   items: [
     {
-      label: 'options本地字典',
+      label: 'options字典',
       prop: 'options',
       type:'select',
+      span: 12,
       // dicName: 'text',
       // props: {
       //   label: 'name',
@@ -238,10 +239,11 @@ export const dic = {
       }],
     },
     {
-      label: 'dicName本地字典',
+      label: '枚举库字典',
       prop: 'dicName',
       type:'select',
       dicName: 'text',
+      span: 12,
       // props: {
       //   label: 'name',
       //   value: 'code'

@@ -42,10 +42,11 @@
 }
 
 .ygp-form__item {
-  min-width: 370px;
+  //min-width: 370px;
 
   .el-form-item__content {
     width: calc(100% - 140px);
+    line-height: 33px;
   }
   .el-select,
   .el-date-editor.el-input,

@@ -94,6 +94,11 @@
               <template slot="menu" slot-scope="scope">
                 <slot name="menu" v-bind="scope"></slot>
               </template>
+              <template slot="menuBtn"
+                        slot-scope="scope">
+                <slot name="menuBtn"
+                      v-bind="scope"></slot>
+              </template>
             </column-menu>
           </column>
         </el-table>

@@ -69,7 +69,14 @@ const Template = (args, { argTypes }) => {
                   @onSubmit="onSubmit" 
                   @row-update="addUpdate" 
                   @row-save="rowSave" 
-                  @onLoad="onLoad" />
+                  @onLoad="onLoad">
+          <template v-if="option.menuType === 'menu'" slot-scope="scope" slot="menuBtn">
+            <el-dropdown-item divided @click.native="tip">自定义按钮</el-dropdown-item>
+          </template>
+          <template v-if="option.menuType === 'menu'" slot-scope="scope" slot="menu" >
+            <el-button style="margin-left:10px;" size="small" type="text" icon="el-icon-user" @click.native="tip">自定义按钮</el-button>
+          </template>
+        </ygp-crud>
       </div>
     `,
 
@@ -94,6 +101,9 @@ const Template = (args, { argTypes }) => {
           )
           done({sexName:'女'})
         }, 2000)
+      },
+      tip(){
+        this.$message.success('自定义按钮');
       }
     }
   };
@@ -193,6 +203,18 @@ Base.args = {
   page: {}
 };
 
+// 合并菜单
+export const Menu = Template.bind({});
+Menu.parameters = parameters;
+Menu.args = {
+  ...Base.args,
+  option: {
+    ...base,
+    menuType:'menu',
+    menuBtnTitle:'自定义名称',
+  },
+}
+
 // 固定列和表头
 export const Height = Template.bind({});
 Height.parameters = parameters;
@@ -200,7 +222,7 @@ Height.args = {
   ...Base.args,
   option: height,
   tableData,
-  height: 280,
+  // height: 280,
 };
 
 // html语法转义

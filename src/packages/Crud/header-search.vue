@@ -59,6 +59,7 @@ export default {
     },
     option() {
       const option = this.crud.option;
+      let spanCount = 0;
       const detailColumn = (list = []) => {
         let column = [];
         //根据order排序
@@ -67,11 +68,13 @@ export default {
             ele = Object.assign(ele, {
               type: getSearchType(ele),
               order: ele.searchOrder,
+              span: ele.searchSpan || option.searchSpan,
               rules: ele.searchRules,
               value: ele.searchValue,
               range: ele.range || ele.searchRange,
             });
             column.push(ele);
+            spanCount = spanCount + (ele.span || 0);
           }
         });
         return column;
@@ -82,9 +85,11 @@ export default {
           delete result.group;
         }
         result.items = detailColumn(deepClone(this.propOption));
+        console.log(spanCount % 24)
         result = Object.assign(result, {
           search: true,
-          submitText: '搜 索'
+          submitText: '搜 索',
+          menuOffset: 24 - (spanCount % 24) - 8
         });
         return result;
       };

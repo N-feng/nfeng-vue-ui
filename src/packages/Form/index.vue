@@ -2,118 +2,122 @@
   <div :class="{'query-filter': isSearch, 'pro-form': !isSearch, 'form-detail': isDetail}">
     <el-form
       ref="ruleForm"
-      :inline="true"
       :model="formData"
       :size="controlSize"
       :label-width="parentOption.labelWidth || '140px'"
     >
-      <ygp-group
-        v-for="(item, index) in columnOption"
-        :key="item.label"
-        :is-tabs="isTabs"
-        :display="vaildDisplay(item)"
-        :index="index"
-        :active.sync="activeName"
-        :label="item.label"
-        :column-option="columnOption"
-      >
-        <div v-show="isGroupShow(item, index+'')" :class="['group-content', item.class]">
-          <template v-for="(column, cindex) in item.items">
-            <el-form-item
-              v-if="vaildDisplay(column) && cindex < count"
-              :key="column.prop"
-              :class="['ygp-form__item', {'full-width': ['radio', 'textarea', 'upload', 'dynamic'].includes(column.type)}]"
-              :prop="column.prop"
-              :label="getLabel(column)"
-              :label-width="column.labelWidth || item.labelWidth || parentOption.labelWidth"
-              :rules="getItemProp(column, 'rules')"
-            >
-              <slot
-                v-if="column.formSlot"
-                :value="formData[column.prop]"
-                :name="column.prop"
-                :column="column"
-                :size="column.size || controlSize"
-                :placeholder="getPlaceholder(column)"
-                :disabled="getItemProp(column, 'disabled')"
-              />
-              <!-- html -->
-              <!-- <template
-                v-else-if="(column.type === 'html' || column.detail || formOption.detail) && column.type !== 'upload'"
-              >
-                <div
-                  v-if="column.render"
-                  :class="!column.notEllipsis?'form-item-text':''"
-                  :title="column.render(formData)"
-                  v-html="column.render(formData)"
-                ></div>
-                <div
-                  v-else
-                  :class="!column.notEllipsis?'form-item-text':''"
-                  :title="formData[column.propName || column.prop]"
-                  v-html="formData[column.propName || column.prop]"
-                ></div>
-              </template>-->
+        <ygp-group
+            v-for="(item, index) in columnOption"
+            :key="item.label"
+            :is-tabs="isTabs"
+            :display="vaildDisplay(item)"
+            :index="index"
+            :active.sync="activeName"
+            :label="item.label"
+            :column-option="columnOption"
+        >
+          <el-row :span="24" v-show="isGroupShow(item, index+'')" :class="['group-content', item.class]">
+            <template v-for="(column, cindex) in item.items">
+              <el-col v-if="vaildDisplay(column) && cindex < count"
+                      :key="column.prop"
+                      :span="getSpan(column)"
+                      :md="getSpan(column)"
+                      :sm="column.smSpan || item.smSpan || 12"
+                      :xs="column.xsSpan || item.xmSpan ||  24"
+                      :offset="column.offset || item.offset ||  0">
+                <el-form-item :prop="column.prop"
+                              :label="getLabel(column)"
+                              :rules="getItemProp(column, 'rules')"
+                              :class="['ygp-form__item', {'full-width': ['radio', 'textarea', 'upload', 'dynamic'].includes(column.type)}]"
+                              :label-width="column.labelWidth || item.labelWidth || parentOption.labelWidth">
+                  <slot
+                      v-if="column.formSlot"
+                      :value="formData[column.prop]"
+                      :name="column.prop"
+                      :column="column"
+                      :size="column.size || controlSize"
+                      :placeholder="getPlaceholder(column)"
+                      :disabled="getItemProp(column, 'disabled')"
+                  />
+                  <!-- html -->
+                  <!-- <template
+                    v-else-if="(column.type === 'html' || column.detail || formOption.detail) && column.type !== 'upload'"
+                  >
+                    <div
+                      v-if="column.render"
+                      :class="!column.notEllipsis?'form-item-text':''"
+                      :title="column.render(formData)"
+                      v-html="column.render(formData)"
+                    ></div>
+                    <div
+                      v-else
+                      :class="!column.notEllipsis?'form-item-text':''"
+                      :title="formData[column.propName || column.prop]"
+                      v-html="formData[column.propName || column.prop]"
+                    ></div>
+                  </template>-->
 
-              <!-- 级联选择器 -->
-              <el-cascader
-                v-else-if="column.type === 'cascader'"
-                v-model="formData[column.prop]"
-                :filterable="column.filterable"
-                :options="column.options"
-                :props="column.props"
-                :clearable="column.clearable"
-                :placeholder="getPlaceholder(column)"
-                :disabled="getItemProp(column, 'disabled')"
-                @change="handleCascaderChange(value,column.prop)"
-              ></el-cascader>
+                  <!-- 级联选择器 -->
+                  <el-cascader
+                      v-else-if="column.type === 'cascader'"
+                      v-model="formData[column.prop]"
+                      :filterable="column.filterable"
+                      :options="column.options"
+                      :props="column.props"
+                      :clearable="column.clearable"
+                      :placeholder="getPlaceholder(column)"
+                      :disabled="getItemProp(column, 'disabled')"
+                      @change="handleCascaderChange(value,column.prop)"
+                  ></el-cascader>
 
-              <!-- 动态组件 -->
-              <component
-                :is="getComponent(column.type)"
-                v-else
-                :ref="column.prop"
-                v-bind="column"
-                v-model="formData[column.prop]"
-                :column="column"
-                :dic="dic"
-                :size="parentOption.size"
-                :maxlength="column.maxlength"
-                :placeholder="getPlaceholder(column)"
-                :disabled="getItemProp(column, 'disabled') || formOption.detail"
-                :close="getItemProp(column, 'close')"
-                :options="getOptions(column)"
-                :detail="column.detail || formOption.detail"
-                :default-time="column.defaultTime"
-                :range="column.range"
-                :column-slot="columnSlot"
-                @keyup.enter.native="handleEnter"
-                @change="(value, option, crudColumn, crudScope) => $emit('onChange', value, option, crudColumn ? crudColumn : column, crudScope)"
-                @focus="$emit('focus', column.prop)"
-                @remote="(callback, query) => $emit('remote', callback, query, column.prop)"
-                @validateField="$refs.ruleForm.validateField(column.prop)"
-              >
-                <template slot="menuDynamic" slot-scope="scope">
-                  <slot name="menuDynamic" v-bind="scope"></slot>
-                </template>
-                <template v-for="el in columnSlot" :slot="el" slot-scope="scope">
-                  <slot v-bind="scope" :name="el"></slot>
-                </template>
-              </component>
-            </el-form-item>
-          </template>
-          <form-menu v-if="isSearch" :is-search="isSearch">
-            <template slot="menuForm" slot-scope="scope">
-              <slot name="menuForm" v-bind="scope"></slot>
+                  <!-- 动态组件 -->
+                  <component
+                      :is="getComponent(column.type)"
+                      v-else
+                      :ref="column.prop"
+                      v-bind="column"
+                      v-model="formData[column.prop]"
+                      :column="column"
+                      :dic="dic"
+                      :size="parentOption.size"
+                      :maxlength="column.maxlength"
+                      :placeholder="getPlaceholder(column)"
+                      :disabled="getItemProp(column, 'disabled') || formOption.detail"
+                      :close="getItemProp(column, 'close')"
+                      :options="getOptions(column)"
+                      :detail="column.detail || formOption.detail"
+                      :default-time="column.defaultTime"
+                      :range="column.range"
+                      :column-slot="columnSlot"
+                      @keyup.enter.native="handleEnter"
+                      @change="(value, option, crudColumn, crudScope) => $emit('onChange', value, option, crudColumn ? crudColumn : column, crudScope)"
+                      @focus="$emit('focus', column.prop)"
+                      @remote="(callback, query) => $emit('remote', callback, query, column.prop)"
+                      @validateField="$refs.ruleForm.validateField(column.prop)"
+                  >
+                    <template slot="menuDynamic" slot-scope="scope">
+                      <slot name="menuDynamic" v-bind="scope"></slot>
+                    </template>
+                    <template v-for="el in columnSlot" :slot="el" slot-scope="scope">
+                      <slot v-bind="scope" :name="el"></slot>
+                    </template>
+                  </component>
+                </el-form-item>
+              </el-col>
+
             </template>
-          </form-menu>
-        </div>
-      </ygp-group>
-      <form-menu v-if="!isSearch" :is-search="isSearch">
-        <template slot="menuForm" slot-scope="scope">
-          <slot name="menuForm" v-bind="scope"></slot>
-        </template>
-      </form-menu>
+            <form-menu v-if="isSearch" :is-search="isSearch">
+              <template slot="menuForm" slot-scope="scope">
+                <slot name="menuForm" v-bind="scope"></slot>
+              </template>
+            </form-menu>
+          </el-row>
+        </ygp-group>
+        <form-menu v-if="!isSearch" :is-search="isSearch">
+          <template slot="menuForm" slot-scope="scope">
+            <slot name="menuForm" v-bind="scope"></slot>
+          </template>
+        </form-menu>
     </el-form>
   </div>
 </template>
@@ -178,6 +182,7 @@ export default {
       bindList: {},
       formData: {},
       formOption: {},
+      itemSpanDefault: 8,
       formCreate: false,
       formDefault: {},
       formVal: {},
@@ -301,6 +306,9 @@ export default {
     vaildData,
     init() {
       this.formOption = this.option;
+    },
+    getSpan (column) {
+      return column.span || this.parentOption.span || this.itemSpanDefault
     },
     // 初始化表单
     dataFormat() {

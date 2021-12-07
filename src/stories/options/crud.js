@@ -24,7 +24,7 @@ export const base = {
 }
 
 export const height = {
-  height:300,
+  height:285,
   columns:[
     {
       label:'姓名',
@@ -103,6 +103,7 @@ export const search = {
     prop: 'name',
     searchValue:'small',
     search:true,
+    searchSpan:12,
     searchRules: [{
       required: true,
       message: "请输入姓名",
@@ -127,6 +128,7 @@ export const search = {
     label:'性别',
     prop:'sex',
     search:true,
+    // searchSpan:12,
   },{
     label: '内容4',
     prop: 'text4',

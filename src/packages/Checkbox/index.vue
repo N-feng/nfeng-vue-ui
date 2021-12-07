@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :style="style">
     <!-- 多选框 -->
     <el-checkbox
       v-if="isSingle"
@@ -66,6 +66,13 @@ export default create({
       default: false,
     },
   },
+  computed: {
+    style() {
+      let style = {}
+      style.lineHeight = "28px"
+      return style
+    }
+  }
 });
 </script>
 
