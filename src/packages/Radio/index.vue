@@ -70,7 +70,7 @@ export default {
       if(this.isButtonRadio) {
         style.lineHeight = "30px"
       }else {
-        style.lineHeight = this.lineHeight ||  "33px"
+        style.lineHeight = this.lineHeight ||  "34px"
       }
       return style
     }

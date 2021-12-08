@@ -2,8 +2,7 @@
   <el-col :span="menuSpan"
           :md="menuSpan"
           :sm="12"
-          :xs="24"
-          :offset="formSafe.parentOption.menuOffset">
+          :xs="24">
     <el-form-item v-if="vaildData(formSafe.parentOption.menuBtn,true)"
                   :style="styleName"
                   :class="className">
@@ -36,10 +35,7 @@
                  :size="formSafe.controlSize"
                  :loading="formSafe.allDisabled"
                  @click="formSafe.resetForm">{{vaildData(formSafe.parentOption.emptyText, "重 置")}}</el-button>
-      <el-button v-if="formSafe.option.items.length > 5 && isSearch"
-                 :size="formSafe.controlSize"
-                 type="text"
-                 @click="formSafe.expand = !formSafe.expand">{{ formSafe.expand ? "收起" : "展开" }}<i :class="formSafe.expand ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i></el-button>
+
       <slot name="menuForm"
             :size="formSafe.controlSize"></slot>
     </el-form-item>
@@ -62,7 +58,7 @@ export default {
   },
   computed: {
     menuSpan () {
-      return this.formSafe.parentOption.menuSpan || (this.isSearch ? 8 : 24);
+      return this.formSafe.parentOption.menuSpan || 24;
     },
     className () {
       return !this.isSearch && 'form-menu'

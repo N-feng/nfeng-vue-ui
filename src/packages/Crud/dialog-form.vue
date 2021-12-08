@@ -2,7 +2,7 @@
   <component
     :is="dialogType"
     lock-scroll
-    :class="['ygp-dialog']"
+    :class="['ygp-dialog',b('dialog')]"
     :modal-append-to-body="false"
     append-to-body
     :title="dialogTitle"
@@ -11,21 +11,47 @@
   >
     <ygp-form
       v-if="boxVisible"
+      ref="tableForm"
       v-model="crud.tableForm"
       :option="formOption"
       :dic="crud.dic"
+      :status.sync="disabled"
       @handleCancel="hide"
       @reset-change="hide"
       @onSubmit="handleSubmit"
     ></ygp-form>
+    <span class="ygp-dialog__footer"
+          :class="'ygp-dialog__footer--'+dialogMenuPosition"
+          v-if="!isView">
+      <el-button v-if="vaildData(formOption.submitBtn,true)"
+                 @click="submit"
+                 :disabled="disabled"
+                 :size="crud.controlSize"
+                 :icon="formOption.submitIcon || 'el-icon-check'"
+                 type="primary">{{formOption.submitText}}</el-button>
+      <el-button v-if="vaildData(formOption.emptyBtn,true)"
+                 @click="reset"
+                 :disabled="disabled"
+                 :size="crud.controlSize || 'el-icon-delete'"
+                 :icon="formOption.emptyIcon">{{formOption.emptyText}}</el-button>
+      <slot name="menuForm"
+            :disabled="disabled"
+            :size="crud.controlSize"
+            :type="boxType"></slot>
+    </span>
   </component>
 </template>
 
 <script>
-export default {
+import {vaildData} from "../../utils/util";
+import create from "../../common/create"
+
+export default create({
+  name: "crud",
   inject: ["crud"],
   data() {
     return {
+      disabled: false,
       boxType: "",
       boxVisible: false,
     };
@@ -52,6 +78,7 @@ export default {
     formOption() {
       let option = this.deepClone(this.crud.tableOption);
       option.items = option.columns;
+      option.menuBtn = false;
       delete option.columns;
       if (this.isView) {
         option.detail = true;
@@ -73,8 +100,18 @@ export default {
     dialogTitle() {
       return "编辑";
     },
+    dialogMenuPosition () {
+      return this.crud.option.dialogMenuPosition || 'center'
+    }
   },
   methods: {
+    vaildData,
+    submit () {
+      this.$refs.tableForm.submit()
+    },
+    reset () {
+      this.$refs.tableForm.resetForm()
+    },
     handleSubmit() {
       if (this.isAdd) {
         this.rowSave();
@@ -101,7 +138,7 @@ export default {
       this.boxVisible = true;
     },
   },
-};
+});
 </script>
 
 <style lang="scss">

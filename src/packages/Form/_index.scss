@@ -1,6 +1,6 @@
-.query-filter {
+.ygp-crud__search {
   background: #f7f8fa;
-  margin: 16px 16px 0;
+  padding: 16px 24px;
 }
 
 .pro-form {
@@ -9,12 +9,12 @@
 }
 
 .form-menu {
-  background-color: white;
-  padding: 16px;
+  //background-color: white;
+  //padding: 16px;
   position: sticky;
   bottom: 0;
   z-index: 5;
-  text-align: center;
+  //text-align: center;
 }
 
 .form-group {
@@ -23,10 +23,10 @@
     box-shadow: 0px 1px 0px 0px #ebedf0;
     margin-bottom: 16px;
   }
-  .group-content {
-    background: #f7f8fa;
-    padding: 16px;
-  }
+  //.group-content {
+  //  background: #f7f8fa;
+  //  padding: 16px;
+  //}
   .form-dynamic {
     background: none;
     padding: 0;
@@ -42,12 +42,12 @@
 }
 
 .ygp-form__item {
-  //min-width: 370px;
-
   .el-form-item__content {
     width: calc(100% - 140px);
-    line-height: 33px;
+    line-height: 34px;
+    min-height: 34px;
   }
+
   .el-select,
   .el-date-editor.el-input,
   .el-input-number--small {
@@ -136,6 +136,43 @@
     [type="radio"],
     .el-input--prefix .el-input__inner {
       padding-left: 15px;
+    }
+  }
+}
+
+.ygp-dialog {
+  .el-dialog {
+    display: flex;
+    flex-direction: column;
+    margin:0 !important;
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+  }
+  .el-dialog__body{
+    margin-bottom: 50px;
+  }
+  .el-dialog .el-dialog__body{
+    flex:1;
+    overflow: hidden;
+    overflow-y:auto;
+  }
+  &__footer {
+    display: block;
+    padding: 10px 16px;
+    box-sizing: border-box;
+    border-top: 1px solid #f0f0f0;
+    width: 100%;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    background-color: #fff;
+    &--right {
+      text-align: right;
+    }
+    &--center {
+      text-align: center;
     }
   }
 }

@@ -98,12 +98,13 @@ export const selection = {
 
 export const search = {
   // searchMenuPosition:'right',
+  searchIndex: 5,
   columns: [{
     label: '姓名',
     prop: 'name',
     searchValue:'small',
     search:true,
-    searchSpan:12,
+    searchSpan:8,
     searchRules: [{
       required: true,
       message: "请输入姓名",

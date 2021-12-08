@@ -1,5 +1,5 @@
 <template>
-  <div :class="{'query-filter': isSearch, 'pro-form': !isSearch, 'form-detail': isDetail}">
+  <div :class="[b(), {'ygp--view': !isView, 'ygp--detail': isDetail}]">
     <el-form
       ref="ruleForm"
       :model="formData"
@@ -18,7 +18,7 @@
         >
           <el-row :span="24" v-show="isGroupShow(item, index+'')" :class="['group-content', item.class]">
             <template v-for="(column, cindex) in item.items">
-              <el-col v-if="vaildDisplay(column) && cindex < count"
+              <el-col v-if="vaildDisplay(column)"
                       :key="column.prop"
                       :span="getSpan(column)"
                       :md="getSpan(column)"
@@ -106,23 +106,24 @@
               </el-col>
 
             </template>
-            <form-menu v-if="isSearch" :is-search="isSearch">
+            <form-menu>
               <template slot="menuForm" slot-scope="scope">
                 <slot name="menuForm" v-bind="scope"></slot>
               </template>
             </form-menu>
           </el-row>
         </ygp-group>
-        <form-menu v-if="!isSearch" :is-search="isSearch">
-          <template slot="menuForm" slot-scope="scope">
-            <slot name="menuForm" v-bind="scope"></slot>
-          </template>
-        </form-menu>
+<!--        <form-menu v-if="!isSearch" :is-search="isSearch">-->
+<!--          <template slot="menuForm" slot-scope="scope">-->
+<!--            <slot name="menuForm" v-bind="scope"></slot>-->
+<!--          </template>-->
+<!--        </form-menu>-->
     </el-form>
   </div>
 </template>
 
 <script>
+import create from "../../common/create";
 import { validatenull } from '../../utils/validate.js';
 import { throttle, deepClone, vaildData, clearVal, arraySort } from "../../utils/util.js";
 import mock from "../../utils/mock.js";
@@ -130,8 +131,8 @@ import { getLabel, getComponent, getPlaceholder, formInitVal } from "../../commo
 import permission from '../../utils/permission';
 import formMenu from "./menu.vue";
 
-export default {
-  name: "YgpForm",
+export default create({
+  name: "form",
   components: { formMenu },
   directives: {
     permission
@@ -150,10 +151,6 @@ export default {
     enableEnterSearch: {
       type: Boolean,
       default: false,
-    },
-    defaultShowColumns: {
-      type: Number,
-      default: 3,
     },
     // 权限控制
     permission: {
@@ -176,7 +173,6 @@ export default {
   },
   data() {
     return {
-      expand: false,
       activeName: '',
       allDisabled: false,
       bindList: {},
@@ -200,26 +196,20 @@ export default {
         (item) => !this.propOption.map((ele) => ele.prop).includes(item)
       );
     },
-    count() {
-      if (this.isSearch) {
-        if (this.expand) {
-          return this.option.items.length;
-        }
-        return this.defaultShowColumns;
-      }
-      return 99;
-    },
     controlSize() {
       return this.option.size || "small";
     },
     isDetail() {
       return this.option.detail;
     },
-    isSearch() {
-      return this.option.search;
-    },
+    // isSearch() {
+    //   return this.option.search;
+    // },
     isTabs() {
       return this.parentOption.tabs;
+    },
+    isView () {
+      return this.boxType === "view"
     },
     dynamicOption() {
       let list = [];
@@ -250,6 +240,7 @@ export default {
     columnOption() {
       let list = [...this.parentOption.group] || [];
       list.forEach((ele) => {
+        ele.items = ele.items || [];
         //处理级联属性
         // ele.items = calcCascader(ele.items);
         //根据order排序
@@ -503,7 +494,7 @@ export default {
       });
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scpoed>
