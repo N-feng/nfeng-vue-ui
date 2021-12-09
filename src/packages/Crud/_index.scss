@@ -30,7 +30,7 @@
   }
 }
 
-.crud-component {
+.ygp-crud {
   background: #ffffff;
   display: flex;
   flex-direction: column;
@@ -47,21 +47,9 @@
   }
 
   // 表格头部
-  .crud-header {
-    padding-bottom: 12px;
-    position: relative;
-    .red-star {
-      color: red;
-      position: absolute;
-      top: 10px;
-      left: -10px;
-    }
-    .crud-title {
-      margin: 0;
-    }
-    .crud-title-large {
-      font-size: 20px;
-    }
+  .el-table th {
+    background-color: rgba(250, 250, 250, 1);
+    color: rgba(0, 0, 0, 0.847058823529412);
   }
 
   // 提示
@@ -76,61 +64,48 @@
     font-weight: 600;
     margin: 0 3px;
   }
-
-  // 表格
-  .table-component {
-    background-color: white;
-    flex: 1;
-    overflow: auto;
-    display: flex;
-    flex-direction: column;
-    margin: 16px;
-    line-height: 20px;
-
-    // 滚动条样式
+  
+  /*滚动条整体样式*/
+  .el-table__body-wrapper,
+  .el-table__fixed-body-wrapper {
     &::-webkit-scrollbar {
-      width: 9px;
+      width: 9px; /*高宽分别对应横竖滚动条的尺寸*/
       height: 9px;
     }
     &::-webkit-scrollbar-thumb {
       background: #d8d6d6;
     }
-
-    .cell-form {
-      flex: 1;
-      overflow: auto;
-      .el-table th {
-        background-color: rgba(250, 250, 250, 1);
-        color: rgba(0, 0, 0, 0.847058823529412);
-        // z-index: 999;
-      }
-      // .el-table__fixed-right {
-      //   z-index: 1000;
-      // }
-      // .el-form-item {
-      //   margin-bottom: 10px;
-      //   &.is-error{
-      //     margin-bottom: 22px;
-      //     margin-top: 10px;
-      //   }
-      // }
-      .el-form-item {
-        margin-bottom: 0;
-      }
-      .el-form-item__error {
-        width: 100%;
-        text-align: left;
-        // position: relative;
-      }
-      .cell {
-        overflow: visible;
-      }
+    &::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.05);
     }
+  }
 
-    .pagination {
-      padding-top: 12px;
-      text-align: right;
+  // 修复列表页样式
+  .el-table__header-wrapper {
+    width: calc(100% - 9px) !important;
+  }
+  .el-table--scrollable-y .el-table__fixed-right {
+    right: 9px !important;
+  }
+
+  .cell-form {
+    flex: 1;
+    overflow: auto;
+    .el-form-item {
+      margin-bottom: 0;
     }
+    .el-form-item__error {
+      width: 100%;
+      text-align: left;
+    }
+    .cell {
+      overflow: visible;
+    }
+  }
+
+  .pagination {
+    padding-top: 12px;
+    text-align: right;
   }
 
   // 搜索表单 + 表格
@@ -183,33 +158,6 @@
   white-space: nowrap;
 }
 
-/*滚动条整体样式*/
-.el-table__body-wrapper,
-.el-table__fixed-body-wrapper {
-  &::-webkit-scrollbar {
-    width: 9px; /*高宽分别对应横竖滚动条的尺寸*/
-    height: 9px;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: #d8d6d6;
-  }
-  &::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.05);
-  }
-}
-
-// 修复列表页样式
-.cell-form {
-  .el-table__header-wrapper {
-    width: calc(100% - 9px) !important;
-  }
-  // .el-table__fixed-right {
-  //   height: calc(100% - 8px)!important;
-  // }
-  .el-table--scrollable-y .el-table__fixed-right {
-    right: 9px !important;
-  }
-}
 
 // 列表页面样式
 .footer {

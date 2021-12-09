@@ -20,7 +20,7 @@
       v-else
       v-model.trim="text"
       clearable
-      :rows="row"
+      :rows="rows"
       :show-word-limit="showWordLimit"
       :type="modelType || type"
       :size="size"
@@ -73,7 +73,7 @@ export default create({
       type: Number,
       default: 50 //备注字段限制
     },
-    row: {
+    rows: {
       type: Number,
       default: 2
     },

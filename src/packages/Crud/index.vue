@@ -1,12 +1,10 @@
 <template>
-  <div class="crud-component">
+  <div :class="b({'card':!tableOption.card})">
     <!-- 搜索表单 -->
     <header-search
       ref="headerSearch"
       :search="search"
       :searchForm.sync="searchForm"
-      @onSubmit="searchSubmit"
-      @reset="searchReset"
     >
       <template slot="searchMenu" slot-scope="scope">
         <slot name="searchMenu" v-bind="scope"></slot>
@@ -15,9 +13,10 @@
     <!--  表单表格之间插槽  -->
     <slot name="middleDiv" />
     <!-- 表格 -->
-    <div class="table-component" :class="[{ 'table--fullscreen': fullscreen }]">
+    <div :class="[b('scroll'), { 'table--fullscreen': fullscreen }]">
       <!-- 表格功能列 -->
-      <header-menu v-if="vaildData(tableOption.header, true)" ref="headerMenu">
+      <header-menu ref="headerMenu"
+                   v-if="vaildData(tableOption.header, true)">
         <template slot="menuLeft" slot-scope="scope">
           <slot name="menuLeft" v-bind="scope"></slot>
         </template>
@@ -45,7 +44,6 @@
         v-if="tableOption"
         ref="cellForm"
         :model="cellForm"
-        class="cell-form"
         :show-message="false"
         @validate="handleValidate"
       >

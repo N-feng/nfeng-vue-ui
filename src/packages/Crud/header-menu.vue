@@ -1,6 +1,6 @@
 <template>
-  <div class="crud__menu">
-    <div class="crud__left">
+  <div :class="b('menu')">
+    <div :class="b('left')">
       <el-button type="primary"
                  @click="crud.rowAdd"
                  icon="el-icon-plus"
@@ -29,7 +29,7 @@
       >
       <slot name="menuLeft" :size="crud.size"></slot>
     </div>
-    <div class="crud__right">
+    <div :class="b('right')">
       <slot name="menuRight" :size="crud.size"></slot>
       <template v-for="(item, index) in crud.tableOption.operate">
         <el-button
@@ -75,7 +75,9 @@
 
 <script>
 import permission from '../../utils/permission';
-export default {
+import create from "../../common/create";
+export default create({
+  name: "crud",
   inject: ["crud"],
   directives: {
     permission
@@ -107,5 +109,5 @@ export default {
       }
     },
   },
-};
+});
 </script>

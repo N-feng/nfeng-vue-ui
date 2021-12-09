@@ -104,7 +104,10 @@
                   </component>
                 </el-form-item>
               </el-col>
-
+              <div :class="b('line')"
+                   v-if="vaildDisplay(column)&&column.row && column.span!==24 && column.count"
+                   :key="`line${column.prop}`"
+                   :style="{width:(column.count/24*100)+'%'}"></div>
             </template>
             <form-menu>
               <template slot="menuForm" slot-scope="scope">
@@ -127,7 +130,7 @@ import create from "../../common/create";
 import { validatenull } from '../../utils/validate.js';
 import { throttle, deepClone, vaildData, clearVal, arraySort } from "../../utils/util.js";
 import mock from "../../utils/mock.js";
-import { getLabel, getComponent, getPlaceholder, formInitVal } from "../../common/dataformat.js";
+import { getLabel, getComponent, getPlaceholder, formInitVal, calcCount } from "../../common/dataformat.js";
 import permission from '../../utils/permission';
 import formMenu from "./menu.vue";
 
@@ -241,6 +244,13 @@ export default create({
       let list = [...this.parentOption.group] || [];
       list.forEach((ele) => {
         ele.items = ele.items || [];
+        // 循环列的全部属性
+        ele.items.forEach((column, cindex) => {
+          //动态计算列的位置
+          if (column.display !== false) {
+            column = calcCount(column, this.itemSpanDefault, cindex === 0);
+          }
+        });
         //处理级联属性
         // ele.items = calcCascader(ele.items);
         //根据order排序

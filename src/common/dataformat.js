@@ -29,6 +29,24 @@ export const calcCascader = (list = []) => {
   });
   return list;
 };
+/**
+ * 计算空白列row
+ */
+let count = 0;
+export const calcCount = (ele, spanDefault = 12, init = false) => {
+  if (init) count = 0;
+  const spanAll = 24;
+  count = count + (ele.span || spanDefault) + (ele.offset || 0);
+  if (count === spanAll) {
+    count = 0;
+  } else if (count > spanAll) {
+    count = 0 + (ele.span || spanDefault) + (ele.offset || 0);
+  } else if (ele.row && count !== spanAll) {
+    ele.count = spanAll - count;
+    count = 0;
+  }
+  return ele;
+};
 
 /**
  * 初始化数据格式

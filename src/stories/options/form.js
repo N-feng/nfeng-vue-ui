@@ -292,7 +292,7 @@ export const dynamic = {
       label: '输入框',
       prop: "input1",
       span:12,
-      // row: true
+      row: true
     },
     {
       label: '子表单',
