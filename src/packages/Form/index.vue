@@ -17,7 +17,7 @@
             :column-option="columnOption"
         >
           <el-row :span="24" v-show="isGroupShow(item, index+'')" :class="['group-content', item.class]">
-            <template v-for="(column, cindex) in item.items">
+            <template v-for="column in item.items">
               <el-col v-if="vaildDisplay(column)"
                       :key="column.prop"
                       :span="getSpan(column)"
@@ -128,7 +128,7 @@
 <script>
 import create from "../../common/create";
 import { validatenull } from '../../utils/validate.js';
-import { throttle, deepClone, vaildData, clearVal, arraySort } from "../../utils/util.js";
+import { throttle, deepClone, vaildData, arraySort } from "../../utils/util.js";
 import mock from "../../utils/mock.js";
 import { getLabel, getComponent, getPlaceholder, formInitVal, calcCount } from "../../common/dataformat.js";
 import permission from '../../utils/permission';

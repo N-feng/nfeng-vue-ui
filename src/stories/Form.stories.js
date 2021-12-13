@@ -1,9 +1,12 @@
+import Vue from "vue";
 import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
-import Vue from "vue";
-Vue.use(ElementUI);
-
+import Antd from 'ant-design-vue';
+import 'ant-design-vue/dist/antd.css';
 import NfengUI from "../packages/main";
+
+Vue.use(ElementUI);
+Vue.use(Antd);
 Vue.use(NfengUI);
 
 // import Form from '../packages/Form/index.vue';
@@ -47,6 +50,9 @@ const Template = (args, { argTypes }) => {
                   @onChange="onChange" 
                   @onCancel="onCancel" 
                   @onSubmit="onSubmit"/>
+<a-button type="primary">
+  Primary
+</a-button>
       </div>
     `,
   };

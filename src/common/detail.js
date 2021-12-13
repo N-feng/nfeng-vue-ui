@@ -1,4 +1,4 @@
-export const detail = (row = {}, column = {}, option = {}, dic = []) => {
+export const detail = (row = {}, column = {}) => {
     let result = row[column.propName || column.prop];
     // 自定义格式化
     if (column.formatter && typeof column.formatter === 'function') {
