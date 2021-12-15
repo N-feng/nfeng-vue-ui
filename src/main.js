@@ -8,7 +8,13 @@ import NfengUI from "./packages/main";
 
 Vue.use(ElementUI);
 Vue.use(Antd);
-Vue.use(NfengUI);
+Vue.use(NfengUI, {
+  ui: {
+    is: '$isAnt',
+    name: 'antd',
+    type: 'a'
+  }
+});
 
 Vue.config.productionTip = false
 
