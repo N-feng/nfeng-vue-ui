@@ -1,6 +1,6 @@
-import components from './index';
+import components from './antd';
 // import utils from '../src/utils';
-import './styles/index.scss';
+import '../styles/index.scss';
 
 import { validatenull } from '../utils/validate.js';
 import { deepClone, vaildData } from '../utils/util';
@@ -11,8 +11,7 @@ let prototypes = {
   validatenull,
 };
 
-function install(Vue, options = { extComponents: [] }) {
-  if (install.installed) return;
+function install(Vue, options = {}) {
 
   Object.keys(components).map(ele => {
     let component = components[ele];
@@ -20,17 +19,10 @@ function install(Vue, options = { extComponents: [] }) {
     name = name.substr(name.length - 1, 1) === '-' ? (name.substr(0, name.length - 1)) + ele : name;
     Vue.component(name, component);
   })
-  options.extComponents.forEach(component => {
-    Vue.component(component.name, component);
-  });
   // Vue.prototype.$utils = utils
   Object.keys(prototypes).forEach((key) => {
     Vue.prototype[key] = prototypes[key];
   });
-}
-
-if (typeof window !== "undefined" && window.Vue) {
-  install(window.Vue);
 }
 
 const Nvue = Object.assign({
