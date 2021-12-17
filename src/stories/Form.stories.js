@@ -1,17 +1,17 @@
-import Vue from "vue";
-import ElementUI from "element-ui";
-import "element-ui/lib/theme-chalk/index.css";
-import Antd from 'ant-design-vue';
-import 'ant-design-vue/dist/antd.css';
-import NfengUI from "../packages/main";
-
-Vue.use(ElementUI);
-Vue.use(Antd);
-Vue.use(NfengUI);
+// import Vue from "vue";
+// import ElementPlus from "element-plus";
+// import "element-plus/dist/index.css";
+// import Antd from 'ant-design-vue';
+// import 'ant-design-vue/dist/antd.css';
+// import NfengUI from "../packages/main";
+//
+// Vue.use(ElementPlus);
+// Vue.use(Antd);
+// Vue.use(NfengUI);
 
 // import Form from '../packages/Form/index.vue';
 
-import { previewTemplate } from "storybook-addon-preview";
+// import { previewTemplate } from "storybook-addon-preview";
 
 import { base, dic, dynamic, rules } from "./options/form";
 
@@ -58,38 +58,38 @@ const Template = (args, { argTypes }) => {
   };
 };
 
-const parameters = {
-  preview: [
-    {
-      tab: "Vue",
-      template: previewTemplate`
-<ygp-form
-  @onCancel="onCancel"
-  @onSubmit="onSubmit"
-  v-bind="$props"
-  v-model="formData"
-  :dic="dic" />`,
-      language: "html",
-      copy: true,
-    },
-    {
-      tab: "Js",
-      template: previewTemplate`
-data () {
-  return {
-    dic: {},
-    option: {},
-  }
-}`,
-      language: "js",
-      copy: true,
-    },
-  ],
-};
+// const parameters = {
+//   preview: [
+//     {
+//       tab: "Vue",
+//       template: previewTemplate`
+// <ygp-form
+//   @onCancel="onCancel"
+//   @onSubmit="onSubmit"
+//   v-bind="$props"
+//   v-model="formData"
+//   :dic="dic" />`,
+//       language: "html",
+//       copy: true,
+//     },
+//     {
+//       tab: "Js",
+//       template: previewTemplate`
+// data () {
+//   return {
+//     dic: {},
+//     option: {},
+//   }
+// }`,
+//       language: "js",
+//       copy: true,
+//     },
+//   ],
+// };
 
 // 基础
 export const Base = Template.bind({});
-Base.parameters = parameters;
+// Base.parameters = parameters;
 Base.args = {
   option: base,
   formData: {},
@@ -119,7 +119,7 @@ Base.args = {
 
 // 数据验证
 export const Rules = Template.bind({});
-Rules.parameters = parameters;
+// Rules.parameters = parameters;
 Rules.args = {
   option: rules,
   formData: {},
@@ -128,7 +128,7 @@ Rules.args = {
 
 // 数据字典
 export const Dic = Template.bind({});
-Dic.parameters = parameters;
+// Dic.parameters = parameters;
 Dic.args = {
   option: dic,
   formData: {},
@@ -148,7 +148,7 @@ Dic.args = {
 
 // 子表单
 export const Dynamic = Template.bind({});
-Dynamic.parameters = parameters;
+// Dynamic.parameters = parameters;
 Dynamic.args = {
   option: dynamic,
   formData: {

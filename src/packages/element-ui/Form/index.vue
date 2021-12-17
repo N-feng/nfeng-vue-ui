@@ -128,7 +128,7 @@
 <script>
 import create from "../../common/create";
 import { validatenull } from '../../utils/validate.js';
-import { throttle, deepClone, vaildData, arraySort } from "../../utils/util.js";
+import { throttle, deepClone, vaildData, arraySort } from "../../utils/util.ts";
 import mock from "../../utils/mock.js";
 import { getLabel, getComponent, getPlaceholder, formInitVal, calcCount } from "../../common/dataformat.js";
 import permission from '../../utils/permission';

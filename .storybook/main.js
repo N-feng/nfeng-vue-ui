@@ -6,8 +6,6 @@ module.exports = {
   "addons": [
     "@storybook/addon-links",
     "@storybook/addon-essentials",
-    "@storybook/preset-scss",
-    // "@storybook/addon-storysource", // 新增
-    "storybook-addon-preview/register",
   ],
+  "framework": "@storybook/vue3"
 }

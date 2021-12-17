@@ -44,7 +44,7 @@
 
 <script>
 import permission from "../../utils/permission";
-import { vaildData } from "../../utils/util.js";
+import { vaildData } from "../../utils/util.ts";
 
 export default {
   inject: ["formSafe"],

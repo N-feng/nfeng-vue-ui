@@ -1,12 +1,12 @@
-import ElementUI from "element-ui";
-import "element-ui/lib/theme-chalk/index.css";
-import Vue from "vue";
-import NfengUI from "../packages/main";
-import {base, search, selection, cell, html, view, height} from "./options/crud";
-import {previewTemplate} from "storybook-addon-preview";
-
-Vue.use(ElementUI);
-Vue.use(NfengUI);
+// import ElementUI from "element-ui";
+// import "element-ui/lib/theme-chalk/index.css";
+// import Vue from "vue";
+// import NfengUI from "../packages/main";
+// import {base, search, selection, cell, html, view, height} from "./options/crud";
+// import {previewTemplate} from "storybook-addon-preview";
+//
+// Vue.use(ElementUI);
+// Vue.use(NfengUI);
 
 export default {
   // component: Form,
@@ -109,38 +109,38 @@ const Template = (args, { argTypes }) => {
   };
 };
 
-const parameters = {
-  preview: [
-    {
-      tab: "Vue",
-      template: previewTemplate`
-<ygp-crud v-bind="$props" 
-          :option="{...option,stripe,index,selection,rowSelection,cellBtn}" 
-          :data="tableData" 
-          :dic="dic" 
-          @onRowSave="onRowSave" 
-          @onRowUpdate="onRowUpdate" 
-          @onRowDel="onRowDel" 
-          @onSelectionChange="onSelectionChange" 
-          @onSelectChange="onSelectChange" 
-          @onSubmit="onSubmit" />`,
-      language: "html",
-      copy: true,
-    },
-    {
-      tab: "Js",
-      template: previewTemplate`
-data () {
-  return {
-    dic: {},
-    option: {},
-  }
-}`,
-      language: "js",
-      copy: true,
-    },
-  ],
-};
+// const parameters = {
+//   preview: [
+//     {
+//       tab: "Vue",
+//       template: previewTemplate`
+// <ygp-crud v-bind="$props"
+//           :option="{...option,stripe,index,selection,rowSelection,cellBtn}"
+//           :data="tableData"
+//           :dic="dic"
+//           @onRowSave="onRowSave"
+//           @onRowUpdate="onRowUpdate"
+//           @onRowDel="onRowDel"
+//           @onSelectionChange="onSelectionChange"
+//           @onSelectChange="onSelectChange"
+//           @onSubmit="onSubmit" />`,
+//       language: "html",
+//       copy: true,
+//     },
+//     {
+//       tab: "Js",
+//       template: previewTemplate`
+// data () {
+//   return {
+//     dic: {},
+//     option: {},
+//   }
+// }`,
+//       language: "js",
+//       copy: true,
+//     },
+//   ],
+// };
 
 const tableData = [{
     id:1,
@@ -188,7 +188,7 @@ const tableData = [{
 
 // 基础
 export const Base = Template.bind({});
-Base.parameters = parameters;
+// Base.parameters = parameters;
 Base.args = {
   option: base,
   tableData,
@@ -205,7 +205,7 @@ Base.args = {
 
 // 合并菜单
 export const Menu = Template.bind({});
-Menu.parameters = parameters;
+// Menu.parameters = parameters;
 Menu.args = {
   ...Base.args,
   option: {
@@ -217,7 +217,7 @@ Menu.args = {
 
 // 固定列和表头
 export const Height = Template.bind({});
-Height.parameters = parameters;
+// Height.parameters = parameters;
 Height.args = {
   ...Base.args,
   option: height,
@@ -227,7 +227,7 @@ Height.args = {
 
 // html语法转义
 export const Html = Template.bind({});
-Html.parameters = parameters;
+// Html.parameters = parameters;
 Html.args = {
   ...Base.args,
   option: html,
@@ -236,7 +236,7 @@ Html.args = {
 
 // 查看内容
 export const View = Template.bind({});
-View.parameters = parameters;
+// View.parameters = parameters;
 View.args = {
   ...Base.args,
   option: view,
@@ -245,7 +245,7 @@ View.args = {
 
 // 多选
 export const Selection = Template.bind({});
-Selection.parameters = parameters;
+// Selection.parameters = parameters;
 Selection.args = {
   ...Base.args,
   option: selection,
@@ -255,7 +255,7 @@ Selection.args = {
 
 // 搜索
 export const Search = Template.bind({});
-Search.parameters = parameters;
+// Search.parameters = parameters;
 Search.args = {
   ...Base.args,
   option: search,
@@ -263,7 +263,7 @@ Search.args = {
 
 // 分页
 export const Page = Template.bind({});
-Page.parameters = parameters;
+// Page.parameters = parameters;
 Page.args = {
   ...Search.args,
   page: {
@@ -273,7 +273,7 @@ Page.args = {
 
 // 行编辑
 export const Cell = Template.bind({});
-Cell.parameters = parameters;
+// Cell.parameters = parameters;
 Cell.args = {
   ...Base.args,
   option: cell,
