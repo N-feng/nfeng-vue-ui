@@ -26,5 +26,5 @@ export default {
 </script>
 
 <style lang="scss">
-@import "./_index.scss";
+@import "index";
 </style>

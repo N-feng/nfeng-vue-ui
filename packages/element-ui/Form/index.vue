@@ -508,5 +508,5 @@ export default create({
 </script>
 
 <style lang="scss" scpoed>
-@import "./_index.scss";
+@import "form";
 </style>

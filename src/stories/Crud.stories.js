@@ -2,7 +2,7 @@
 // import "element-ui/lib/theme-chalk/index.css";
 // import Vue from "vue";
 // import NfengUI from "../packages/main";
-// import {base, search, selection, cell, html, view, height} from "./options/crud";
+import {base, search, selection, cell, html, view, height} from "./options/crud";
 // import {previewTemplate} from "storybook-addon-preview";
 //
 // Vue.use(ElementUI);
@@ -56,27 +56,28 @@ const Template = (args, { argTypes }) => {
     props: Object.keys(argTypes),
     template: `
       <div>
+      <el-button></el-button>
 <!--        <p>tableData: {{tableData}}</p>-->
-        <ygp-crud v-bind="$props" 
-                  :option="{...option,stripe,index,selection,rowSelection,cellBtn}" 
-                  :data="tableData" 
-                  :dic="dic" 
-                  @onRowSave="onRowSave" 
-                  @onRowUpdate="onRowUpdate" 
-                  @onRowDel="onRowDel" 
-                  @onSelectionChange="onSelectionChange" 
-                  @onSelectChange="onSelectChange" 
-                  @onSubmit="onSubmit" 
-                  @row-update="addUpdate" 
-                  @row-save="rowSave" 
-                  @onLoad="onLoad">
-          <template v-if="option.menuType === 'menu'" slot-scope="scope" slot="menuBtn">
-            <el-dropdown-item divided @click.native="tip">自定义按钮</el-dropdown-item>
-          </template>
-          <template v-if="option.menuType === 'menu'" slot-scope="scope" slot="menu" >
-            <el-button style="margin-left:10px;" size="small" type="text" icon="el-icon-user" @click.native="tip">自定义按钮</el-button>
-          </template>
-        </ygp-crud>
+<!--        <ygp-crud v-bind="$props" -->
+<!--                  :option="{...option,stripe,index,selection,rowSelection,cellBtn}" -->
+<!--                  :data="tableData" -->
+<!--                  :dic="dic" -->
+<!--                  @onRowSave="onRowSave" -->
+<!--                  @onRowUpdate="onRowUpdate" -->
+<!--                  @onRowDel="onRowDel" -->
+<!--                  @onSelectionChange="onSelectionChange" -->
+<!--                  @onSelectChange="onSelectChange" -->
+<!--                  @onSubmit="onSubmit" -->
+<!--                  @row-update="addUpdate" -->
+<!--                  @row-save="rowSave" -->
+<!--                  @onLoad="onLoad">-->
+<!--          <template v-if="option.menuType === 'menu'" slot-scope="scope" slot="menuBtn">-->
+<!--            <el-dropdown-item divided @click.native="tip">自定义按钮</el-dropdown-item>-->
+<!--          </template>-->
+<!--          <template v-if="option.menuType === 'menu'" slot-scope="scope" slot="menu" >-->
+<!--            <el-button style="margin-left:10px;" size="small" type="text" icon="el-icon-user" @click.native="tip">自定义按钮</el-button>-->
+<!--          </template>-->
+<!--        </ygp-crud>-->
       </div>
     `,
 

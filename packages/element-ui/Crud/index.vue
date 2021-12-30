@@ -777,5 +777,5 @@ export default create({
 </script>
 
 <style lang="scss">
-@import "./_index.scss";
+@import "index";
 </style>

@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import create from "../../common/create.js";
+import create from "../../common/create.ts";
 import props from "../../common/props.js";
 import event from "../../common/event.js";
 

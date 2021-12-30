@@ -142,5 +142,5 @@ export default create({
 </script>
 
 <style lang="scss">
-@import "./_dialog-form.scss";
+@import "dialog-form";
 </style>

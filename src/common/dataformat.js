@@ -6,7 +6,7 @@ import {
   DATE_LIST,
   ARRAY_VALUE_LIST,
   MULTIPLE_LIST,
-} from "../global/variable";
+} from "../../packages/core/variable";
 import { detailDataType, findObject } from "../utils/util";
 
 /**
