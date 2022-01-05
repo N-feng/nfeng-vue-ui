@@ -1,4 +1,4 @@
-import bem from './bem';
+import bem from './useBem';
 import { KEY_COMPONENT_NAME } from './variable';
 export default function(sfc) {
   sfc.name = KEY_COMPONENT_NAME + (sfc.name || '');

@@ -1,3 +1,5 @@
+import {getCurrentInstance} from "vue";
+
 /**
  * bem helper
  * b() // 'button'
@@ -28,18 +30,20 @@ const prefix = (name, mods) => {
   return ret;
 };
 
-export default {
-  methods: {
-    b(el, mods) {
-      const { name } = this.$options;
+export default function useBem() {
+  const b = (el?, mods?) => {
+    const internalInstance = getCurrentInstance() // 有效
+    const name = internalInstance?.proxy?.$options.name;
 
-      if (el && typeof el !== 'string') {
-        mods = el;
-        el = '';
-      }
-      el = join(name, el, ELEMENT);
-
-      return mods ? [el, prefix(el, mods)] : el;
+    if (el && typeof el !== 'string') {
+      mods = el;
+      el = '';
     }
+    el = join(name, el, ELEMENT);
+
+    return mods ? [el, prefix(el, mods)] : el;
+  }
+  return {
+    b
   }
 };
