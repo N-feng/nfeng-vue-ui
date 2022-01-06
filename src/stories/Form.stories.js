@@ -37,24 +37,12 @@ export default {
   },
 };
 
-const Template = (args, { argTypes }) => {
+const Template = (args) => {
   return {
-    // components: { Form },
-    props: Object.keys(argTypes),
-    template: `
-      <div>
-<!--        <p>formData: {{formData}}</p>-->
-        <ygp-form v-bind="$props"
-                  :value="formData" 
-                  :dic="dic"
-                  @onChange="onChange" 
-                  @onCancel="onCancel" 
-                  @onSubmit="onSubmit"/>
-<a-button type="primary">
-  Primary
-</a-button>
-      </div>
-    `,
+    setup() {
+      return { args };
+    },
+    template: '<ygp-form v-bind="args" />',
   };
 };
 
