@@ -1,11 +1,15 @@
-import { defineComponent } from 'vue'
+import {computed, defineComponent, PropType} from 'vue'
 import useBem from '../../core/useBem'
+
+export interface formProps {
+  items: object | object[]
+}
 
 export default defineComponent({
   name: 'form',
   props: {
     option: {
-      type: Object,
+      type: Object as PropType<formProps>,
       required: true,
       default: () => {
         return {};
@@ -15,9 +19,12 @@ export default defineComponent({
   setup(props, context) {
     console.log(props.option)
     const { b } = useBem()
+    const tableOption: formProps = props.option
+    console.log(tableOption)
+    const parentOption = computed(() => tableOption)
+    console.log(parentOption.value)
+    const columnOption = computed(() => props.option.items || [])
     return () => {
-      console.log(this)
-      console.log(props)
       return (
         <>
           <div className={b()}>
