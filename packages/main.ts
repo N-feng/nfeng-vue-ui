@@ -1,4 +1,4 @@
-import components from './antd';
+import components from './ui/antd';
 import { KEY_COMPONENT_NAME } from './core/variable';
 import '../styles/index.scss';
 
