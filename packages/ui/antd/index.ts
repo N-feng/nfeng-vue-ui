@@ -4,7 +4,7 @@ import Select from "../../antd/select/Select";
 import Radio from "../../antd/radio/Radio";
 import Checkbox from "../../antd/checkbox/Checkbox";
 import Switch from "../../antd/switch/Switch";
-import Input from "../../antd/input/Input";
+import YInput from "../../antd/input/Input";
 
 export default {
     Dates,
@@ -13,5 +13,5 @@ export default {
     Radio,
     Checkbox,
     Switch,
-    Input,
+    YInput,
 }

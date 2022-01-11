@@ -6,7 +6,8 @@ import {
   DATE_LIST,
   ARRAY_VALUE_LIST,
   MULTIPLE_LIST,
-} from "../../packages/core/variable";
+  SELECT_LIST
+} from "../global/variable";
 import { detailDataType, findObject } from "../utils/util";
 
 /**
@@ -158,18 +159,14 @@ export const getComponent = (type, component) => {
 };
 
 export const getPlaceholder = (column) => {
-  const SELECT_LIST = ["select", "input-date", "date"];
-  if (SELECT_LIST.includes(column.type)) {
-    return `请选择${column.label || ""}`;
-  } else {
-    return `请输入${column.label || ""}`;
-  }
-};
-
-export const getLabel = (column) => {
+  const placeholder = column.placeholder;
   const label = column.label;
-  if (label && label.length) {
-    return label.replace("：", "").replace(":", "") + "：";
+  if (validatenull(placeholder)) {
+    if (SELECT_LIST.includes(column.type)) {
+      return `请选择${label}`;
+    } else {
+      return `请输入${label}`;
+    }
   }
-  return label;
+  return placeholder;
 };

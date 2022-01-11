@@ -1,14 +1,14 @@
-import { computed, defineComponent, resolveComponent } from "vue";
+import { computed, defineComponent, reactive, h, resolveComponent } from "vue";
 import useBem from "../../core/useBem";
-import { getComponent } from "../../core/dataformat";
-import type { FormItem } from "./types";
+import { getComponent, getPlaceholder } from "../../core/dataformat";
+// import type { FormItem } from "./types";
 
 export interface formProps {
   items: object | object[]
 }
 
 export default defineComponent({
-  name: 'form',
+  name: 'YForm',
   props: {
     option: {
       type: Object,
@@ -30,27 +30,43 @@ export default defineComponent({
     const labelCol = props.option.labelWidth || 5;
     const wrapperCol = 24 - labelCol;
 
+    const formSafe = reactive({});
+
     return () => {
       return (
         <>
           <div className={b()}>
-            <a-row>
-              {columnOption.value.map((column: FormItem,index) => {
-                const name = column.prop;
-                return (
-                  <a-col span={getSpan(column)}>{column}
-                    <a-form-item
+            <a-form model={formSafe}>
+              <a-row>
+                {columnOption.value.map((column, index) => {
+                  return (
+                    <a-col span={getSpan(column)}>
+                      <a-form-item
                         label={column.label}
                         labelCol={{ span: labelCol }}
                         wrapperCol={{ span: wrapperCol }}
-                    >
-                      {/*{resolveComponent(getComponent(column.type,column.component))}*/}
-                    </a-form-item>
-                  </a-col>
-                )
-              })}
-            </a-row>
-            <div className={b('group')}>{ JSON.stringify(props.option.items) }222</div>
+                        name={column.prop}
+                        v-slots={{
+                          default: () => {
+                            let children
+                            const componentProps = {
+                              placeholder: getPlaceholder(column)
+                            }
+                            const Component = resolveComponent(
+                              getComponent(column.type, column.component)
+                            ) as string
+                            children = h(Component, {
+                              ...componentProps
+                            })
+                            return children
+                          }
+                        }}
+                      />
+                    </a-col>
+                  )
+                })}
+              </a-row>
+            </a-form>
           </div>
         </>
       )

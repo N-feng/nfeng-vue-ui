@@ -1,5 +1,12 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-    name: 'select'
+  name: 'YSelect',
+  setup() {
+    return () => {
+      return (
+        <a-select></a-select>
+      )
+    }
+  }
 })

@@ -42,7 +42,7 @@ const Template = (args) => {
     setup() {
       return { args };
     },
-    template: '<ygp-form v-bind="args" />',
+    template: '<y-form v-bind="args" />',
   };
 };
 
