@@ -1,4 +1,4 @@
-import { computed, defineComponent, PropType, ref } from "vue";
+import { computed, defineComponent, h, PropType, ref } from "vue";
 import { DatePicker, RangePicker } from 'ant-design-vue';
 import type { Dayjs } from 'dayjs';
 
@@ -31,11 +31,13 @@ export default defineComponent({
     })
     return () => {
       const [Comp, cls] = isRange.value ? [RangePicker, 'y-date-range'] : [DatePicker, 'y-date']
-      return (
-        // <Comp class={cls} v-model:value={value} />
-        <>
-          <div>a-date</div>
-        </>
+      return h(
+        Comp,
+        // <>
+        //   {/* <Comp class={cls} v-model:value={value} />
+        //   <div>a-date</div> */}
+        //   <a-date-picker></a-date-picker>
+        // </>
       )
     }
   }
