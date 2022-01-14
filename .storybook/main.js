@@ -8,7 +8,7 @@ module.exports = {
   "addons": [
     "@storybook/addon-links",
     "@storybook/addon-essentials",
-    // '@storybook/addon-postcss',
+    '@storybook/addon-postcss',
     // '@storybook/preset-scss',
     // {
     //   name: '@storybook/addon-postcss',
