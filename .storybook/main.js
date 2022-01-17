@@ -9,15 +9,15 @@ module.exports = {
     "@storybook/addon-links",
     "@storybook/addon-essentials",
     // '@storybook/addon-postcss',
-    // '@storybook/preset-scss',
-    {
-      name: '@storybook/addon-postcss',
-      options: {
-        postcssLoaderOptions: {
-          implementation: require('postcss'),
-        },
-      },
-    },
+    '@storybook/preset-scss',
+    // {
+    //   name: '@storybook/addon-postcss',
+    //   options: {
+    //     postcssLoaderOptions: {
+    //       implementation: require('postcss'),
+    //     },
+    //   },
+    // },
     // {
     //   name: '@storybook/preset-scss',
     //   options: {
