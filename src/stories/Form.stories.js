@@ -24,16 +24,16 @@ export default {
         category: "Events",
       },
     },
-    onCancel: {
-      table: {
-        category: "Events",
-      },
-    },
-    onSubmit: {
-      table: {
-        category: "Events",
-      },
-    },
+    // onCancel: {
+    //   table: {
+    //     category: "Events",
+    //   },
+    // },
+    // onSubmit: {
+    //   table: {
+    //     category: "Events",
+    //   },
+    // },
   },
 };
 
@@ -80,7 +80,7 @@ export const Base = Template.bind({});
 // Base.parameters = parameters;
 Base.args = {
   option: base,
-  formData: {},
+  modelValue: {},
   dic: {
     VAILD: [
       {

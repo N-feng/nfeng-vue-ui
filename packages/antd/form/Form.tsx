@@ -17,10 +17,23 @@ export default defineComponent({
         return {};
       },
     },
+    dic: {
+      type: Object,
+    },
+    modelValue: {
+      type: Object,
+      required: true,
+      default: () => {
+        return {};
+      }
+    }
   },
-  setup(props) {
+  emits: ['change'],
+  setup(props, { emit }) {
     const { b } = useBem();
     const columnOption = computed(() => props.option.items || []);
+
+    emit('change', b)
 
     const itemSpanDefault = 8;
     function getSpan(column) {
