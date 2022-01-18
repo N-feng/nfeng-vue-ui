@@ -28,7 +28,6 @@ export default defineComponent({
     return () => {
       const [Comp, cls] = isRange.value ? [RangePicker, 'y-date-range'] : [DatePicker, 'y-date']
       const Component = resolveComponent(`a-${getComponent(props.type)}`) as string
-      console.log('Component: ', Component);
       return h(
           Component,
           {}

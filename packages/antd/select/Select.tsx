@@ -1,4 +1,5 @@
 import { defineComponent } from "vue";
+import useDic from "../../core/useDic";
 
 export default defineComponent({
   name: 'YSelect',
@@ -10,19 +11,24 @@ export default defineComponent({
       }
     },
     labelKey: {
-      type: String
+      type: String,
+      default: 'name',
     },
     valueKey: {
-      type: String
+      type: String,
+      default: 'code',
     },
   },
   setup(props) {
-    console.log(props)
+    const { getOptions } = useDic();
+    const propMap = {
+      label: props.labelKey,
+      value: props.valueKey,
+    };
+    const options = getOptions(propMap, props.options);
     return () => {
       return (
-        <a-select>
-          
-        </a-select>
+        <a-select options={options} />
       )
     }
   }

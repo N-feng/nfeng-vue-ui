@@ -32,7 +32,7 @@ export default defineComponent({
   emits: ['change'],
   setup(props, { emit }) {
     const { b } = useBem();
-    const { getOptions } = useDic();
+    const { getDic } = useDic();
     const columnOption = computed(() => props.option.items || []);
 
     emit('change', b)
@@ -66,7 +66,7 @@ export default defineComponent({
                             let children
                             const componentProps = {
                               placeholder: getPlaceholder(column),
-                              options: getOptions(column, props.dic)
+                              options: getDic(column, props.dic)
                             }
                             const Component = resolveComponent(
                               getComponent(column.type, column.component)

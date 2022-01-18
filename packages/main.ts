@@ -8,7 +8,6 @@ const install = (Vue, options = {}) => {
     let name = component.name || '';
     // name = name.substr(name.length - 1, 1) === '-' ? (name.substr(0, name.length - 1)) + ele : name;
     // name = KEY_COMPONENT_NAME + name;
-    console.log(name)
     Vue.component(name, component);
   })
 }
