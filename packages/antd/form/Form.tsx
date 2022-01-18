@@ -1,6 +1,7 @@
 import { computed, defineComponent, reactive, h, resolveComponent } from "vue";
 import useBem from "../../core/useBem";
 import { getComponent, getPlaceholder } from "../../core/dataformat";
+import useDic from "../../core/useDic";
 // import type { FormItem } from "./types";
 
 export interface formProps {
@@ -31,6 +32,7 @@ export default defineComponent({
   emits: ['change'],
   setup(props, { emit }) {
     const { b } = useBem();
+    const { getOptions } = useDic();
     const columnOption = computed(() => props.option.items || []);
 
     emit('change', b)
@@ -63,7 +65,8 @@ export default defineComponent({
                           default: () => {
                             let children
                             const componentProps = {
-                              placeholder: getPlaceholder(column)
+                              placeholder: getPlaceholder(column),
+                              options: getOptions(column, props.dic)
                             }
                             const Component = resolveComponent(
                               getComponent(column.type, column.component)
