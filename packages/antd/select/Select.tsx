@@ -1,5 +1,6 @@
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import useDic from "../../core/useDic";
+import { getExpose } from "../../utils/common";
 
 export default defineComponent({
   name: 'YSelect',
@@ -19,16 +20,26 @@ export default defineComponent({
       default: 'code',
     },
   },
-  setup(props) {
+  setup(props, { expose }) {
+    const select = ref()
+    console.log('select: ', select);
+    getExpose(['blur', 'focus'], select)
     const { getOptions } = useDic();
     const propMap = {
       label: props.labelKey,
       value: props.valueKey,
     };
     const options = getOptions(propMap, props.options);
+    const value = ref('lucy')
+    const onUpdate = (val) => {
+      console.log(val)
+    }
+    const changeHandle = (val) => {
+      console.log(val)
+    }
     return () => {
       return (
-        <a-select options={options} />
+        <a-select ref="select" options={options} value={value} onUpdate:value={onUpdate} change={changeHandle} />
       )
     }
   }
