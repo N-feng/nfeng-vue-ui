@@ -22,20 +22,21 @@ export default defineComponent({
   },
   setup(props, { expose }) {
     const select = ref()
-    console.log('select: ', select);
-    getExpose(['blur', 'focus'], select)
+    // console.log('select: ', select);
+    // getExpose(['blur', 'focus'], select)
     const { getOptions } = useDic();
     const propMap = {
       label: props.labelKey,
       value: props.valueKey,
     };
     const options = getOptions(propMap, props.options);
+    console.log(options)
     const value = ref('lucy')
     const onUpdate = (val) => {
       console.log(val)
     }
     const changeHandle = (val) => {
-      console.log(val)
+      console.log('changeHandle'+val)
     }
     return () => {
       return (
