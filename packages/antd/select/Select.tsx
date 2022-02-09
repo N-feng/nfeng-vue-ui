@@ -1,4 +1,4 @@
-import { defineComponent, ref } from "vue";
+import {defineComponent, onMounted, ref} from "vue";
 import useDic from "../../core/useDic";
 import { getExpose } from "../../utils/common";
 
@@ -22,7 +22,11 @@ export default defineComponent({
   },
   setup(props, { expose }) {
     const select = ref()
-    // console.log('select: ', select);
+
+    onMounted(() => {
+      console.log('select: ', select.value);
+    })
+
     // getExpose(['blur', 'focus'], select)
     const { getOptions } = useDic();
     const propMap = {
@@ -40,8 +44,8 @@ export default defineComponent({
     }
     return () => {
       return (
-        <a-select ref="select" options={options} value={value} onUpdate:value={onUpdate} change={changeHandle} />
+        <a-select ref={select} options={options} value={value} onUpdate:value={onUpdate} onChange={changeHandle} />
       )
     }
-  }
+  },
 })
