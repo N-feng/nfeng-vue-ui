@@ -20,11 +20,12 @@ export default defineComponent({
       default: 'code',
     },
   },
-  setup(props, { expose }) {
+  emits: ['update:modelValue', 'change'],
+  setup(props, { expose, emit }) {
     const select = ref()
 
     onMounted(() => {
-      console.log('select: ', select.value);
+      // console.log('select: ', select.value);
     })
 
     // getExpose(['blur', 'focus'], select)
@@ -34,17 +35,25 @@ export default defineComponent({
       value: props.valueKey,
     };
     const options = getOptions(propMap, props.options);
-    console.log(options)
+    // console.log(options)
     const value = ref('lucy')
     const onUpdate = (val) => {
       console.log(val)
     }
-    const changeHandle = (val) => {
-      console.log('changeHandle'+val)
+    const changeHandle = (value, option) => {
+      console.log(`selected ${value}`);
+      console.log(option)
+      emit('change', value, option)
     }
     return () => {
       return (
-        <a-select ref={select} options={options} value={value} onUpdate:value={onUpdate} onChange={changeHandle} />
+        <a-select
+            ref={select}
+            options={options}
+            value={value}
+            onUpdate:value={onUpdate}
+            onChange={changeHandle}
+        />
       )
     }
   },

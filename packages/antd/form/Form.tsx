@@ -1,7 +1,8 @@
-import { computed, defineComponent, reactive, h, resolveComponent } from "vue";
+import {computed, defineComponent, reactive, h, resolveComponent, ref} from "vue";
 import useBem from "../../core/useBem";
-import { getComponent, getPlaceholder } from "../../core/dataformat";
+import {formInitVal, getComponent, getPlaceholder} from "../../core/dataformat";
 import useDic from "../../core/useDic";
+import {deepClone} from "../../utils/util";
 // import type { FormItem } from "./types";
 
 export interface formProps {
@@ -33,9 +34,39 @@ export default defineComponent({
   setup(props, { emit }) {
     const { b } = useBem();
     const { getDic } = useDic();
-    const columnOption = computed(() => props.option.items || []);
-
-    emit('change', b)
+    const parentOption = computed(() => {
+      let option = deepClone(props.option)
+      let group = option.group
+      if (!group) {
+        option = Object.assign(option, {
+          group: [deepClone(option)]
+        })
+      }
+      if (group) {
+        //处理分组以外的部分
+        group.unshift({
+          arrow: false,
+          column: option.column
+        })
+      }
+      return option
+    })
+    const columnOption = computed(() => {
+      let list = [...parentOption.value.group] || []
+      list.forEach((ele, index) => {
+        ele.items = ele.items || []
+      })
+      return list
+    });
+    const propOption = computed(() => {
+      let list: any = [];
+      columnOption.value.forEach(option => {
+        option.items.forEach(column  => list.push(column))
+      })
+      return list
+    })
+    const formDefault = formInitVal(propOption.value)
+    const form = reactive(deepClone(formDefault.tableForm))
 
     const itemSpanDefault = 8;
     function getSpan(column) {
