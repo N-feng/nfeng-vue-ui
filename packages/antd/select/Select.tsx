@@ -41,8 +41,7 @@ export default defineComponent({
       console.log(val)
     }
     const changeHandle = (value, option) => {
-      console.log(`selected ${value}`);
-      console.log(option)
+      emit('update:modelValue', value)
       emit('change', value, option)
     }
     return () => {

@@ -67,6 +67,7 @@ export default defineComponent({
     })
     const formDefault = formInitVal(propOption.value)
     const form = reactive(deepClone(formDefault.tableForm))
+    console.log(form)
 
     const itemSpanDefault = 8;
     function getSpan(column) {
@@ -81,35 +82,45 @@ export default defineComponent({
     return () => {
       return (
         <>
-          <div className={b()}>
+          <div className={b()}>{JSON.stringify(form)}
             <a-form model={formSafe}>
               <a-row>
-                {columnOption.value.map((column, index) => {
+                {columnOption.value.map((item, index) => {
                   return (
-                    <a-col span={getSpan(column)}>
-                      <a-form-item
-                        label={column.label}
-                        labelCol={{ span: labelCol }}
-                        wrapperCol={{ span: wrapperCol }}
-                        name={column.prop}
-                        v-slots={{
-                          default: () => {
-                            let children
-                            const componentProps = {
-                              placeholder: getPlaceholder(column),
-                              options: getDic(column, props.dic)
-                            }
-                            const Component = resolveComponent(
-                              getComponent(column.type, column.component)
-                            ) as string
-                            children = h(Component, {
-                              ...componentProps
-                            })
-                            return children
-                          }
-                        }}
-                      />
-                    </a-col>
+                      <>
+                        {item.items.map((column,cindex) => {
+                          return (
+                              <>
+                                <a-col span={getSpan(column)}>
+                                  <a-form-item
+                                      label={column.label}
+                                      labelCol={{ span: labelCol }}
+                                      wrapperCol={{ span: wrapperCol }}
+                                      name={column.prop}
+                                      v-slots={{
+                                        default: () => {
+                                          let children
+                                          const componentProps = {
+                                            placeholder: getPlaceholder(column),
+                                            options: getDic(column, props.dic),
+                                            modelValue: form[column.prop],
+                                            'onUpdate:modelValue': (val) => form[column.prop] = val
+                                          }
+                                          const Component = resolveComponent(
+                                              getComponent(column.type, column.component)
+                                          ) as string
+                                          children = h(Component, {
+                                            ...componentProps
+                                          })
+                                          return children
+                                        }
+                                      }}
+                                  />
+                                </a-col>
+                              </>
+                          )
+                        })}
+                      </>
                   )
                 })}
               </a-row>
