@@ -50,65 +50,74 @@ export default {
   },
 };
 
-const Template = (args, { argTypes }) => {
+const Template = (args) => {
   return {
-    // components: { Form },
-    props: Object.keys(argTypes),
-    template: `
-      <div>
-      <el-button></el-button>
-<!--        <p>tableData: {{tableData}}</p>-->
-<!--        <ygp-crud v-bind="$props" -->
-<!--                  :option="{...option,stripe,index,selection,rowSelection,cellBtn}" -->
-<!--                  :data="tableData" -->
-<!--                  :dic="dic" -->
-<!--                  @onRowSave="onRowSave" -->
-<!--                  @onRowUpdate="onRowUpdate" -->
-<!--                  @onRowDel="onRowDel" -->
-<!--                  @onSelectionChange="onSelectionChange" -->
-<!--                  @onSelectChange="onSelectChange" -->
-<!--                  @onSubmit="onSubmit" -->
-<!--                  @row-update="addUpdate" -->
-<!--                  @row-save="rowSave" -->
-<!--                  @onLoad="onLoad">-->
-<!--          <template v-if="option.menuType === 'menu'" slot-scope="scope" slot="menuBtn">-->
-<!--            <el-dropdown-item divided @click.native="tip">自定义按钮</el-dropdown-item>-->
-<!--          </template>-->
-<!--          <template v-if="option.menuType === 'menu'" slot-scope="scope" slot="menu" >-->
-<!--            <el-button style="margin-left:10px;" size="small" type="text" icon="el-icon-user" @click.native="tip">自定义按钮</el-button>-->
-<!--          </template>-->
-<!--        </ygp-crud>-->
-      </div>
-    `,
-
-    methods: {
-      rowSave(form, done) {
-        console.log(form)
-        this.$message.success(
-          '新增数据' + JSON.stringify(form)
-        )
-        done({id:this.tableData.length})
-      },
-      addUpdate (form,index,done,loading) {
-        console.log(form)
-        this.$message.success('模拟网络请求')
-        setTimeout(() => {
-          this.$message.success('关闭按钮等待')
-          loading()
-        }, 1000)
-        setTimeout(() => {
-          this.$message.success(
-            '编辑数据' + JSON.stringify(form) + '数据序号' + index
-          )
-          done({sexName:'女'})
-        }, 2000)
-      },
-      tip(){
-        this.$message.success('自定义按钮');
-      }
-    }
+    setup() {
+      return { args };
+    },
+    template: '<y-crud v-bind="args" />',
   };
 };
+
+// const Template = (args, { argTypes }) => {
+//   return {
+//     // components: { Form },
+//     props: Object.keys(argTypes),
+//     template: `
+//       <div>
+//       <el-button></el-button>
+// <!--        <p>tableData: {{tableData}}</p>-->
+// <!--        <ygp-crud v-bind="$props" -->
+// <!--                  :option="{...option,stripe,index,selection,rowSelection,cellBtn}" -->
+// <!--                  :data="tableData" -->
+// <!--                  :dic="dic" -->
+// <!--                  @onRowSave="onRowSave" -->
+// <!--                  @onRowUpdate="onRowUpdate" -->
+// <!--                  @onRowDel="onRowDel" -->
+// <!--                  @onSelectionChange="onSelectionChange" -->
+// <!--                  @onSelectChange="onSelectChange" -->
+// <!--                  @onSubmit="onSubmit" -->
+// <!--                  @row-update="addUpdate" -->
+// <!--                  @row-save="rowSave" -->
+// <!--                  @onLoad="onLoad">-->
+// <!--          <template v-if="option.menuType === 'menu'" slot-scope="scope" slot="menuBtn">-->
+// <!--            <el-dropdown-item divided @click.native="tip">自定义按钮</el-dropdown-item>-->
+// <!--          </template>-->
+// <!--          <template v-if="option.menuType === 'menu'" slot-scope="scope" slot="menu" >-->
+// <!--            <el-button style="margin-left:10px;" size="small" type="text" icon="el-icon-user" @click.native="tip">自定义按钮</el-button>-->
+// <!--          </template>-->
+// <!--        </ygp-crud>-->
+//       </div>
+//     `,
+
+//     methods: {
+//       rowSave(form, done) {
+//         console.log(form)
+//         this.$message.success(
+//           '新增数据' + JSON.stringify(form)
+//         )
+//         done({id:this.tableData.length})
+//       },
+//       addUpdate (form,index,done,loading) {
+//         console.log(form)
+//         this.$message.success('模拟网络请求')
+//         setTimeout(() => {
+//           this.$message.success('关闭按钮等待')
+//           loading()
+//         }, 1000)
+//         setTimeout(() => {
+//           this.$message.success(
+//             '编辑数据' + JSON.stringify(form) + '数据序号' + index
+//           )
+//           done({sexName:'女'})
+//         }, 2000)
+//       },
+//       tip(){
+//         this.$message.success('自定义按钮');
+//       }
+//     }
+//   };
+// };
 
 // const parameters = {
 //   preview: [
@@ -192,15 +201,15 @@ export const Base = Template.bind({});
 // Base.parameters = parameters;
 Base.args = {
   option: base,
-  tableData,
+  data: tableData,
   // height: 230,
   dic: {},
   selectedRowKeys: [],
-  stripe: false,
-  index: false,
-  selection: false,
-  rowSelection: false,
-  cellBtn: false,
+  // stripe: false,
+  // index: false,
+  // selection: false,
+  // rowSelection: false,
+  // cellBtn: false,
   page: {}
 };
 

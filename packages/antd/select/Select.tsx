@@ -19,39 +19,36 @@ export default defineComponent({
       type: String,
       default: 'code',
     },
+    modelValue: {
+      type: [Array, Object, String, Number],
+    },
   },
   emits: ['update:modelValue', 'change'],
-  setup(props, { expose, emit }) {
+  setup(props, { expose, emit, attrs }) {
     const select = ref()
+    expose({
+      ...getExpose(['blur', 'focus'], select)
+    })
 
     onMounted(() => {
       // console.log('select: ', select.value);
     })
 
-    // getExpose(['blur', 'focus'], select)
     const { getOptions } = useDic();
     const propMap = {
       label: props.labelKey,
       value: props.valueKey,
     };
     const options = getOptions(propMap, props.options);
-    // console.log(options)
-    const value = ref('lucy')
-    const onUpdate = (val) => {
-      console.log(val)
-    }
-    const changeHandle = (value, option) => {
-      emit('update:modelValue', value)
-      emit('change', value, option)
-    }
+
     return () => {
       return (
         <a-select
-            ref={select}
-            options={options}
-            value={value}
-            onUpdate:value={onUpdate}
-            onChange={changeHandle}
+          ref={select}
+          placeholder={attrs['placeholder'] === void 0 ? '请选择' : attrs['placeholder']}
+          options={options}
+          value={props.modelValue ? props.modelValue : undefined}
+          onUpdate:value={(val) => emit('update:modelValue', val)}
         />
       )
     }

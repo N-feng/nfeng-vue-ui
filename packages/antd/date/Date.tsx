@@ -1,5 +1,4 @@
 import {computed, defineComponent, h, PropType, ref, resolveComponent} from "vue";
-import { DatePicker, RangePicker } from 'ant-design-vue';
 import type { Dayjs } from 'dayjs';
 
 type DateType = 'date-picker' | 'range-picker'
@@ -7,16 +6,21 @@ type DateType = 'date-picker' | 'range-picker'
 export default defineComponent({
   name: 'YDate',
   props: {
+    modelValue: {
+      // type: [String, Object, Array] as PropType<string | Dayjs | string[] | Dayjs[]>,
+      type: [String, Object, Array] as any,
+    },
     type: {
       type: String as PropType<DateType>,
       default: 'date-picker',
     },
   },
-  setup(props) {
-    const value = ref<Dayjs>()
-    const isRange = computed(() => {
-      return /^(.*?)range(.*?)$/.test(props.type)
-    })
+  emits: ['update:modelValue'],
+  setup(props, { attrs, emit }) {
+    // const value = ref<Dayjs>()
+    // const isRange = computed(() => {
+    //   return /^(.*?)range(.*?)$/.test(props.type)
+    // })
 
     function getComponent(t: DateType) {
       if (/^(.*?)range(.*?)$/.test(props.type)) {
@@ -26,16 +30,16 @@ export default defineComponent({
     }
 
     return () => {
-      const [Comp, cls] = isRange.value ? [RangePicker, 'y-date-range'] : [DatePicker, 'y-date']
       const Component = resolveComponent(`a-${getComponent(props.type)}`) as string
       return h(
           Component,
-          {}
-        // <>
-        //   {/* <Comp class={cls} v-model:value={value} />
-        //   <div>a-date</div> */}
-        //   <a-date-picker></a-date-picker>
-        // </>
+          {
+            valueFormat: attrs['format'] as string || 'YYYY-MM-DD',
+            value:props.modelValue,
+            'onUpdate:value': (val) => {
+              emit('update:modelValue', val)
+            }
+          }
       )
     }
   }

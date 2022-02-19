@@ -1,4 +1,4 @@
-import { validatenull } from "../utils/validate";
+import { validatenull } from '../utils/validate';
 import {
   KEY_COMPONENT_NAME,
   DIC_SPLIT,
@@ -7,8 +7,8 @@ import {
   ARRAY_VALUE_LIST,
   MULTIPLE_LIST,
   SELECT_LIST
-} from "../global/variable";
-import { detailDataType, findObject } from "../utils/util";
+} from '../global/variable';
+import { detailDataType, findObject } from '../utils/util';
 
 /**
  * 计算级联属性
@@ -71,7 +71,7 @@ export const initVal = (value, column) => {
       if (validatenull(list)) {
         list = [];
       } else {
-        list = (list + "").split(separator) || [];
+        list = (list + '').split(separator) || [];
       }
     }
     // 数据转化
@@ -94,17 +94,16 @@ export const formInitVal = (list = []) => {
   list.forEach((ele:any) => {
     if (
       ARRAY_VALUE_LIST.includes(ele.type) ||
-      (MULTIPLE_LIST.includes(ele.type) && ele.multiple) ||
-      ele.range || ele.dataType === "array"
+      (MULTIPLE_LIST.includes(ele.type) && ele.multiple) || ele.range || ele.dataType === 'array'
     ) {
       tableForm[ele.prop] = [];
     } else if (
-      ["rate", "slider", "number"].includes(ele.type) ||
-      ele.dataType === "number"
+      ['rate', 'slider', 'number'].includes(ele.type) ||
+      ele.dataType === 'number'
     ) {
       tableForm[ele.prop] = undefined;
     } else {
-      tableForm[ele.prop] = "";
+      tableForm[ele.prop] = '';
     }
     // if (ele.bind) {
     //   tableForm = createObj(tableForm, ele.bind);

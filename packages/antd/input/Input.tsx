@@ -5,12 +5,16 @@ type InputType = 'text' | 'input' | 'number' | 'password' | 'search' | 'textarea
 export default defineComponent({
   name: 'YInput',
   props: {
+    modelValue: {
+      type: [String, Number]
+    },
     type: {
       type: String as PropType<InputType>,
       default: ''
     }
   },
-  setup(props) {
+  emits: ['update:modelValue'],
+  setup(props, { emit }) {
 
     function getComponent(t: InputType) {
       let type
@@ -33,6 +37,8 @@ export default defineComponent({
       return h(
         Component,
         {
+          value: props.modelValue,
+          'onUpdate:value': (val) => emit('update:modelValue', val),
           class: 'y-input'
         }
       )
