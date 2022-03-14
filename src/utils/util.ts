@@ -107,7 +107,7 @@ export const deepClone = (data) => {
 export const arraySort = (list = [], prop, callback) => {
   return list.filter(ele => !validatenull(ele[prop])).sort((a, b) => callback(a, b)).concat(list.filter(ele => validatenull(ele[prop])));
 }
-export const clearVal = (obj, list = []) => {
+export const clearVal = (obj, list: any[] = []) => {
   if (!obj) return {};
   Object.keys(obj).forEach((ele) => {
     if (list.includes(ele)) return;
@@ -131,17 +131,3 @@ export const vaildData = (val, dafult) => {
   }
   return !validatenull(val) ? val : dafult;
 };
-
-// 节流
-export function throttle(fn, delay) {
-  let timer = null;
-  return function () {
-    if (!timer) {
-      fn();
-      timer = setTimeout(() => {
-        timer = null;
-        clearTimeout(timer);
-      }, delay);
-    }
-  };
-}

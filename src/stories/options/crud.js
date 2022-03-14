@@ -14,12 +14,21 @@ export const base = {
   columns:[
     {
       label:'姓名',
-      prop:'name'
+      prop:'name',
+      slot:true
     },
     {
       label:'性别',
-      prop:'sex'
-    }
+      prop:'sex',
+      render: ({ index }) => {
+        return index
+      }
+    },
+    // {
+    //   label: '操作',
+    //   prop: 'operation',
+    //   width: 250
+    // },
   ]
 }
 
@@ -52,13 +61,15 @@ export const html = {
     label:'姓名',
     prop:'name',
     html:true,
-    formatter:(val)=>{
-      // console.log(val)
-      return '<span style="color:red">'+val.name+'</span>'
+    render:(val)=>{
+      return '<span style="color:red">'+val.text+'</span>'
     }
   }, {
     label:'性别',
-    prop:'sex'
+    prop:'sex',
+    formatter: (val) => {
+      return val.text
+    }
   }]
 }
 
@@ -83,6 +94,7 @@ export const view = {
 
 export const selection = {
   selection: true,
+  rowSelection: {},
   align:'center',
   menuAlign:'center',
   columns:[

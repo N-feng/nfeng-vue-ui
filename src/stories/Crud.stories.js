@@ -55,7 +55,10 @@ const Template = (args) => {
     setup() {
       return { args };
     },
-    template: '<y-crud v-bind="args" />',
+    template: '<y-crud v-bind="args"> ' +
+        '<template #name>111</template>' +
+        '<template v-slot:menu><a>自定义按钮</a></template> ' +
+        '</y-crud>',
   };
 };
 
